@@ -1,0 +1,24 @@
+{
+  "name": "chit",
+  "version": "0.1.0",
+  "description": "Chit management program",
+  "main": "app/main.js",
+  "scripts": {
+    "test": "electron ."
+  },
+  "keywords": [
+    "chit",
+    "electron"
+  ],
+  "author": "vigneshpa",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^14.6.4",
+    "@types/sqlite3": "^3.1.6",
+    "electron": "^10.1.1",
+    "electron-builder": "^22.8.0"
+  },
+  "dependencies": {
+    "sqlite3": "^5.0.0"
+  }
+}
