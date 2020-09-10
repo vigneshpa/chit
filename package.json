@@ -4,7 +4,13 @@
   "description": "Chit management program",
   "main": "app/main.js",
   "scripts": {
-    "test": "electron ."
+    "test": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vigneshpa/chit.git"
   },
   "keywords": [
     "chit",
@@ -12,6 +18,10 @@
   ],
   "author": "vigneshpa",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vigneshpa/chit/issues"
+  },
+  "homepage": "https://github.com/vigneshpa/chit#readme",
   "devDependencies": {
     "@types/node": "^14.6.4",
     "@types/sqlite3": "^3.1.6",

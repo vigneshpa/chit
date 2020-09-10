@@ -19,9 +19,19 @@
     "typescript": "~3.9.3",
     "vue-template-compiler": "^2.6.11"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  "browserslist": {
+    "modern": [
+      "last 2 chrome versions"
+    ],
+    "production": [
+      "last 2 chrome versions"
+    ],
+    "developement": [
+      "last 1 chrome version",
+      "last 1 firefox version"
+    ],
+    "ssr": [
+      "node 12"
+    ]
+  }
 }
