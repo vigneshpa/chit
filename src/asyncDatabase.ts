@@ -56,24 +56,48 @@ export { createUser };
 async function createGroup(year:number, month:number, batch:string, members:{UID:number, noOfCheats:number}[]): Promise<{ success: boolean; result: createGroupFields }> {
   let result: createGroupFields;
   let success: boolean;
-  let groupAlreadyExists: boolean = false;
   let gName: string = year + "-" + month + "-" + batch;
   let total = 0;
   for (const member of members) {
     total += member.noOfCheats;
-  }
-  if (total < 20) {
-    throw new Error("Total number of cheats is less than 20");
   }
   if (total !== 20) {
     throw new Error("Total number of cheats is not equal to 20");
   }
   try {
     await db.run("INSERT INTO `groups` (`name`, `year`, `month`, `batch`, `winners`) VALUES (?, ?, ?, ?, '[]');", [gName, year, month, batch]);
+    result = await db.get("SELECT * FROM `groups` WHERE `name` = '" + gName + "';");
   }catch(err){
+    success = false;
     throw err;
+  }
+
+  if(success){
+    db.transaction(function(db1){
+      let iterable:Promise<any>[] = [];
+      for (const member of members) {
+        iterable.push(db1.run("INSERT INTO `cheats` (`UID`, `GID`, `no_of_cheats`, `month1_toBePaid`) VALUES (?, ?, ?)", [member.UID, result.GID, member.noOfCheats, 5000 * member.noOfCheats]));
+      }
+      return Promise.all(iterable);
+    });
   }
 
   return { success, result };
 }
 export { createGroup };
+
+async function listUsers():Promise<createUserFields[]>{
+  let result:createUserFields[] = await db.all("SELECT * FROM `users`");
+  return result;
+}
+export {listUsers};
+
+async function listGroups():Promise<createGroupFields[]>{
+  let result:createGroupFields[];
+  result = await db.all("SELECT * FROM `groups`");
+  result.forEach((group, index)=>{
+    group.winners = JSON.parse(<string>(<unknown>group.winners));
+  });
+  return result;
+}
+export {listGroups};

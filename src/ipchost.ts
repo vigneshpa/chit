@@ -1,51 +1,57 @@
 import { ipcMain, BrowserWindow } from "electron";
-import * as dbmgmt from "./database";
+import * as dbmgmt from "./asyncDatabase";
 import { join } from "path";
-export async function initialise():Promise<any> {
+export async function initialise(): Promise<void> {
 
-    ipcMain.on("create-user-account", function (event, data: createUserFields) {
+    ipcMain.on("create-user-account", async function (event, data: createUserFields) {
+        let err: sqliteError;
+        let response: { result: any; success?: boolean; };
         console.log("\nRecived Message From Renderer to create user\n", event, data);
-        dbmgmt.createUser(data.name, data.phone, data.address, function (err:Error, row:createUserFields) {
-            event.sender.send("create-user-account", err, row);
-        });
+        try {
+            response = await dbmgmt.createUser(data.name, data.phone, data.address,);
+        } catch (err1) {
+            err = err1;
+        }
+        event.sender.send("create-user-account", err, response.result);
     });
 
-    ipcMain.on("create-group", function (event, data: createGroupFields) {
+    ipcMain.on("create-group", async function (event, data: createGroupFields) {
+        let err: sqliteError;
+        let response: { result: any; success?: boolean; };
         console.log("Recived message from Renderer to create group", event, data);
-        dbmgmt.createGroup(data.year, data.month, data.batch, data.members, function(err:Error, row:createGroupFields){
-            event.sender.send("create-group", err, row);
-        });
+        try {
+            response = await dbmgmt.createGroup(data.year, data.month, data.batch, data.members);
+        } catch (err1) {
+            err = err1;
+        }
+        event.sender.send("create-group", err, response.result);
     });
-    ipcMain.on("ping", function(event, ...args){
+    ipcMain.on("ping", function (event, ...args) {
         console.log("Recived ping from renderer", args);
         console.log("Sending pong to the renderer");
         event.sender.send("pong", ...args);
     });
-    ipcMain.on("get-users-data", function(event){
+    ipcMain.on("get-users-data", async function (event) {
         console.log("Recived message from renderer to get users data");
-        dbmgmt.listUsers(function(err, rows){
-            console.log("Sending users data to the renderer");
-            event.sender.send("get-users-data", err, rows);
-            if(err) throw err;
-        })
+        const result = await dbmgmt.listUsers();
+        console.log("Sending users data to the renderer");
+        event.sender.send("get-users-data", result);
     });
 
-    ipcMain.on("open-forms", function(event){
+    ipcMain.on("open-forms", function (event) {
         let formsWindow = new BrowserWindow({
-            height:1080,
-            width:720,
-            webPreferences:{
-                nodeIntegration:true
+            height: 1080,
+            width: 720,
+            webPreferences: {
+                nodeIntegration: true
             }
         });
         formsWindow.loadFile(join(__dirname, "./windows/forms/index.html"));
     });
-    ipcMain.on("get-groups-data", function(event){
+    ipcMain.on("get-groups-data",async function (event) {
         console.log("Recived message from renderer to get groups data");
-        dbmgmt.listGroups(function(err, rows){
-            console.log("Sending groups data to the renderer.");
-            event.sender.send("get-groups-data", err, rows);
-            if(err) throw err;
-        });
+        const result = await dbmgmt.listGroups();
+        console.log("Sending groups data to the renderer.");
+        event.sender.send("get-groups-data", result);
     });
 }

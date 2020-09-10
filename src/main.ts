@@ -24,10 +24,14 @@ app.on("ready", function (launchInfo) {
 
 ipcMain.on("splash-ready", async function (event) {
   splash.webContents.send("log", "Connecting to the database");
-  await loadMain();
+  await (await import("./asyncDatabase")).start();
+  splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
+  await (await import("./ipchost")).initialise();
+  splash.webContents.send("log", "Loading main window");
+  loadMain();
 });
 
-async function loadMain() {
+function loadMain() {
   if (!mainWindow) {
     mainWindow = new BrowserWindow({
       height: 720,
