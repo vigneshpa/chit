@@ -22,9 +22,13 @@ electron_1.app.on("ready", function (launchInfo) {
 });
 electron_1.ipcMain.on("splash-ready", async function (event) {
     splash.webContents.send("log", "Connecting to the database");
-    await loadMain();
+    await (await Promise.resolve().then(() => require("./asyncDatabase"))).start();
+    splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
+    await (await Promise.resolve().then(() => require("./ipchost"))).initialise();
+    splash.webContents.send("log", "Loading main window");
+    loadMain();
 });
-async function loadMain() {
+function loadMain() {
     if (!mainWindow) {
         mainWindow = new electron_1.BrowserWindow({
             height: 720,
@@ -54,6 +58,7 @@ electron_1.app.on("window-all-closed", () => {
         appQuit();
     }
 });
-function appQuit() {
+async function appQuit() {
+    await (await Promise.resolve().then(() => require("./asyncDatabase"))).closeDB();
     electron_1.app.quit();
 }

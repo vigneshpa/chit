@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sqlite = exports.Statement = exports.Database = void 0;
-const sqlite3_1 = require("sqlite3");
-exports.sqlite = sqlite3_1.default;
+const sqlite = require("sqlite3");
+exports.sqlite = sqlite;
 class Database {
-    static get OPEN_READONLY() { return sqlite3_1.default.OPEN_READONLY; }
-    static get OPEN_READWRITE() { return sqlite3_1.default.OPEN_READWRITE; }
-    static get OPEN_CREATE() { return sqlite3_1.default.OPEN_CREATE; }
+    static get OPEN_READONLY() { return sqlite.OPEN_READONLY; }
+    static get OPEN_READWRITE() { return sqlite.OPEN_READWRITE; }
+    static get OPEN_CREATE() { return sqlite.OPEN_CREATE; }
     static open(filename, mode) {
         let db = new Database();
         return db.open(filename, mode);
@@ -22,7 +22,7 @@ class Database {
             if (this.db) {
                 return reject(new Error('Database.open: database is already open'));
             }
-            let db = new sqlite3_1.default.Database(filename, mode, err => {
+            let db = new sqlite.Database(filename, mode, err => {
                 if (err) {
                     reject(err);
                 }
@@ -182,7 +182,7 @@ class Database {
 exports.Database = Database;
 class Statement {
     constructor(statement) {
-        if (!(statement instanceof sqlite3_1.default.Statement)) {
+        if (!(statement instanceof sqlite.Statement)) {
             throw new TypeError(`Statement: 'statement' is not a statement instance`);
         }
         this.statement = statement;
