@@ -4,7 +4,7 @@
         "strict": false,
         "target": "ES2019",
         "module":"CommonJS",
-        "lib": ["ES2019", "ES2020.bigint", "ES2020.string", "ES2020.symbol.wellknown", "ES2020.Promise", "DOM"],
+        "lib": ["ES2019", "ES2020.bigint", "ES2020.string", "ES2020.symbol.wellknown", "ES2020.Promise", "DOM", "ES6"],
         "removeComments": true,
         "allowSyntheticDefaultImports": true
     },

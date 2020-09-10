@@ -4,7 +4,7 @@ exports.initialise = void 0;
 const electron_1 = require("electron");
 const dbmgmt = require("./database");
 const path_1 = require("path");
-function initialise() {
+async function initialise() {
     electron_1.ipcMain.on("create-user-account", function (event, data) {
         console.log("\nRecived Message From Renderer to create user\n", event, data);
         dbmgmt.createUser(data.name, data.phone, data.address, function (err, row) {

@@ -10,7 +10,7 @@ electron_1.app.on("ready", function (launchInfo) {
         width: 500,
         height: 300,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
         },
         frame: false,
         resizable: false,

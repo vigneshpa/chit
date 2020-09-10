@@ -14,21 +14,21 @@ class Database {
     static get OPEN_READWRITE() { return sqlite.OPEN_READWRITE }
     static get OPEN_CREATE() { return sqlite.OPEN_CREATE }
 
-    static open(filename:string, mode?:number) {
+    static open(filename: string, mode?: number) {
         let db = new Database()
         return db.open(filename, mode)
     }
 
-    db:sqlite.Database;
-    filename:string;
+    db: sqlite.Database;
+    filename: string;
 
-    open(filename:string, mode?:number) {
+    open(filename: string, mode?: number) {
         if (typeof mode === 'undefined') {
             mode = Database.OPEN_READWRITE | Database.OPEN_CREATE
         } else if (typeof mode !== 'number') {
             throw new TypeError('Database.open: mode is not a number')
         }
-        return new Promise((resolve:(value:this)=>void, reject:(reason:Error)=>void) => {
+        return new Promise((resolve: (value: this) => void, reject: (reason: Error) => void) => {
             if (this.db) {
                 return reject(new Error('Database.open: database is already open'))
             }
@@ -44,7 +44,7 @@ class Database {
         })
     }
 
-    close(fn?:(db:this)=>Promise<any>):Promise<this> {
+    close(fn?: (db: this) => Promise<any>): Promise<this> {
         if (!this.db) {
             return Promise.reject<this>(new Error('Database.close: database is not open'))
         }
@@ -53,13 +53,13 @@ class Database {
                 return this.close().then(_ => {
                     return result
                 })
-            }).catch((err:Error) => {
+            }).catch((err: Error) => {
                 return this.close().then(_ => {
                     return Promise.reject(err)
                 })
             })
         }
-        return new Promise((resolve:(value:this)=>void, reject:(err:Error)=>void) => {
+        return new Promise((resolve: (value: this) => void, reject: (err: Error) => void) => {
             this.db.close(err => {
                 if (err) {
                     reject(err)
@@ -71,13 +71,13 @@ class Database {
         })
     }
 
-    run(sql:string, ...args:any[]) {
-        return new Promise((resolve:(value:sqlite.Database)=>void, reject:(err:Error)=>void) => {
+    run(sql: string, ...args: any[]) {
+        return new Promise((resolve: (value: sqlite.Database) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.run: database is not open'))
             }
             // Need a real function because 'this' is used.
-            let callback = function (err) {
+            let callback = function (err: Error) {
                 if (err) {
                     reject(err)
                 } else {
@@ -89,12 +89,12 @@ class Database {
         })
     }
 
-    get(sql:string, ...args:any[]) {
-        return new Promise((resolve:(row:any)=>void, reject:(err:Error)=>void) => {
+    get(sql: string, ...args: any[]) {
+        return new Promise((resolve: (row: any) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.get: database is not open'))
             }
-            let callback = (err:Error, row:any) => {
+            let callback = (err: Error, row: any) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -106,12 +106,12 @@ class Database {
         })
     }
 
-    all(sql:string, ...args:any[]) {
-        return new Promise((resolve:(rows:any[])=>void, reject:(err:Error)=>void) => {
+    all(sql: string, ...args: any[]) {
+        return new Promise((resolve: (rows: any[]) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.all: database is not open'))
             }
-            let callback = (err, rows) => {
+            let callback = (err: Error, rows: any[]) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -123,15 +123,15 @@ class Database {
         })
     }
 
-    each(sql:string, ...args:any[]) {
+    each(sql: string, ...args: any[]) {
         if (args.length === 0 || typeof args[args.length - 1] !== 'function') {
             throw TypeError('Database.each: last arg is not a function')
         }
-        return new Promise((resolve:(nrows:number)=>void, reject:(err:Error)=>void) => {
+        return new Promise((resolve: (nrows: number) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.each: database is not open'))
             }
-            let callback = (err, nrows) => {
+            let callback = (err: Error, nrows: number) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -143,8 +143,8 @@ class Database {
         })
     }
 
-    exec(sql:string) {
-        return new Promise((resolve:(value:this)=>void, reject:(err:Error)=>void) => {
+    exec(sql: string) {
+        return new Promise((resolve: (value: this) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.exec: database is not open'))
             }
@@ -158,7 +158,7 @@ class Database {
         })
     }
 
-    transaction(fn:(db:this)=>Promise<any[]>) {
+    transaction(fn: (db: this) => Promise<any[]>) {
         return this.exec('BEGIN TRANSACTION').then(_ => {
             return fn(this).then(result => {
                 return this.exec('END TRANSACTION').then(_ => {
@@ -172,13 +172,13 @@ class Database {
         })
     }
 
-    prepare(sql:string, ...args:any[]) {
-        return new Promise((resolve:(statement:Statement)=>void, reject:(err:Error)=>void) => {
+    prepare(sql: string, ...args: any[]) {
+        return new Promise((resolve: (statement: Statement) => void, reject: (err: Error) => void) => {
             if (!this.db) {
                 return reject(new Error('Database.prepare: database is not open'))
             }
-            let statement:sqlite.Statement
-            let callback = (err:Error) => {
+            let statement: sqlite.Statement
+            let callback = (err: Error) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -196,19 +196,19 @@ class Database {
 //-----------------------------------------------------------------------------
 
 class Statement {
-    
+
     statement: sqlite.Statement;
 
-    constructor(statement:sqlite.Statement) {
+    constructor(statement: sqlite.Statement) {
         if (!(statement instanceof sqlite.Statement)) {
             throw new TypeError(`Statement: 'statement' is not a statement instance`)
         }
         this.statement = statement
     }
 
-    bind(...args:any[]) {
-        return new Promise((resolve:(value:this)=>void, reject:(err:Error)=>void) => {
-            let callback = (err:Error) => {
+    bind(...args: any[]) {
+        return new Promise((resolve: (value: this) => void, reject: (err: Error) => void) => {
+            let callback = (err: Error) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -221,7 +221,7 @@ class Statement {
     }
 
     reset() {
-        return new Promise((resolve:(value:this)=>void, reject) => {
+        return new Promise((resolve: (value: this) => void, reject) => {
             this.statement.reset(_ => {
                 resolve(this)
             })
@@ -229,7 +229,7 @@ class Statement {
     }
 
     finalize() {
-        return new Promise((resolve:(any:void)=>void, reject:(err:Error)=>void) => {
+        return new Promise((resolve: (any: void) => void, reject: (err: Error) => void) => {
             this.statement.finalize(err => {
                 if (err) {
                     reject(err)
@@ -240,8 +240,8 @@ class Statement {
         })
     }
 
-    run(...args:any[]) {
-        return new Promise((resolve:(stmt:sqlite.Statement)=>void, reject:(err:Error)=>void) => {
+    run(...args: any[]) {
+        return new Promise((resolve: (stmt: sqlite.Statement) => void, reject: (err: Error) => void) => {
             // Need a real function because 'this' is used.
             let callback = function (err: Error) {
                 if (err) {
@@ -255,8 +255,8 @@ class Statement {
         })
     }
 
-    get(...args:any[]) {
-        return new Promise((resolve:(row?:any)=>void, reject:(err:Error)=>void) => {
+    get(...args: any[]) {
+        return new Promise((resolve: (row?: any) => void, reject: (err: Error) => void) => {
             let callback = (err: Error, row: any) => {
                 if (err) {
                     reject(err)
@@ -269,9 +269,9 @@ class Statement {
         })
     }
 
-    all(...args:any[]) {
-        return new Promise((resolve:(rows:any[])=>void, reject:(err:Error)=>void) => {
-            let callback = (err, rows) => {
+    all(...args: any[]) {
+        return new Promise((resolve: (rows: any[]) => void, reject: (err: Error) => void) => {
+            let callback = (err: Error, rows: any[]) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -283,12 +283,12 @@ class Statement {
         })
     }
 
-    each(...args:any[]) {
+    each(...args: any[]) {
         if (args.length === 0 || typeof args[args.length - 1] !== 'function') {
             throw TypeError('Statement.each: last arg is not a function')
         }
-        return new Promise((resolve:(nrows:number)=>void, reject:(err:Error)=>void) => {
-            let callback = (err, nrows) => {
+        return new Promise((resolve: (nrows: number) => void, reject: (err: Error) => void) => {
+            let callback = (err: Error, nrows: number) => {
                 if (err) {
                     reject(err)
                 } else {
@@ -306,3 +306,4 @@ class Statement {
 //-----------------------------------------------------------------------------
 
 export default Database;
+export { Database, Statement, sqlite };
