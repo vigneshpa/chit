@@ -101,3 +101,8 @@ async function listGroups():Promise<createGroupFields[]>{
   return result;
 }
 export {listGroups};
+
+async function closeDB(){
+  await db.close();
+}
+export {closeDB};

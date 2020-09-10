@@ -62,6 +62,7 @@ app.on("window-all-closed", () => {
   }
 });
 
-function appQuit() {
+async function appQuit() {
+  await (await import("./asyncDatabase")).closeDB();
   app.quit();
 }
