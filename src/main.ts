@@ -32,7 +32,7 @@ ipcMain.on("splash-ready", async function (event) {
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
   const ipc = await import("./ipchost");
   ipc.setOnPingRecived(()=>{
-    setTimeout(()=>splash.close(), 2000);
+    splash.webContents.send("log", "Loading UI ");
   });
   ipc.initialise();
   splash.webContents.send("log", "Loading main window");
@@ -55,14 +55,18 @@ function loadMain() {
       appQuit();
     });
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
+    splash.webContents.send("log", "Executing vue.js framework");
     if(isDeveopement){
       mainWindow.loadURL("http://localhost:8000");
     }else {
       mainWindow.loadFile(join(__dirname, "./windows/index.html"));
     }
     mainWindow.on("ready-to-show", function () {
-      splash.webContents.send("log", "Loading vue.js framework");
+      splash.webContents.send("log", "UI is ready<br/>Waiting for idle signal");
       mainWindow.show();
+      setTimeout(function(){
+        splash?.close();
+      }, 2000);
     });
   } else {
     mainWindow.focus();
