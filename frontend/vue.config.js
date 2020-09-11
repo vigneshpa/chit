@@ -13,7 +13,7 @@ module.exports = {
       "entry": "src/index/main.ts",
       "template": "public/index.html",
       "filename": "index.html",
-      "title": "Index Page",
+      "title": "Chit Management System",
       "chunks": [
         "chunk-vendors",
         "chunk-common",

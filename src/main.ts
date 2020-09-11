@@ -32,7 +32,7 @@ ipcMain.on("splash-ready", async function (event) {
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
   const ipc = await import("./ipchost");
   ipc.setOnPingRecived(()=>{
-    splash.webContents.send("log", "Loading UI ");
+    if(splash)splash.webContents.send("log", "Loading UI ");
   });
   ipc.initialise();
   splash.webContents.send("log", "Loading main window");
@@ -80,6 +80,5 @@ app.on("window-all-closed", () => {
 });
 
 async function appQuit() {
-  await (await import("./asyncDatabase")).closeDB();
   app.quit();
 }
