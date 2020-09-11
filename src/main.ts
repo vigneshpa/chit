@@ -6,7 +6,7 @@ let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 
 app.on("ready", function (launchInfo) {
-  console.log("Got ready signal\n", "Displaying splash . . .");
+  console.log("Got ready signal", "Displaying splash . . .");
   splash = new BrowserWindow({
     width: 500,
     height: 300,
@@ -19,8 +19,8 @@ app.on("ready", function (launchInfo) {
     skipTaskbar: true,
     transparent: false,
   });
-  //splash.loadFile(__dirname + "/resources/splash.html");
-  splash.webContents.openDevTools();
+  splash.loadFile(__dirname + "/resources/splash.html");
+  //splash.webContents.openDevTools();
 });
 
 ipcMain.on("splash-ready", async function (event) {
@@ -53,7 +53,7 @@ function loadMain() {
       appQuit();
     });
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
-    mainWindow.loadFile(join(__dirname, "./app/windows/index.html"));
+    mainWindow.loadFile(join(__dirname, "./windows/index.html"));
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "Loading vue.js framework");
       mainWindow.show();
