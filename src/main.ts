@@ -53,7 +53,7 @@ function loadMain() {
       appQuit();
     });
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
-    mainWindow.loadFile(join(__dirname, "./../../cheat/app/windows/main/index.html"));
+    mainWindow.loadFile(join(__dirname, "./app/windows/index.html"));
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "Loading vue.js framework");
       mainWindow.show();
