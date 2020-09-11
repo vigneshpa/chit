@@ -1,6 +1,13 @@
 import { ipcMain, BrowserWindow } from "electron";
 import * as dbmgmt from "./asyncDatabase";
 import { join } from "path";
+
+let onPingRecived:()=>void;
+function setOnPingRecived(onPingRecivedFn:()=>void):void{
+    onPingRecived = onPingRecivedFn;
+}
+export {setOnPingRecived};
+
 export async function initialise(): Promise<void> {
 
     ipcMain.on("create-user-account", async function (event, data: createUserFields) {
@@ -30,6 +37,7 @@ export async function initialise(): Promise<void> {
         console.log("Recived ping from renderer", args);
         console.log("Sending pong to the renderer");
         event.sender.send("pong", ...args);
+        onPingRecived();
     });
     ipcMain.on("get-users-data", async function (event) {
         console.log("Recived message from renderer to get users data");

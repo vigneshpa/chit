@@ -7,6 +7,8 @@ const existsP = promisify(exists);
 const dbFile: string = join(app.getPath("userData"), "./main.db");
 let db = new Database();
 
+console.log("Stroing data at ", dbFile);
+
 async function start(): Promise<void> {
   if (await existsP(dbFile)) {
     //If database file exists connecting to it.
@@ -30,6 +32,7 @@ async function start(): Promise<void> {
     });
   }
   await db.run("PRAGMA foreign_keys=ON;");
+  console.log("Connected to the database");
 }
 export { start };
 
@@ -69,6 +72,11 @@ async function createGroup(year:number, month:number, batch:string, members:{UID
     result = await db.get("SELECT * FROM `groups` WHERE `name` = '" + gName + "';");
   }catch(err){
     success = false;
+    if (err.errno === 19) {
+      console.log(err);
+    } else {
+      throw err;
+    }
     throw err;
   }
 
@@ -103,6 +111,7 @@ async function listGroups():Promise<createGroupFields[]>{
 export {listGroups};
 
 async function closeDB(){
+  console.log("Closing database connections");
   await db.close();
 }
 export {closeDB};

@@ -6,6 +6,7 @@ let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 
 app.on("ready", function (launchInfo) {
+  console.log("Got ready signal\n", "Displaying splash . . .");
   splash = new BrowserWindow({
     width: 500,
     height: 300,
@@ -18,15 +19,20 @@ app.on("ready", function (launchInfo) {
     skipTaskbar: true,
     transparent: false,
   });
-  splash.loadFile(__dirname + "/resources/splash.html");
-  //splash.webContents.openDevTools();
+  //splash.loadFile(__dirname + "/resources/splash.html");
+  splash.webContents.openDevTools();
 });
 
 ipcMain.on("splash-ready", async function (event) {
+  console.log("Splash is ready");
   splash.webContents.send("log", "Connecting to the database");
   await (await import("./asyncDatabase")).start();
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
-  await (await import("./ipchost")).initialise();
+  const ipc = await import("./ipchost");
+  ipc.setOnPingRecived(()=>{
+    setTimeout(()=>splash.close(), 2000);
+  });
+  ipc.initialise();
   splash.webContents.send("log", "Loading main window");
   loadMain();
 });
@@ -46,7 +52,8 @@ function loadMain() {
     mainWindow.on("closed", function () {
       appQuit();
     });
-    mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
+    //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
+    mainWindow.loadFile(join(__dirname, "./../../cheat/app/windows/main/index.html"));
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "Loading vue.js framework");
       mainWindow.show();
