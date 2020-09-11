@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
   },
   mutations: {
@@ -12,4 +12,11 @@ export default new Vuex.Store({
   },
   modules: {
   }
-})
+});
+window.ipcrenderer.send("ping");
+console.log("Sent ping to the renderer.");
+window.ipcrenderer.on("pong", function(event){
+  console.log("Got pong from the renderer");
+});
+
+export default store;

@@ -1,3 +1,5 @@
+let isDeveopement = true;
+
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain } from "electron";
 import { join } from "path";
@@ -53,7 +55,11 @@ function loadMain() {
       appQuit();
     });
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
-    mainWindow.loadFile(join(__dirname, "./windows/index.html"));
+    if(isDeveopement){
+      mainWindow.loadURL("http://localhost:8000");
+    }else {
+      mainWindow.loadFile(join(__dirname, "./windows/index.html"));
+    }
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "Loading vue.js framework");
       mainWindow.show();

@@ -6,8 +6,7 @@ module.exports = {
       "ipcrenderer": {
         "root": "ipcrenderer"
       }
-    },
-    "target": "electron-renderer"
+    }
   },
   "pages": {
     "index": {

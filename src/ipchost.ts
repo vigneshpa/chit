@@ -9,6 +9,12 @@ function setOnPingRecived(onPingRecivedFn:()=>void):void{
 export {setOnPingRecived};
 
 export async function initialise(): Promise<void> {
+    ipcMain.on("ping", function (event, ...args) {
+        console.log("Recived ping from renderer", args);
+        console.log("Sending pong to the renderer");
+        event.sender.send("pong", ...args);
+        onPingRecived();
+    });
 
     ipcMain.on("create-user-account", async function (event, data: createUserFields) {
         let err: sqliteError;
@@ -33,12 +39,7 @@ export async function initialise(): Promise<void> {
         }
         event.sender.send("create-group", err, response.result);
     });
-    ipcMain.on("ping", function (event, ...args) {
-        console.log("Recived ping from renderer", args);
-        console.log("Sending pong to the renderer");
-        event.sender.send("pong", ...args);
-        onPingRecived();
-    });
+
     ipcMain.on("get-users-data", async function (event) {
         console.log("Recived message from renderer to get users data");
         const result = await dbmgmt.listUsers();
@@ -54,8 +55,9 @@ export async function initialise(): Promise<void> {
                 nodeIntegration: true
             }
         });
-        formsWindow.loadFile(join(__dirname, "./windows/forms/index.html"));
+        formsWindow.loadFile(join(__dirname, "./windows/forms.html"));
     });
+
     ipcMain.on("get-groups-data",async function (event) {
         console.log("Recived message from renderer to get groups data");
         const result = await dbmgmt.listGroups();
