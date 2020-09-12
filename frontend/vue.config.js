@@ -20,7 +20,12 @@ module.exports = {
         "index"
       ]
     },
-    "subpage": "src/subpage/main.ts"
+    "form":{
+        "entry":"src/forms/main.ts",
+        "template":"public/forms.html",
+        "filename":"forms.html",
+        "title":"form"
+    }
   },
   "transpileDependencies": [
     "vuetify"

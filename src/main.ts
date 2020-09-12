@@ -3,6 +3,11 @@ let isDeveopement = true;
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain } from "electron";
 import { join } from "path";
+import Dbmgmt from "./Dbmgmt";
+import Ipchosts from "./Ipchost";
+const dbFile:string = join(app.getPath("userData"), "/main.db");
+const dbmgmt:Dbmgmt = new Dbmgmt(dbFile);
+const ipchosts:Ipchosts = new Ipchosts(dbmgmt, isDeveopement);
 
 let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
@@ -28,13 +33,13 @@ app.on("ready", function (launchInfo) {
 ipcMain.on("splash-ready", async function (event) {
   console.log("Splash is ready");
   splash.webContents.send("log", "Connecting to the database");
-  await (await import("./asyncDatabase")).start();
+  dbmgmt.start();
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
-  const ipc = await import("./ipchost");
-  ipc.setOnPingRecived(()=>{
+  const ipc = await import("./Ipchost");
+  ipchosts.setOnPingRecived(()=>{
     if(splash)splash.webContents.send("log", "Loading UI ");
   });
-  ipc.initialise();
+  ipchosts.initialise();
   splash.webContents.send("log", "Loading main window");
   loadMain();
 });
