@@ -1,67 +1,64 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initialise = exports.setOnPingRecived = void 0;
 const electron_1 = require("electron");
-const dbmgmt = require("./asyncDatabase");
-const path_1 = require("path");
-let onPingRecived;
-function setOnPingRecived(onPingRecivedFn) {
-    onPingRecived = onPingRecivedFn;
-}
-exports.setOnPingRecived = setOnPingRecived;
-async function initialise() {
-    electron_1.ipcMain.on("ping", function (event, ...args) {
-        console.log("Recived ping from renderer", args);
-        console.log("Sending pong to the renderer");
-        event.sender.send("pong", ...args);
-        onPingRecived();
-    });
-    electron_1.ipcMain.on("create-user-account", async function (event, data) {
-        let err;
-        let response;
-        console.log("\nRecived Message From Renderer to create user\n", event, data);
-        try {
-            response = await dbmgmt.createUser(data.name, data.phone, data.address);
-        }
-        catch (err1) {
-            err = err1;
-        }
-        event.sender.send("create-user-account", err, response.result);
-    });
-    electron_1.ipcMain.on("create-group", async function (event, data) {
-        let err;
-        let response;
-        console.log("Recived message from Renderer to create group", event, data);
-        try {
-            response = await dbmgmt.createGroup(data.year, data.month, data.batch, data.members);
-        }
-        catch (err1) {
-            err = err1;
-        }
-        event.sender.send("create-group", err, response.result);
-    });
-    electron_1.ipcMain.on("get-users-data", async function (event) {
-        console.log("Recived message from renderer to get users data");
-        const result = await dbmgmt.listUsers();
-        console.log("Sending users data to the renderer");
-        event.sender.send("get-users-data", result);
-    });
-    electron_1.ipcMain.on("open-forms", function (event) {
-        let formsWindow = new electron_1.BrowserWindow({
-            height: 1080,
-            width: 720,
-            webPreferences: {
-                nodeIntegration: true
+class Ipchosts {
+    constructor(dbmgmt) {
+        this.onPingRecived = function () { };
+        this.dbmgmt = dbmgmt;
+    }
+    setOnPingRecived(onPingRecivedFn) {
+        this.onPingRecived = onPingRecivedFn;
+    }
+    setOnOpenForm(onOpenFormFn) {
+        this.onOpenForm = onOpenFormFn;
+    }
+    async initialise() {
+        electron_1.ipcMain.on("ping", function (event, ...args) {
+            console.log("Recived ping from renderer", args);
+            console.log("Sending pong to the renderer");
+            event.sender.send("pong", ...args);
+            this.onPingRecived();
+        }.bind(this));
+        electron_1.ipcMain.on("create-user-account", async function (event, data) {
+            let err;
+            let response;
+            console.log("\nRecived Message From Renderer to create user\n", event, data);
+            try {
+                response = await this.dbmgmt.createUser(data.name, data.phone, data.address);
             }
-        });
-        formsWindow.loadFile(path_1.join(__dirname, "./windows/forms.html"));
-    });
-    electron_1.ipcMain.on("get-groups-data", async function (event) {
-        console.log("Recived message from renderer to get groups data");
-        const result = await dbmgmt.listGroups();
-        console.log("Sending groups data to the renderer.");
-        event.sender.send("get-groups-data", result);
-    });
+            catch (err1) {
+                err = err1;
+            }
+            event.sender.send("create-user-account", err, response.result);
+        }.bind(this));
+        electron_1.ipcMain.on("create-group", async function (event, data) {
+            let err;
+            let response;
+            console.log("Recived message from Renderer to create group", event, data);
+            try {
+                response = await this.dbmgmt.createGroup(data.year, data.month, data.batch, data.members);
+            }
+            catch (err1) {
+                err = err1;
+            }
+            event.sender.send("create-group", err, response.result);
+        }.bind(this));
+        electron_1.ipcMain.on("get-users-data", async function (event) {
+            console.log("Recived message from renderer to get users data");
+            const result = await this.dbmgmt.listUsers();
+            console.log("Sending users data to the renderer");
+            event.sender.send("get-users-data", result);
+        }.bind(this));
+        electron_1.ipcMain.on("get-groups-data", async function (event) {
+            console.log("Recived message from renderer to get groups data");
+            const result = await this.dbmgmt.listGroups();
+            console.log("Sending groups data to the renderer.");
+            event.sender.send("get-groups-data", result);
+        }.bind(this));
+        electron_1.ipcMain.on("open-forms", function (event, type) {
+            this.onOpenForm(type);
+        }.bind(this));
+    }
 }
-exports.initialise = initialise;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaXBjaG9zdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9pcGNob3N0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUFBLHVDQUFrRDtBQUNsRCwwQ0FBMEM7QUFDMUMsK0JBQTRCO0FBRTVCLElBQUksYUFBc0IsQ0FBQztBQUMzQixTQUFTLGdCQUFnQixDQUFDLGVBQXdCO0lBQzlDLGFBQWEsR0FBRyxlQUFlLENBQUM7QUFDcEMsQ0FBQztBQUNPLDRDQUFnQjtBQUVqQixLQUFLLFVBQVUsVUFBVTtJQUM1QixrQkFBTyxDQUFDLEVBQUUsQ0FBQyxNQUFNLEVBQUUsVUFBVSxLQUFLLEVBQUUsR0FBRyxJQUFJO1FBQ3ZDLE9BQU8sQ0FBQyxHQUFHLENBQUMsNEJBQTRCLEVBQUUsSUFBSSxDQUFDLENBQUM7UUFDaEQsT0FBTyxDQUFDLEdBQUcsQ0FBQyw4QkFBOEIsQ0FBQyxDQUFDO1FBQzVDLEtBQUssQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLE1BQU0sRUFBRSxHQUFHLElBQUksQ0FBQyxDQUFDO1FBQ25DLGFBQWEsRUFBRSxDQUFDO0lBQ3BCLENBQUMsQ0FBQyxDQUFDO0lBRUgsa0JBQU8sQ0FBQyxFQUFFLENBQUMscUJBQXFCLEVBQUUsS0FBSyxXQUFXLEtBQUssRUFBRSxJQUFzQjtRQUMzRSxJQUFJLEdBQWdCLENBQUM7UUFDckIsSUFBSSxRQUE2QyxDQUFDO1FBQ2xELE9BQU8sQ0FBQyxHQUFHLENBQUMsa0RBQWtELEVBQUUsS0FBSyxFQUFFLElBQUksQ0FBQyxDQUFDO1FBQzdFLElBQUk7WUFDQSxRQUFRLEdBQUcsTUFBTSxNQUFNLENBQUMsVUFBVSxDQUFDLElBQUksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLEtBQUssRUFBRSxJQUFJLENBQUMsT0FBTyxDQUFFLENBQUM7U0FDNUU7UUFBQyxPQUFPLElBQUksRUFBRTtZQUNYLEdBQUcsR0FBRyxJQUFJLENBQUM7U0FDZDtRQUNELEtBQUssQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLHFCQUFxQixFQUFFLEdBQUcsRUFBRSxRQUFRLENBQUMsTUFBTSxDQUFDLENBQUM7SUFDbkUsQ0FBQyxDQUFDLENBQUM7SUFFSCxrQkFBTyxDQUFDLEVBQUUsQ0FBQyxjQUFjLEVBQUUsS0FBSyxXQUFXLEtBQUssRUFBRSxJQUF1QjtRQUNyRSxJQUFJLEdBQWdCLENBQUM7UUFDckIsSUFBSSxRQUE2QyxDQUFDO1FBQ2xELE9BQU8sQ0FBQyxHQUFHLENBQUMsK0NBQStDLEVBQUUsS0FBSyxFQUFFLElBQUksQ0FBQyxDQUFDO1FBQzFFLElBQUk7WUFDQSxRQUFRLEdBQUcsTUFBTSxNQUFNLENBQUMsV0FBVyxDQUFDLElBQUksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLEtBQUssRUFBRSxJQUFJLENBQUMsS0FBSyxFQUFFLElBQUksQ0FBQyxPQUFPLENBQUMsQ0FBQztTQUN4RjtRQUFDLE9BQU8sSUFBSSxFQUFFO1lBQ1gsR0FBRyxHQUFHLElBQUksQ0FBQztTQUNkO1FBQ0QsS0FBSyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsY0FBYyxFQUFFLEdBQUcsRUFBRSxRQUFRLENBQUMsTUFBTSxDQUFDLENBQUM7SUFDNUQsQ0FBQyxDQUFDLENBQUM7SUFFSCxrQkFBTyxDQUFDLEVBQUUsQ0FBQyxnQkFBZ0IsRUFBRSxLQUFLLFdBQVcsS0FBSztRQUM5QyxPQUFPLENBQUMsR0FBRyxDQUFDLGlEQUFpRCxDQUFDLENBQUM7UUFDL0QsTUFBTSxNQUFNLEdBQUcsTUFBTSxNQUFNLENBQUMsU0FBUyxFQUFFLENBQUM7UUFDeEMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxvQ0FBb0MsQ0FBQyxDQUFDO1FBQ2xELEtBQUssQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLGdCQUFnQixFQUFFLE1BQU0sQ0FBQyxDQUFDO0lBQ2hELENBQUMsQ0FBQyxDQUFDO0lBRUgsa0JBQU8sQ0FBQyxFQUFFLENBQUMsWUFBWSxFQUFFLFVBQVUsS0FBSztRQUNwQyxJQUFJLFdBQVcsR0FBRyxJQUFJLHdCQUFhLENBQUM7WUFDaEMsTUFBTSxFQUFFLElBQUk7WUFDWixLQUFLLEVBQUUsR0FBRztZQUNWLGNBQWMsRUFBRTtnQkFDWixlQUFlLEVBQUUsSUFBSTthQUN4QjtTQUNKLENBQUMsQ0FBQztRQUNILFdBQVcsQ0FBQyxRQUFRLENBQUMsV0FBSSxDQUFDLFNBQVMsRUFBRSxzQkFBc0IsQ0FBQyxDQUFDLENBQUM7SUFDbEUsQ0FBQyxDQUFDLENBQUM7SUFFSCxrQkFBTyxDQUFDLEVBQUUsQ0FBQyxpQkFBaUIsRUFBQyxLQUFLLFdBQVcsS0FBSztRQUM5QyxPQUFPLENBQUMsR0FBRyxDQUFDLGtEQUFrRCxDQUFDLENBQUM7UUFDaEUsTUFBTSxNQUFNLEdBQUcsTUFBTSxNQUFNLENBQUMsVUFBVSxFQUFFLENBQUM7UUFDekMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxzQ0FBc0MsQ0FBQyxDQUFDO1FBQ3BELEtBQUssQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLGlCQUFpQixFQUFFLE1BQU0sQ0FBQyxDQUFDO0lBQ2pELENBQUMsQ0FBQyxDQUFDO0FBQ1AsQ0FBQztBQXhERCxnQ0F3REMifQ==
+exports.default = Ipchosts;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiSXBjaG9zdC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9JcGNob3N0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBQUEsdUNBQW1DO0FBR25DLE1BQU0sUUFBUTtJQUdWLFlBQVksTUFBYztRQUdsQixrQkFBYSxHQUFlLGNBQWMsQ0FBQyxDQUFBO1FBRi9DLElBQUksQ0FBQyxNQUFNLEdBQUcsTUFBTSxDQUFDO0lBQ3pCLENBQUM7SUFFRCxnQkFBZ0IsQ0FBQyxlQUEyQjtRQUN4QyxJQUFJLENBQUMsYUFBYSxHQUFHLGVBQWUsQ0FBQztJQUN6QyxDQUFDO0lBQ0QsYUFBYSxDQUFDLFlBQWdDO1FBQzFDLElBQUksQ0FBQyxVQUFVLEdBQUcsWUFBWSxDQUFDO0lBQ25DLENBQUM7SUFDRCxLQUFLLENBQUMsVUFBVTtRQUNaLGtCQUFPLENBQUMsRUFBRSxDQUFDLE1BQU0sRUFBRSxVQUFVLEtBQUssRUFBRSxHQUFHLElBQUk7WUFDdkMsT0FBTyxDQUFDLEdBQUcsQ0FBQyw0QkFBNEIsRUFBRSxJQUFJLENBQUMsQ0FBQztZQUNoRCxPQUFPLENBQUMsR0FBRyxDQUFDLDhCQUE4QixDQUFDLENBQUM7WUFDNUMsS0FBSyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsTUFBTSxFQUFFLEdBQUcsSUFBSSxDQUFDLENBQUM7WUFDbkMsSUFBSSxDQUFDLGFBQWEsRUFBRSxDQUFDO1FBQ3pCLENBQUMsQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQztRQUVkLGtCQUFPLENBQUMsRUFBRSxDQUFDLHFCQUFxQixFQUFFLEtBQUssV0FBVyxLQUFLLEVBQUUsSUFBc0I7WUFDM0UsSUFBSSxHQUFnQixDQUFDO1lBQ3JCLElBQUksUUFBNkMsQ0FBQztZQUNsRCxPQUFPLENBQUMsR0FBRyxDQUFDLGtEQUFrRCxFQUFFLEtBQUssRUFBRSxJQUFJLENBQUMsQ0FBQztZQUM3RSxJQUFJO2dCQUNBLFFBQVEsR0FBRyxNQUFNLElBQUksQ0FBQyxN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

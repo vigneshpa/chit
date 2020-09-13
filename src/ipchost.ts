@@ -1,17 +1,18 @@
-import { ipcMain, BrowserWindow } from "electron";
-import { join } from "path";
+import { ipcMain } from "electron";
 import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
-    dbmgmt: Dbmgmt;
-    isDevelopement: boolean;
-    constructor(dbmgmt: Dbmgmt, isDevelopement: boolean) {
+    private dbmgmt: Dbmgmt;
+    private onOpenForm:(type:string)=>void;
+    constructor(dbmgmt: Dbmgmt) {
         this.dbmgmt = dbmgmt;
-        this.isDevelopement = isDevelopement;
     }
-    onPingRecived: () => void = function () { }
+    private onPingRecived: () => void = function () { }
     setOnPingRecived(onPingRecivedFn: () => void): void {
         this.onPingRecived = onPingRecivedFn;
+    }
+    setOnOpenForm(onOpenFormFn:(type:string)=>void){
+        this.onOpenForm = onOpenFormFn;
     }
     async initialise(): Promise<void> {
         ipcMain.on("ping", function (event, ...args) {
@@ -60,19 +61,7 @@ class Ipchosts {
         }.bind(this));
 
         ipcMain.on("open-forms", function (event, type: string) {
-            let formsWindow = new BrowserWindow({
-                height: 1080,
-                width: 720,
-                webPreferences: {
-                    nodeIntegration: false,
-                    preload: join(__dirname, "./preload.js")
-                }
-            });
-            if (this.isDevelopement) {
-                formsWindow.loadURL("http://localhost:8000/forms.html?form=addUser");
-            } else {
-                formsWindow.loadFile(join(__dirname, "./windows/forms.html?form=addUser"));
-            }
+            this.onOpenForm(type);
         }.bind(this));
     }
 }

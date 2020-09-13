@@ -1,28 +1,23 @@
 <template>
-  <v-app id="1_app">
-    
-  </v-app>
+<div>
+    <create-user v-if="form === 'addUser'" v-bind:key="'app'"></create-user>
+    <create-group v-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
+</div>
 </template>
-
 <script lang="ts">
+import CreateUser from "./CreateUser.vue";
+import CreateGroup from "./CreateGroup.vue";
 import Vue from 'vue';
-import HelloWorld from '../components/HelloWorld.vue';
+
+const url = new URL(window.location.href);
+const form = url.searchParams.get("form");
+console.log(form);
 
 export default Vue.extend({
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-});
+    data:()=>{return{form};},
+    components:{
+        CreateUser,
+        CreateGroup
+    }
+})
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

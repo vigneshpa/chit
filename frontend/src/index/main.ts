@@ -5,8 +5,8 @@ import vuetify from "@/plugins/vuetify";
 
 Vue.config.productionTip = false;
 
-new Vue({
+window.app = new Vue({
   store,
   render: h => h(App),
   vuetify
-}).$mount('#app')
+}).$mount('#app');

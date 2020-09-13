@@ -13,13 +13,11 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left color="blue" dark>
+    <v-app-bar app clipped-left color="blue" dark v-bind:loading="this.$store.state.appLoading">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Chit Management system</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-menu
-      offset-y
-      >
+      <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn dark icon v-bind="attrs" v-on="on">
             <v-icon>mdi-plus</v-icon>
@@ -27,14 +25,14 @@
         </template>
 
         <v-list>
-		<v-list-item  v-for="item in addList" v-bind:key="item.key" @click="item.onClick">
-          <v-list-item-action v-if="item.icon">
-            <v-icon>{{item.icon}}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{item.title}}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
+          <v-list-item v-for="item in addList" v-bind:key="item.key" @click="item.onClick">
+            <v-list-item-action v-if="item.icon">
+              <v-icon>{{item.icon}}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-menu>
     </v-app-bar>
@@ -57,14 +55,33 @@ export default {
   },
   data: () => ({
     drawer: null,
-    addList:[
-      {title:"Add User", key:1, onClick:()=>{}, icon:"mdi-account-plus"},
-      {title:"Add Group", key:2, onClick:()=>{}, icon:"mdi-account-multiple-plus"}
+    addList: [
+      {
+        title: "Add User",
+        key: 1,
+        onClick: () => {
+          window.store.commit("openForm", "addUser");
+        },
+        icon: "mdi-account-plus",
+      },
+      {
+        title: "Add Group",
+        key: 2,
+        onClick: () => {
+          window.store.commit("openForm", "addGroup");
+        },
+        icon: "mdi-account-multiple-plus",
+      },
     ],
-	drawerList:[
-	  {title:"Dashboard", key:1, onClick:()=>{}, icon:"mdi-view-dashboard"},
-	  {title:"Settings", key:2, onClick:()=>{}, icon:"mdi-cog"}
-	]
+    drawerList: [
+      {
+        title: "Dashboard",
+        key: 1,
+        onClick: () => {},
+        icon: "mdi-view-dashboard",
+      },
+      { title: "Settings", key: 2, onClick: () => {}, icon: "mdi-cog" },
+    ]
   }),
   created() {},
 };
