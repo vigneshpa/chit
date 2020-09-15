@@ -6,12 +6,6 @@ declare global {
         ipcrenderer: IpcRenderer;
         app: Vue;
         store: Store<State>;
-        addUserData: {
-            name: string;
-            phone: string;
-            address: string;
-            step:number;
-        }
     }
     interface State {
         appLoading: boolean;

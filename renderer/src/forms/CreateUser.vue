@@ -17,6 +17,7 @@
                   prepend-icon="mdi-account"
                   v-model="name"
                   required
+                  id="name"
                   v-on:keyup.enter="next"
                 ></v-text-field>
                 <span
@@ -32,6 +33,8 @@
                   required
                   v-model="phone"
                   v-on:keyup.enter="next"
+                  id="phone"
+                  v-on:input="phoneChange"
                 ></v-text-field>
                 <span
                   class="caption grey--text text--darken-1"
@@ -46,6 +49,7 @@
                   outlined
                   v-model="address"
                   no-resize
+                  id="address"
                   rows="4"
                 ></v-textarea>
                 <span
@@ -94,9 +98,9 @@
               :disabled="step === 4"
               v-if="step !==4"
               color="primary"
-              @click="step++"
+              @click="stepForward"
             >Next</v-btn>
-            <v-btn v-if="step ===4" color="primary" key="next">
+            <v-btn v-if="step ===4" color="primary" key="next" @click="submit">
               <v-icon>mdi-content-save</v-icon>Finish
             </v-btn>
           </v-card-actions>
@@ -112,24 +116,66 @@ import Vue from "vue";
 export default Vue.extend({
   name: "create-user",
   data: () => {
-    window.addUserData={
+    let addUserData = {
       step: 1,
       phone: "",
       name: "",
       address: "",
     };
-    return window.addUserData;
-  },
-  watch: {
-    phone: function (newPhone, oldPhone) {
-        console.log(oldPhone, newPhone);
-        newPhone = oldPhone.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
-    },
+    return addUserData;
   },
   methods: {
     next() {
       document.getElementById("next")?.click();
     },
+    phoneChange() {
+      if (!this.phone) return;
+      let ph: string = this.phone;
+      if (!(ph.startsWith("+") || ph.startsWith("0"))) {
+        ph = "+91" + ph;
+      }
+      ph = (ph.startsWith("+") ? "+" : "") + ph.replace(/[^0-9]/g, "").trim();
+      if (ph.startsWith("+91") && ph.length > 3) {
+        ph = "+91 " + ph.slice(3, 13);
+      }
+      if (ph.startsWith("0") && ph.length > 5) {
+        ph = ph.slice(0, 5) + "-" + ph.slice(5, 11);
+      }
+      setTimeout(()=>{
+          this.phone = ph;
+        },
+        0
+      );
+    },
+    stepForward(){
+      this.validate(()=>{
+      this.step++;
+      });
+    },
+    validate(fn:()=>void){
+      if(this.step>3)return fn();
+      switch (this.step){
+        case 1:
+          if(!this.name)return false;
+          break;
+        case 2:
+          window.ipcrenderer.send()
+          if(!this.phone)return false;
+          break;
+        case 3:
+          if(!this.address)return false;
+          break;
+      }
+      return fn();
+    },
+    submit(){
+      window.ipcrenderer.once("create-user-account", function(event, data:createUser){});
+      window.ipcrenderer.send("create-user-account", {
+        name:this.name,
+        phone:this.phone,
+        address:this.address
+      });
+    }
   },
   computed: {
     currentTitle() {
@@ -137,9 +183,9 @@ export default Vue.extend({
         case 1:
           return "Add User";
         case 2:
-          return "Add Phone Number";
+          return "Phone Number of " + this.name;
         case 3:
-          return "Add Address";
+          return "Address of " + this.name;
         case 4:
           return "Final";
       }
