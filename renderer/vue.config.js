@@ -1,5 +1,5 @@
 module.exports = {
-  "outputDir": "./../app/windows/",
+  "outputDir": "./../main/app/windows/",
   "publicPath": "./",
   "configureWebpack": {
     "externals": {

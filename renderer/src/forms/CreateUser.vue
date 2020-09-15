@@ -18,6 +18,8 @@
                   v-model="name"
                   required
                   id="name"
+                  :loading="loading"
+                  :readonly="disableInputs"
                   v-on:keyup.enter="next"
                 ></v-text-field>
                 <span
@@ -34,6 +36,9 @@
                   v-model="phone"
                   v-on:keyup.enter="next"
                   id="phone"
+                  :loading="loading"
+                  :readonly="disableInputs"
+                  :error-messages="phoneMessage"
                   v-on:input="phoneChange"
                 ></v-text-field>
                 <span
@@ -50,6 +55,8 @@
                   v-model="address"
                   no-resize
                   id="address"
+                  :loading="loading"
+                  :readonly="disableInputs"
                   rows="4"
                 ></v-textarea>
                 <span
@@ -91,17 +98,17 @@
           </v-window>
           <v-divider></v-divider>
           <v-card-actions>
-            <v-btn :disabled="step === 1" text @click="step--">Back</v-btn>
+            <v-btn :disabled="(step === 1) || disableButtons" text @click="step--">Back</v-btn>
             <v-spacer></v-spacer>
             <v-btn
               id="next"
-              :disabled="step === 4"
               v-if="step !==4"
               color="primary"
               @click="stepForward"
+              :disabled="disableButtons"
             >Next</v-btn>
-            <v-btn v-if="step ===4" color="primary" key="next" @click="submit">
-              <v-icon>mdi-content-save</v-icon>Finish
+            <v-btn v-if="step ===4" :color="submited?'success':'primary'" key="next" @click="submit" :disabled="submited && !success">
+              <v-icon v-if="!submited">mdi-content-save</v-icon><v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon> Finish
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -111,6 +118,8 @@
 </template>
 
 <script lang="ts">
+import { MessageBoxOptions } from "electron";
+import { inspect } from "util";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -119,8 +128,15 @@ export default Vue.extend({
     let addUserData = {
       step: 1,
       phone: "",
+      phoneMessage: "",
       name: "",
       address: "",
+      disableButtons: false as boolean,
+      disableInputs:false as boolean,
+      loading:false as boolean,
+      submited:false as boolean,
+      success:false as boolean,
+      skipValidation:false as boolean
     };
     return addUserData;
   },
@@ -141,41 +157,106 @@ export default Vue.extend({
       if (ph.startsWith("0") && ph.length > 5) {
         ph = ph.slice(0, 5) + "-" + ph.slice(5, 11);
       }
-      setTimeout(()=>{
-          this.phone = ph;
-        },
-        0
-      );
+      setTimeout(() => {
+        this.phone = ph;
+      }, 0);
     },
-    stepForward(){
-      this.validate(()=>{
-      this.step++;
+    stepForward() {
+      if(this.skipValidation){
+        this.step++;
+        return;
+      }
+      this.disableButtons = true;
+      this.disableInputs = true;
+      this.validate((success) => {
+        if (success) this.step++;
+        this.disableInputs = false;
+        this.disableButtons = false;
       });
     },
-    validate(fn:()=>void){
-      if(this.step>3)return fn();
-      switch (this.step){
+    validate(fn: (success: boolean) => void) {
+      if (this.step > 3) return fn(true);
+      switch (this.step) {
         case 1:
-          if(!this.name)return false;
+          if (!this.name) return fn(false);
+          return fn(true);
           break;
         case 2:
-          window.ipcrenderer.send()
-          if(!this.phone)return false;
+          if (!this.phone) return fn(false);
+          if (this.phone.startsWith("+91") && this.phone.length<14){
+            this.phoneMessage = "Indian phone numbers must contain 10 digits";
+            return fn(false);
+          }
+          if (this.phone.startsWith("0") && this.phone.length < 12){
+            this.phoneMessage = "Local landline numbers must contain 11 digits";
+            return fn(false);
+          }
+          this.phoneMessage = "";
+          window.ipcrenderer.once(
+            "phone-exists",
+            (event, err: sqliteError, response: boolean) => {
+              if (!response) {
+                fn(true);
+              } else {
+                this.phoneMessage = "Number Already exists";
+                fn(false);
+              }
+            }
+          );
+          window.ipcrenderer.send("phone-exists", this.phone);
           break;
         case 3:
-          if(!this.address)return false;
+          if (!this.address) return fn(false);
+          return fn(true);
           break;
       }
-      return fn();
     },
-    submit(){
-      window.ipcrenderer.once("create-user-account", function(event, data:createUser){});
-      window.ipcrenderer.send("create-user-account", {
-        name:this.name,
-        phone:this.phone,
-        address:this.address
+    submit() {
+      if(this.submited){
+        window.close();
+        return;
+      }
+      this.submited = true;
+      this.disableInputs = true;
+      this.skipValidation = true;
+      window.ipcrenderer.once("create-user", (
+        event,
+        err: sqliteError,
+        data: createUserFields
+      ) => {
+        if (err) {
+          window.ipcrenderer.send("show-message-box", {
+            message: "Some error occoured during the creation of User",
+            type: "error",
+            title: "Cannot create User!",
+            detail: inspect(err),
+          } as MessageBoxOptions);
+          this.success = false;
+        }else
+        if (data) {
+          window.ipcrenderer.send("show-message-box", {
+            message: "User created SUCCESSFULLY !",
+            type: "info",
+            title: "Created New User!",
+            detail: inspect(data),
+          } as MessageBoxOptions);
+          this.success = true;
+        }else{
+          window.ipcrenderer.send("show-message-box", {
+            message: "Some error occoured during the creation of User\nTry checking phone number.",
+            type: "error",
+            title: "Cannot create User!",
+            detail: "err and detail variables are undefined"
+          } as MessageBoxOptions);
+          this.success = false;
+        }
       });
-    }
+      window.ipcrenderer.send("create-user", {
+        name: this.name,
+        phone: this.phone,
+        address: this.address,
+      });
+    },
   },
   computed: {
     currentTitle() {
@@ -194,4 +275,5 @@ export default Vue.extend({
   components: {},
   mounted() {},
 });
+window.document.title = "Create User";
 </script>

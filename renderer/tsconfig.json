@@ -33,7 +33,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "./../types/cheat.d.ts"
+    "./../main/types/cheat.d.ts"
   ],
   "exclude": [
     "node_modules"

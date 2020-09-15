@@ -100,7 +100,7 @@ ipchosts.setOnOpenForm(function (type) {
       formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {
-      formsWindow.loadFile(join(__dirname, "./windows/forms.html?form=" + type));
+      formsWindow.loadURL("file:///"+join(__dirname, "./windows/forms.html")+"?form=" + type);
     }
     formsWindow.on("closed", function () {
       formsWindow = null;

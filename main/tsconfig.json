@@ -11,5 +11,5 @@
     },
     "compileOnSave": true,
     "include": ["src/**/*", "types/cheat.d.ts"],
-    "exclude": ["node_modules/**/*","src/windows/**/*", "frontend/**/*"],
+    "exclude": ["node_modules/**/*"],
 }
