@@ -1,8 +1,8 @@
 <template>
   <v-app id="1_app">
     <v-main>
-      <v-container>
-        <v-card class="mx-auto" max-width="500">
+      <v-container id="container">
+        <v-card class="mx-auto" max-width="500" id="card">
           <v-card-title class="title font-weight-regular justify-space-between">
             <span>{{ currentTitle }}</span>
             <v-avatar color="lighten" class="headding grey--text" size="48">
@@ -273,7 +273,8 @@ export default Vue.extend({
     },
   },
   components: {},
-  mounted() {},
+  mounted() {
+    window.document.title = "Create User";
+  },
 });
-window.document.title = "Create User";
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-app id="1_app">
     <v-main>
-      <v-container>
+      <v-container id="container">
         <v-card class="mx-auto" max-width="500">
           <v-card-title class="title font-weight-regular justify-space-between">
             <span>{{ currentTitle }}</span>
@@ -12,7 +12,7 @@
           <v-window v-model="step">
             <v-window-item :value="1">
               <v-card-text>
-                <v-text-field
+                <v-date-picker
                   label="Month"
                   type="month"
                   v-model="month"
@@ -21,7 +21,8 @@
                   :loading="loading"
                   :readonly="disableInputs"
                   v-on:keyup.enter="next"
-                ></v-text-field>
+                ></v-date-picker>
+                <br />
                 <span
                   class="caption grey--text text--darken-1"
                 >Please select year and month of the batch.</span>
@@ -59,9 +60,7 @@
                   :readonly="disableInputs"
                   rows="4"
                 ></v-textarea>
-                <span
-                  class="caption grey--text text--darken-1"
-                >Please add members for this group.</span>
+                <span class="caption grey--text text--darken-1">Please add members for this group.</span>
               </v-card-text>
             </v-window-item>
             <v-window-item :value="4">
@@ -107,8 +106,15 @@
               @click="stepForward"
               :disabled="disableButtons"
             >Next</v-btn>
-            <v-btn v-if="step ===4" :color="submited?'primary':'success'" key="next" @click="submit" :disabled="submited && !success">
-              <v-icon v-if="!submited">mdi-content-save</v-icon><v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon> Finish
+            <v-btn
+              v-if="step ===4"
+              :color="submited?'primary':'success'"
+              key="next"
+              @click="submit"
+              :disabled="submited && !success"
+            >
+              <v-icon v-if="!submited">mdi-content-save</v-icon>
+              <v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon>Finish
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -129,14 +135,14 @@ export default Vue.extend({
       step: 1,
       month: "",
       batch: "",
-      batchMessage:"",
+      batchMessage: "",
       members: [],
       disableButtons: false as boolean,
-      disableInputs:false as boolean,
-      loading:false as boolean,
-      submited:false as boolean,
-      success:false as boolean,
-      skipValidation:false as boolean
+      disableInputs: false as boolean,
+      loading: false as boolean,
+      submited: false as boolean,
+      success: false as boolean,
+      skipValidation: false as boolean,
     };
   },
   methods: {
@@ -148,7 +154,7 @@ export default Vue.extend({
       this.batch = this.batch.charAt(0);
     },
     stepForward() {
-      if(this.skipValidation){
+      if (this.skipValidation) {
         this.step++;
         return;
       }
@@ -181,7 +187,7 @@ export default Vue.extend({
               }
             }
           );
-          window.ipcrenderer.send("phone-exists", this.batch,  this.month);
+          window.ipcrenderer.send("phone-exists", this.batch, this.month);
           break;
         case 3:
           if (!this.members) return fn(false);
@@ -190,45 +196,44 @@ export default Vue.extend({
       }
     },
     submit() {
-      if(this.submited){
+      if (this.submited) {
         window.close();
         return;
       }
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      window.ipcrenderer.once("create-group", (
-        event,
-        err: sqliteError,
-        data: createGroupFields
-      ) => {
-        if (err) {
-          window.ipcrenderer.send("show-message-box", {
-            message: "Some error occoured during the creation of Group",
-            type: "error",
-            title: "Cannot create Group!",
-            detail: inspect(err),
-          } as MessageBoxOptions);
-          this.success = false;
-        }else
-        if (data) {
-          window.ipcrenderer.send("show-message-box", {
-            message: "Group created SUCCESSFULLY !",
-            type: "info",
-            title: "Created New Group!",
-            detail: inspect(data),
-          } as MessageBoxOptions);
-          this.success = true;
-        }else{
-          window.ipcrenderer.send("show-message-box", {
-            message: "Some error occoured during the creation of Group\nTry checking batch name.",
-            type: "error",
-            title: "Cannot create Group!",
-            detail: "err and detail variables are undefined or not truthly"
-          } as MessageBoxOptions);
-          this.success = false;
+      window.ipcrenderer.once(
+        "create-group",
+        (event, err: sqliteError, data: createGroupFields) => {
+          if (err) {
+            window.ipcrenderer.send("show-message-box", {
+              message: "Some error occoured during the creation of Group",
+              type: "error",
+              title: "Cannot create Group!",
+              detail: inspect(err),
+            } as MessageBoxOptions);
+            this.success = false;
+          } else if (data) {
+            window.ipcrenderer.send("show-message-box", {
+              message: "Group created SUCCESSFULLY !",
+              type: "info",
+              title: "Created New Group!",
+              detail: inspect(data),
+            } as MessageBoxOptions);
+            this.success = true;
+          } else {
+            window.ipcrenderer.send("show-message-box", {
+              message:
+                "Some error occoured during the creation of Group\nTry checking batch name.",
+              type: "error",
+              title: "Cannot create Group!",
+              detail: "err and detail variables are undefined or not truthly",
+            } as MessageBoxOptions);
+            this.success = false;
+          }
         }
-      });
+      );
       window.ipcrenderer.send("create-group", {
         month: this.month,
         batch: this.batch,
@@ -251,7 +256,9 @@ export default Vue.extend({
     },
   },
   components: {},
-  mounted() {},
+  mounted() {
+    window.resizeTo(550, 700);
+    window.document.title = "Create Group";
+  },
 });
-window.document.title = "Create Group";
 </script>

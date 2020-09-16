@@ -17,5 +17,8 @@ export default Vue.extend({
         CreateUser,
         CreateGroup
     }
-})
+});
+window.resizeWindowToCard = function(){
+    window.resizeTo(550, document.getElementById("container")!.offsetHeight+32);
+}
 </script>
