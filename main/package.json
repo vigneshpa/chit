@@ -17,7 +17,7 @@
     "electron"
   ],
   "author": "vigneshpa",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/vigneshpa/chit/issues"
   },
