@@ -107,8 +107,15 @@
               @click="stepForward"
               :disabled="disableButtons"
             >Next</v-btn>
-            <v-btn v-if="step ===4" :color="submited?'success':'primary'" key="next" @click="submit" :disabled="submited && !success">
-              <v-icon v-if="!submited">mdi-content-save</v-icon><v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon> Finish
+            <v-btn
+              v-if="step ===4"
+              :color="submited?'success':'primary'"
+              key="next"
+              @click="submit"
+              :disabled="submited && !success"
+            >
+              <v-icon v-if="!submited">mdi-content-save</v-icon>
+              <v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon>Finish
             </v-btn>
           </v-card-actions>
         </v-card>
@@ -132,13 +139,18 @@ export default Vue.extend({
       name: "",
       address: "",
       disableButtons: false as boolean,
-      disableInputs:false as boolean,
-      loading:false as boolean,
-      submited:false as boolean,
-      success:false as boolean,
-      skipValidation:false as boolean
+      disableInputs: false as boolean,
+      loading: false as boolean,
+      submited: false as boolean,
+      success: false as boolean,
+      skipValidation: false as boolean,
     };
     return addUserData;
+  },
+  watch: {
+    step: () => {
+      window.resizeWindowToCard();
+    },
   },
   methods: {
     next() {
@@ -162,16 +174,18 @@ export default Vue.extend({
       }, 0);
     },
     stepForward() {
-      if(this.skipValidation){
+      if (this.skipValidation) {
         this.step++;
         return;
       }
       this.disableButtons = true;
       this.disableInputs = true;
+      this.loading = true;
       this.validate((success) => {
         if (success) this.step++;
         this.disableInputs = false;
         this.disableButtons = false;
+        this.loading = false;
       });
     },
     validate(fn: (success: boolean) => void) {
@@ -183,11 +197,11 @@ export default Vue.extend({
           break;
         case 2:
           if (!this.phone) return fn(false);
-          if (this.phone.startsWith("+91") && this.phone.length<14){
+          if (this.phone.startsWith("+91") && this.phone.length < 14) {
             this.phoneMessage = "Indian phone numbers must contain 10 digits";
             return fn(false);
           }
-          if (this.phone.startsWith("0") && this.phone.length < 12){
+          if (this.phone.startsWith("0") && this.phone.length < 12) {
             this.phoneMessage = "Local landline numbers must contain 11 digits";
             return fn(false);
           }
@@ -212,45 +226,44 @@ export default Vue.extend({
       }
     },
     submit() {
-      if(this.submited){
+      if (this.submited) {
         window.close();
         return;
       }
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      window.ipcrenderer.once("create-user", (
-        event,
-        err: sqliteError,
-        data: createUserFields
-      ) => {
-        if (err) {
-          window.ipcrenderer.send("show-message-box", {
-            message: "Some error occoured during the creation of User",
-            type: "error",
-            title: "Cannot create User!",
-            detail: inspect(err),
-          } as MessageBoxOptions);
-          this.success = false;
-        }else
-        if (data) {
-          window.ipcrenderer.send("show-message-box", {
-            message: "User created SUCCESSFULLY !",
-            type: "info",
-            title: "Created New User!",
-            detail: inspect(data),
-          } as MessageBoxOptions);
-          this.success = true;
-        }else{
-          window.ipcrenderer.send("show-message-box", {
-            message: "Some error occoured during the creation of User\nTry checking phone number.",
-            type: "error",
-            title: "Cannot create User!",
-            detail: "err and detail variables are undefined"
-          } as MessageBoxOptions);
-          this.success = false;
+      window.ipcrenderer.once(
+        "create-user",
+        (event, err: sqliteError, data: createUserFields) => {
+          if (err) {
+            window.ipcrenderer.send("show-message-box", {
+              message: "Some error occoured during the creation of User",
+              type: "error",
+              title: "Cannot create User!",
+              detail: inspect(err),
+            } as MessageBoxOptions);
+            this.success = false;
+          } else if (data) {
+            window.ipcrenderer.send("show-message-box", {
+              message: "User created SUCCESSFULLY !",
+              type: "info",
+              title: "Created New User!",
+              detail: inspect(data),
+            } as MessageBoxOptions);
+            this.success = true;
+          } else {
+            window.ipcrenderer.send("show-message-box", {
+              message:
+                "Some error occoured during the creation of User\nTry checking phone number.",
+              type: "error",
+              title: "Cannot create User!",
+              detail: "err and detail variables are undefined",
+            } as MessageBoxOptions);
+            this.success = false;
+          }
         }
-      });
+      );
       window.ipcrenderer.send("create-user", {
         name: this.name,
         phone: this.phone,

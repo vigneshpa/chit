@@ -21,6 +21,8 @@
                   :loading="loading"
                   :readonly="disableInputs"
                   v-on:keyup.enter="next"
+                  full-width
+                  color="primary"
                 ></v-date-picker>
                 <br />
                 <span
@@ -40,7 +42,7 @@
                   :loading="loading"
                   :readonly="disableInputs"
                   :error-messages="batchMessage"
-                  v-on:input="batchChange"
+                  @input="batchChange"
                 ></v-text-field>
                 <span
                   class="caption grey--text text--darken-1"
@@ -145,13 +147,23 @@ export default Vue.extend({
       skipValidation: false as boolean,
     };
   },
+  watch: {
+    step: function () {
+      window.resizeWindowToCard();
+    },
+  },
   methods: {
     next() {
       document.getElementById("next")?.click();
     },
     batchChange() {
       if (!this.batch) return;
-      this.batch = this.batch.charAt(0);
+      let bch = this.batch;
+      bch = bch.toUpperCase().replace(/[^A-Z]/g, "");
+      bch = bch.charAt(bch.length-1);
+      setTimeout(()=>{
+        this.batch = bch;
+      }, 0);
     },
     stepForward() {
       if (this.skipValidation) {
@@ -160,10 +172,12 @@ export default Vue.extend({
       }
       this.disableButtons = true;
       this.disableInputs = true;
+      this.loading = true;
       this.validate((success) => {
         if (success) this.step++;
         this.disableInputs = false;
         this.disableButtons = false;
+        this.loading = false;
       });
     },
     validate(fn: (success: boolean) => void) {
@@ -187,7 +201,7 @@ export default Vue.extend({
               }
             }
           );
-          window.ipcrenderer.send("phone-exists", this.batch, this.month);
+          window.ipcrenderer.send("batch-exists", this.batch, this.month);
           break;
         case 3:
           if (!this.members) return fn(false);

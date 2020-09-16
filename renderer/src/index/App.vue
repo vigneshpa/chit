@@ -45,9 +45,9 @@
       <v-spacer></v-spacer>
       <span>
         <a @click="openGithub">
-          <v-icon>mdi-github</v-icon>vigneshpa
+          <v-icon size="20">mdi-github</v-icon>vigneshpa
         </a>
-        &copy; {{ new Date().getFullYear() }}
+        &copy; {{ new Date().getFullYear() }} GPL3
       </span>
       <v-spacer></v-spacer>
     </v-footer>
