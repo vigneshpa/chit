@@ -42,12 +42,19 @@
     </v-main>
 
     <v-footer app dense>
-      <span>vigneshpa &copy; {{ new Date().getFullYear() }}</span>
+      <v-spacer></v-spacer>
+      <span>
+        <a @click="openGithub">
+          <v-icon>mdi-github</v-icon>vigneshpa
+        </a>
+        &copy; {{ new Date().getFullYear() }}
+      </span>
+      <v-spacer></v-spacer>
     </v-footer>
   </v-app>
 </template>
 
-<script>
+<script lang="ts">
 import "@/assets/common.scss";
 export default {
   props: {
@@ -81,8 +88,14 @@ export default {
         icon: "mdi-view-dashboard",
       },
       { title: "Settings", key: 2, onClick: () => {}, icon: "mdi-cog" },
-    ]
+    ],
   }),
+  methods:{
+    openGithub(ev:Event){
+      ev.preventDefault();
+      window.openExternal("https://github.com/vigneshpa");
+    }
+  },
   created() {},
 };
 </script>

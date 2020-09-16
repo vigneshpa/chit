@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain, MessageBoxOptions } from "electron";
+import { BrowserWindow, dialog, ipcMain, MessageBoxOptions, shell } from "electron";
 import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
@@ -77,8 +77,12 @@ class Ipchosts {
             event.sender.send("phone-exists", err, result);
         });
 
-        ipcMain.on("show-message-box", function(event, options:MessageBoxOptions){
+        ipcMain.on("show-message-box", (event, options:MessageBoxOptions)=>{
             dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), options);
+        });
+
+        ipcMain.on("open-external", (event, url:string)=>{
+            shell.openExternal(url);
         });
     }
 }

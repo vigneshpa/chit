@@ -67,6 +67,7 @@ function loadMain() {
     splash.webContents.send("log", "Executing vue.js framework");
     if (isDevelopement) {
       mainWindow.loadURL("http://localhost:8000");
+      mainWindow.webContents.openDevTools();
     } else {
       mainWindow.loadFile(join(__dirname, "./windows/index.html"));
     }

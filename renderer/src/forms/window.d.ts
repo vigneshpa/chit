@@ -6,6 +6,7 @@ declare global {
         ipcrenderer: IpcRenderer;
         app: Vue;
         store: Store<State>;
+        openExternal:(url:string)=>void
     }
     interface State {
         appLoading: boolean;

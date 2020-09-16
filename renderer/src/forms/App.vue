@@ -1,8 +1,6 @@
 <template>
-<div>
     <create-user v-if="form === 'addUser'" v-bind:key="'app'"></create-user>
-    <create-group v-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
-</div>
+    <create-group v-else-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
 </template>
 <script lang="ts">
 import CreateUser from "./CreateUser.vue";
