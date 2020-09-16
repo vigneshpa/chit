@@ -39,5 +39,7 @@
     "ssr": [
       "node 12"
     ]
-  }
+  },
+  "author":"Vignesh",
+  "license":"GPL-3.0"
 }
