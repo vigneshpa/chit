@@ -112,6 +112,11 @@ class Dbmgmt {
     if(result.phone===phone) return true;
     return false;
   }
+  async checkBatch(batch:string, month:string){
+    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=?", batch, month);
+    if(result.batch === batch) return true;
+    return false;
+  }
 }
 
 export default Dbmgmt;

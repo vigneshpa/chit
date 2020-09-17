@@ -77,6 +77,20 @@ class Ipchosts {
             event.sender.send("phone-exists", err, result);
         });
 
+        ipcMain.on("batch-exists", async (event, batch: string, month:string) => {
+            let err: sqliteError;
+            let result: boolean;
+            console.log("Checking existance of Batch  " + batch + " in month " + month);
+            try {
+                result = await this.dbmgmt.checkBatch(batch, month);
+            } catch (e) {
+                err = e;
+            }
+            console.log("Batch " + (result ? "" : "does not ") + "exists");
+            event.sender.send("batch-exists", err, result);
+        });
+
+
         ipcMain.on("show-message-box", (event, options:MessageBoxOptions)=>{
             dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), options);
         });

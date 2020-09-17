@@ -51,7 +51,62 @@
             </v-window-item>
             <v-window-item :value="3">
               <v-card-text>
-                <v-textarea
+                <v-card>
+                  <v-card-text>
+                    <v-autocomplete
+                      v-model="memberModel"
+                      :items="members"
+                      :loading="loading"
+                      color="white"
+                      hide-no-data
+                      hide-selected
+                      item-text="info.name"
+                      item-value="info"
+                      label="Member"
+                      prepend-icon="mdi-account"
+                      return-object
+                    ></v-autocomplete>
+                    <v-text-field
+                      prepend-icon="mdi-number"
+                      v-model="noOfChits"
+                      label="Number of Chits"
+                      type="number"
+                      max="20"
+                    ></v-text-field>
+                  </v-card-text>
+                  <v-divider></v-divider>
+                  <v-expand-transition>
+                    <v-list v-if="memberModel" style="position:fixed;z-index:1" elevation="5">
+                      <v-list-item v-for="(field, key) in memberModel.info" :key="key">
+                        <v-list-item-content>
+                          <v-list-item-title v-text="field"></v-list-item-title>
+                          <v-list-item-subtitle v-text="key"></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-expand-transition>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn :disabled="!memberModel" @click="memberModel = null">
+                      Clear
+                    </v-btn>
+                    <v-btn :disabled="!memberModel" @click="addMember" color="secondary">
+                      Add
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+                <v-list subheader min-height="300">
+                  <v-subheader>Members of the new group:</v-subheader>
+                  <v-list-item v-for="member in members" :key="member.info.UID">
+                    <v-list-item-content>{{member.info.name}}</v-list-item-content>
+                    <v-chip elevation="1">{{member.noOfChits}}</v-chip>
+                    <v-list-item-action>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-list-item-action>
+                  </v-list-item>
+                </v-list>
+                <!-- <v-textarea
                   label="Members"
                   prepend-icon="mdi-home"
                   outlined
@@ -61,7 +116,7 @@
                   :loading="loading"
                   :readonly="disableInputs"
                   rows="4"
-                ></v-textarea>
+                ></v-textarea>-->
                 <span class="caption grey--text text--darken-1">Please add members for this group.</span>
               </v-card-text>
             </v-window-item>
@@ -138,7 +193,29 @@ export default Vue.extend({
       month: "",
       batch: "",
       batchMessage: "",
-      members: [],
+      members: [
+        {
+          info: {
+            UID: 1,
+            name: "Vignesh",
+            address: "Some address",
+            phone: "+91 9876543210",
+          },
+          noOfChits: 1,
+        },
+        {
+          info: {
+            UID: 2,
+            name: "Vignesh",
+            address: "Some address",
+            phone: "+91 9876543211",
+          },
+          noOfChits: 2.5,
+        },
+      ] as members[],
+      memberModel: null as createUserFields | null,
+      noOfChits:null as number|null,
+      users: [] as createUserFields[],
       disableButtons: false as boolean,
       disableInputs: false as boolean,
       loading: false as boolean,
@@ -146,6 +223,27 @@ export default Vue.extend({
       success: false as boolean,
       skipValidation: false as boolean,
     };
+  },
+  computed: {
+    TotalChits() {
+      let total = 0;
+      this.members.forEach((member) => {
+        total += member.noOfChits;
+      });
+      return total;
+    },
+    currentTitle() {
+      switch (this.step) {
+        case 1:
+          return "Create Group";
+        case 2:
+          return "Batch Name";
+        case 3:
+          return "Add members for " + this.batch;
+        case 4:
+          return "Final";
+      }
+    },
   },
   watch: {
     step: function () {
@@ -160,8 +258,8 @@ export default Vue.extend({
       if (!this.batch) return;
       let bch = this.batch;
       bch = bch.toUpperCase().replace(/[^A-Z]/g, "");
-      bch = bch.charAt(bch.length-1);
-      setTimeout(()=>{
+      bch = bch.charAt(bch.length - 1);
+      setTimeout(() => {
         this.batch = bch;
       }, 0);
     },
@@ -196,7 +294,7 @@ export default Vue.extend({
               if (!response) {
                 fn(true);
               } else {
-                this.batchMessage = "Number Already exists";
+                this.batchMessage = "Batch Already exists";
                 fn(false);
               }
             }
@@ -255,24 +353,15 @@ export default Vue.extend({
       });
     },
   },
-  computed: {
-    currentTitle() {
-      switch (this.step) {
-        case 1:
-          return "Create Group";
-        case 2:
-          return "Batch Name";
-        case 3:
-          return "Add members for " + this.batch;
-        case 4:
-          return "Final";
-      }
-    },
-  },
   components: {},
   mounted() {
     window.resizeTo(550, 700);
     window.document.title = "Create Group";
   },
 });
+
+interface members {
+  info: createUserFields;
+  noOfChits: number;
+}
 </script>
