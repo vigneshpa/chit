@@ -13,7 +13,7 @@ body{
   height: 5px;
   transition: all ease 0.3;
 }
-::-webkit-scrollbar {
+::-webkit-scrollbar:window-inactive {
   width: 15px;
   height: 15px;
 }
