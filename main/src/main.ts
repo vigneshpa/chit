@@ -55,10 +55,10 @@ function loadMain() {
       width: 1080,
       webPreferences: {
         nodeIntegration: false,
-        preload: join(__dirname, "./preload.js"),
+        preload: join(__dirname, "./preload.js")
       },
       show: false,
-      darkTheme: false,
+      backgroundColor: "#000000"
     });
     mainWindow.on("closed", function () {
       appQuit();
@@ -93,7 +93,7 @@ ipchosts.setOnOpenForm(function (type) {
         nodeIntegration: false,
         preload: join(__dirname, "./preload.js")
       },
-      resizable: false
+      resizable: true
     });
     formsWindow.setMenu(null);
     console.log("Recived message from renderer to open ", type);
@@ -101,7 +101,7 @@ ipchosts.setOnOpenForm(function (type) {
       formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {
-      formsWindow.loadURL("file:///"+join(__dirname, "./windows/forms.html")+"?form=" + type);
+      formsWindow.loadURL("file:///" + join(__dirname, "./windows/forms.html") + "?form=" + type);
     }
     formsWindow.on("closed", function () {
       formsWindow = null;

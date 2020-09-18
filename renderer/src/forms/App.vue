@@ -27,7 +27,7 @@ window.resizeWindowToCard = function () {
   setTimeout(() => {
     window.resizeTo(
       550,
-      document.getElementById("container")!.offsetHeight + 32
+      document.getElementById("container")!.offsetHeight + 42
     );
   }, 350);
 };

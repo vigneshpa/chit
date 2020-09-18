@@ -114,7 +114,7 @@
               @click="submit"
               :disabled="submited && !success"
             >
-              <v-icon v-if="!submited">mdi-content-save</v-icon>
+              <v-icon v-if="!submited">mdi-account-check</v-icon>
               <v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon>Finish
             </v-btn>
           </v-card-actions>
@@ -154,7 +154,7 @@ export default Vue.extend({
   },
   methods: {
     next() {
-      document.getElementById("next")?.click();
+      document.getElementById("next")!.click();
     },
     phoneChange() {
       if (!this.phone) return;

@@ -34,7 +34,7 @@
               <v-card-text>
                 <v-text-field
                   label="Batch Name"
-                  prepend-icon="mdi-batch"
+                  prepend-icon="mdi-alphabetical-variant"
                   required
                   v-model="batch"
                   v-on:keyup.enter="next"
@@ -46,24 +46,24 @@
                 ></v-text-field>
                 <span
                   class="caption grey--text text--darken-1"
-                >Please enter a name for this batch. This must be unique for every month.</span>
+                >Please enter a name for this batch in month of {{this.month}}. This must be unique for every batch within a month.</span>
               </v-card-text>
             </v-window-item>
             <v-window-item :value="3">
               <v-card-text>
-                <v-card>
+                <v-card :loading="loading">
                   <v-card-text>
                     <v-autocomplete
                       v-model="memberModel"
-                      :items="members"
+                      :items="users"
                       :loading="loading"
-                      color="white"
                       hide-no-data
                       hide-selected
-                      item-text="info.name"
-                      item-value="info"
+                      item-text="name"
+                      item-value="UID"
                       label="Member"
                       prepend-icon="mdi-account"
+                      :readonly="disableInputs"
                       return-object
                     ></v-autocomplete>
                     <v-text-field
@@ -71,41 +71,66 @@
                       v-model="noOfChits"
                       label="Number of Chits"
                       type="number"
-                      max="20"
+                      :max="20-totalChits"
+                      min="0"
+                      :readonly="disableInputs"
+                      @keyup.enter="window.document.getElementById('add').click()"
                     ></v-text-field>
                   </v-card-text>
                   <v-divider></v-divider>
                   <v-expand-transition>
-                    <v-list v-if="memberModel" style="position:fixed;z-index:1" elevation="5">
-                      <v-list-item v-for="(field, key) in memberModel.info" :key="key">
+                    <v-list
+                      v-if="memberModel"
+                      width="312"
+                      style="position:fixed;z-index:1"
+                      elevation="5"
+                    >
+                      <v-list-item v-for="(field, key) in memberModel" :key="key+'userDetail'">
                         <v-list-item-content>
                           <v-list-item-title v-text="field"></v-list-item-title>
                           <v-list-item-subtitle v-text="key"></v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
+                      <v-list-item>
+                        <v-btn :disabled="!memberModel" @click="memberModel = null">
+                          <v-icon>mdi-close</v-icon>
+                        </v-btn>
+                      </v-list-item>
                     </v-list>
                   </v-expand-transition>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn :disabled="!memberModel" @click="memberModel = null">
-                      Clear
-                    </v-btn>
-                    <v-btn :disabled="!memberModel" @click="addMember" color="secondary">
+                    <v-btn
+                      :disabled="!memberModel || !noOfChits || !(parseFloat(noOfChits)>0) || (parseFloat(noOfChits)>(20-totalChits))"
+                      @click="addMember"
+                      color="primary"
+                      id="add"
+                    >
                       Add
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
                   </v-card-actions>
                 </v-card>
-                <v-list subheader min-height="300">
+                <div style="height:300px;overflow:auto">
                   <v-subheader>Members of the new group:</v-subheader>
-                  <v-list-item v-for="member in members" :key="member.info.UID">
-                    <v-list-item-content>{{member.info.name}}</v-list-item-content>
-                    <v-chip elevation="1">{{member.noOfChits}}</v-chip>
-                    <v-list-item-action>
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-list-item-action>
-                  </v-list-item>
-                </v-list>
+                  <v-list>
+                    <v-fab-transition group>
+                      <v-list-item
+                        v-for="member in members"
+                        :key="member.info.UID+'memberDetail'"
+                        @click="()=>{}"
+                      >
+                        <v-list-item-content
+                          :title="member.info.phone + '\n' + member.info.address"
+                        >{{member.info.name}}</v-list-item-content>
+                        <v-chip v-text="member.noOfChits"></v-chip>
+                        <v-list-item-action @click="removeMember(member)">
+                          <v-icon>mdi-close-circle</v-icon>
+                        </v-list-item-action>
+                      </v-list-item>
+                    </v-fab-transition>
+                  </v-list>
+                </div>
                 <!-- <v-textarea
                   label="Members"
                   prepend-icon="mdi-home"
@@ -117,36 +142,51 @@
                   :readonly="disableInputs"
                   rows="4"
                 ></v-textarea>-->
-                <span class="caption grey--text text--darken-1">Please add members for this group.</span>
+                <span class="caption grey--text text--darken-1">
+                  Please add members for this group. Total no of chits must be 20.
+                  <br />
+                  {{totalChits}} alloted {{20-totalChits}} remaining.
+                </span>
               </v-card-text>
+              <v-progress-linear :value="totalChits*5"></v-progress-linear>
             </v-window-item>
             <v-window-item :value="4">
               <v-card-text>
                 <span>The details of the new Group are:</span>
                 <br />
                 <br />
-                <table>
-                  <tbody>
-                    <tr>
-                      <td>
-                        <v-icon>mdi-calender</v-icon>
-                      </td>
-                      <td>{{month}}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <v-icon>mdi-batch</v-icon>
-                      </td>
-                      <td>{{batch}}</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <v-icon>mdi-members</v-icon>
-                      </td>
-                      <td>{{members}}</td>
-                    </tr>
-                  </tbody>
-                </table>
+
+                <v-list>
+                  <v-subheader>Month</v-subheader>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-calendar</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>{{month}}</v-list-item-title>
+                  </v-list-item>
+                  <v-subheader>Batch Name</v-subheader>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-alphabetical-variant</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>{{batch}}</v-list-item-title>
+                  </v-list-item>
+                  <v-subheader>Members</v-subheader>
+                  <v-list-group prepend-icon="mdi-account-group" no-action>
+                    <template v-slot:activator>
+                      <v-list-item-content>
+                        <v-list-item-title>{{members.length}} Members</v-list-item-title>
+                      </v-list-item-content>
+                    </template>
+                    <v-list-item v-for="member in members" :key="member.info.UID+'memberFinal'">
+                      <v-list-item-content
+                        v-text="member.info.name"
+                        :title="member.info.phone+'\n'+member.info.address"
+                      ></v-list-item-content>
+                      <v-chip v-text="member.noOfChits"></v-chip>
+                    </v-list-item>
+                  </v-list-group>
+                </v-list>
                 <br />
                 <span>Please check the details and click finish.</span>
               </v-card-text>
@@ -161,7 +201,7 @@
               v-if="step !==4"
               color="primary"
               @click="stepForward"
-              :disabled="disableButtons"
+              :disabled="disableButtons || (step === 3 && totalChits !== 20)"
             >Next</v-btn>
             <v-btn
               v-if="step ===4"
@@ -193,28 +233,9 @@ export default Vue.extend({
       month: "",
       batch: "",
       batchMessage: "",
-      members: [
-        {
-          info: {
-            UID: 1,
-            name: "Vignesh",
-            address: "Some address",
-            phone: "+91 9876543210",
-          },
-          noOfChits: 1,
-        },
-        {
-          info: {
-            UID: 2,
-            name: "Vignesh",
-            address: "Some address",
-            phone: "+91 9876543211",
-          },
-          noOfChits: 2.5,
-        },
-      ] as members[],
+      members: [] as members[],
       memberModel: null as createUserFields | null,
-      noOfChits:null as number|null,
+      noOfChits: null as string | null,
       users: [] as createUserFields[],
       disableButtons: false as boolean,
       disableInputs: false as boolean,
@@ -222,10 +243,11 @@ export default Vue.extend({
       submited: false as boolean,
       success: false as boolean,
       skipValidation: false as boolean,
+      window: window,
     };
   },
   computed: {
-    TotalChits() {
+    totalChits() {
       let total = 0;
       this.members.forEach((member) => {
         total += member.noOfChits;
@@ -239,7 +261,7 @@ export default Vue.extend({
         case 2:
           return "Batch Name";
         case 3:
-          return "Add members for " + this.batch;
+          return "Add members for " + this.batch + " batch";
         case 4:
           return "Final";
       }
@@ -248,11 +270,27 @@ export default Vue.extend({
   watch: {
     step: function () {
       window.resizeWindowToCard();
+      if (this.step === 3) this.getUsers();
     },
   },
   methods: {
+    removeMember(member: members) {
+      this.users.push(member.info);
+      this.members.splice(this.members.indexOf(member), 1);
+    },
+    addMember() {
+      if (this.memberModel && this.noOfChits) {
+        this.members.push({
+          info: this.memberModel,
+          noOfChits: parseFloat(this.noOfChits),
+        });
+        this.users.splice(this.users.indexOf(this.memberModel), 1);
+        this.memberModel = null;
+        this.noOfChits = null;
+      }
+    },
     next() {
-      document.getElementById("next")?.click();
+      document.getElementById("next")!.click();
     },
     batchChange() {
       if (!this.batch) return;
@@ -277,6 +315,20 @@ export default Vue.extend({
         this.disableButtons = false;
         this.loading = false;
       });
+    },
+    getUsers() {
+      this.loading = true;
+      this.disableInputs = true;
+      window.ipcrenderer.once(
+        "get-users-data",
+        (event, data: createUserFields[]) => {
+          this.users = data;
+          console.log(data);
+          this.disableInputs = false;
+          this.loading = false;
+        }
+      );
+      window.ipcrenderer.send("get-users-data");
     },
     validate(fn: (success: boolean) => void) {
       if (this.step > 3) return fn(true);
@@ -303,6 +355,7 @@ export default Vue.extend({
           break;
         case 3:
           if (!this.members) return fn(false);
+          if (this.totalChits !== 20) return fn(false);
           return fn(true);
           break;
       }

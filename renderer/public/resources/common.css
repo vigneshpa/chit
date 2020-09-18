@@ -1,5 +1,44 @@
-html{
-    overflow: hidden;
-    overflow-x: hidden;
-    overflow-y: hidden;
+html {
+  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  margin:0px;
+  padding:0px;
+}
+body{
+  overflow: overlay;
+}
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  transition: all ease 0.3;
+}
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(178.5, 178.5, 178.5, 0.95);
+}
+::-webkit-scrollbar-thumb:hover{
+  background-color: rgba(178.5, 178.5, 178.5);
+}
+::-webkit-scrollbar-track {
+  background-color: rgba(128, 128, 128, 0.2);
+}
+@media (prefers-color-scheme:light){
+  body{
+    background-color: white;
+  }
+  html{
+    background-color: white;
+  }
+}
+@media (prefers-color-scheme:dark){
+  body{
+    background-color: black;
+  }
+  html{
+    background-color: black;
+  }
 }
