@@ -1,27 +1,13 @@
-html {
-  overflow: hidden;
-  overflow-x: hidden;
-  overflow-y: hidden;
-  margin:0px;
-  padding:0px;
-}
-body{
-  overflow: overlay;
-}
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
   transition: all ease 0.3;
 }
-::-webkit-scrollbar:window-inactive {
-  width: 15px;
-  height: 15px;
-}
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(178.5, 178.5, 178.5, 0.95);
+  background-color: rgba(128, 128, 128, 0.95);
 }
 ::-webkit-scrollbar-thumb:hover{
-  background-color: rgba(178.5, 178.5, 178.5);
+  background-color: rgba(128, 128, 128);
 }
 ::-webkit-scrollbar-track {
   background-color: rgba(128, 128, 128, 0.2);
@@ -33,6 +19,12 @@ body{
   html{
     background-color: white;
   }
+  body::-webkit-scrollbar-thumb {
+    background-color: rgb(129, 129, 129);
+  }
+  body::-webkit-scrollbar-track {
+    background-color: rgb(255, 255, 255);
+  }
 }
 @media (prefers-color-scheme:dark){
   body{
@@ -40,5 +32,11 @@ body{
   }
   html{
     background-color: black;
+  }
+  body::-webkit-scrollbar-thumb {
+    background-color: rgb(128, 128, 128);
+  }
+  body::-webkit-scrollbar-track {
+    background-color: rgb(0, 0, 0);
   }
 }

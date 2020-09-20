@@ -65,6 +65,8 @@
                       prepend-icon="mdi-account"
                       :readonly="disableInputs"
                       return-object
+                      append-outer-icon="mdi-reload"
+                      @click:append-outer="reloadUsers"
                     ></v-autocomplete>
                     <v-text-field
                       prepend-icon="mdi-number"
@@ -82,7 +84,7 @@
                     <v-list
                       v-if="memberModel"
                       width="312"
-                      style="position:fixed;z-index:1"
+                      style="position:absolute;z-index:1"
                       elevation="5"
                     >
                       <v-list-item v-for="(field, key) in memberModel" :key="key+'userDetail'">
@@ -280,11 +282,15 @@ export default Vue.extend({
     },
     addMember() {
       if (this.memberModel && this.noOfChits) {
+        let removed = this.users.splice(this.users.indexOf(this.memberModel), 1);
+        if(removed.length !== 1){
+          this.users.push(...removed);
+          return;
+        }
         this.members.push({
-          info: this.memberModel,
+          info: removed[0],
           noOfChits: parseFloat(this.noOfChits),
-        });
-        this.users.splice(this.users.indexOf(this.memberModel), 1);
+        });;
         this.memberModel = null;
         this.noOfChits = null;
       }
@@ -324,6 +330,22 @@ export default Vue.extend({
         (event, data: createUserFields[]) => {
           this.users = data;
           console.log(data);
+          this.disableInputs = false;
+          this.loading = false;
+        }
+      );
+      window.ipcrenderer.send("get-users-data");
+    },
+    reloadUsers(){
+      this.loading = true;
+      this.disableInputs = true;
+      window.ipcrenderer.once(
+        "get-users-data",
+        (event, data: createUserFields[]) => {
+          console.log(data);
+          this.members.forEach(member=>{
+            this.users.splice(this.users.indexOf(member.info), 1);
+          });
           this.disableInputs = false;
           this.loading = false;
         }
