@@ -1,0 +1,15 @@
+{
+    "type":"object",
+    "title":"Configuration settings of the app",
+    "properties":{
+        "isDevelopement":{
+            "type":"boolean",
+            "description":"This defines wheather the app is to be run in developement mode (true) or production mode (false)."
+        },
+        "theme":{
+            "type":"string",
+            "enum": ["dark", "light", "system"],
+            "description":"Theme of the app"
+        }
+    }
+}

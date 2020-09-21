@@ -25,10 +25,34 @@
   "devDependencies": {
     "@types/node": "^14.10.1",
     "@types/sqlite3": "^3.1.6",
+    "dotenv": "^8.2.0",
     "electron": "^10.1.2",
     "electron-builder": "^22.8.0"
   },
   "dependencies": {
     "sqlite3": "^5.0.0"
+  },
+  "build": {
+    "appId": "your.id",
+    "mac": {
+      "category": "your.app.category.type"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "msi":{
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+     },
+    "directories": {
+      "buildResources": "resources"
+    },
+    "files": [
+      "app/**/*"
+    ],
+    "npmRebuild": true
   }
 }

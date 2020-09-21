@@ -1,4 +1,5 @@
-let isDevelopement = true;
+console.log("Loading configurations and environment variables . . .");
+import config from "./config";
 
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain } from "electron";
@@ -65,7 +66,7 @@ function loadMain() {
     });
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
     splash.webContents.send("log", "Executing vue.js framework");
-    if (isDevelopement) {
+    if (config.isDevelopement) {
       mainWindow.loadURL("http://localhost:8000");
       mainWindow.webContents.openDevTools();
     } else {
@@ -97,7 +98,7 @@ ipchosts.setOnOpenForm(function (type) {
     });
     formsWindow.setMenu(null);
     console.log("Recived message from renderer to open ", type);
-    if (isDevelopement) {
+    if (config.isDevelopement) {
       formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {

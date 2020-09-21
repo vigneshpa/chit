@@ -30,3 +30,6 @@ interface createGroupFields{
 interface sqliteError extends Error{
     errno?:number;
 }
+interface Configuration{
+    isDevelopement:boolean;
+}
