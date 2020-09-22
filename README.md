@@ -61,3 +61,8 @@ To build main
 cd main
 tsc
 ```
+To pack app
+```
+cd main
+npm run build
+```
