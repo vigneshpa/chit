@@ -3,10 +3,10 @@
   <create-group v-else-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
 </template>
 <script lang="ts">
-import "@/assets/common.scss";
 import CreateUser from "./CreateUser.vue";
 import CreateGroup from "./CreateGroup.vue";
 import Vue from "vue";
+import "@/assets/common.scss";
 
 const url = new URL(window.location.href);
 const form = url.searchParams.get("form");

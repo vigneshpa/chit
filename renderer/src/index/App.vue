@@ -55,8 +55,8 @@
 </template>
 
 <script lang="ts">
-import "@/assets/common.scss";
 import Vue from "vue";
+import "@/assets/common.scss";
 export default Vue.extend({
   props: {
     source: String,
