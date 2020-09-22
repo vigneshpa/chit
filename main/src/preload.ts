@@ -1,16 +1,10 @@
 import {ipcRenderer} from "electron";
 interface preWindow extends Window{
     ipcrenderer?:typeof ipcRenderer;
+    config?:Configuration;
 }
 const preWindow:preWindow = window;
 preWindow.ipcrenderer = require("electron").ipcRenderer;
+preWindow.config = global.config;
 
-console.log("Loaded 'ipcrenderer' into the window");
-/*contextBridge.exposeInMainWorld("ipcrenderer", {
-    once:function(...args){
-        console.log("Recived once ", ...args);
-    },
-    send:function(...args){
-        console.log("recived send", ...args);
-    }
-});*/
+console.log("Loaded 'ipcrenderer' and 'config' into the window");

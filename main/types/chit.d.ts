@@ -5,14 +5,14 @@ interface createUserFields{
     address?:string;
 }
 interface userInfo{
-    UID?:number;
+    UID:number;
     name:string;
     phone:string;
     address?:string;
     groups?:number[];
-    cheats:cheatInfo[];
+    chits:chitInfo[];
 }
-interface cheatInfo{
+interface chitInfo{
     CID:number;
     UID:number;
     GID:number;
@@ -24,7 +24,7 @@ interface createGroupFields{
     month:number;
     year:number;
     batch:string;
-    members?:{UID:number;noOfCheats:number}[];
+    members?:{UID:number;noOfChits:number}[];
     winners?:Array<number>;
 }
 interface sqliteError extends Error{
@@ -32,4 +32,10 @@ interface sqliteError extends Error{
 }
 interface Configuration{
     isDevelopement:boolean;
+    theme:Theme;
+}
+declare enum Theme{
+    system = "system",
+    dark = "dark",
+    light = "light"
 }

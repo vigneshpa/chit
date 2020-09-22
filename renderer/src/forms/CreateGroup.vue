@@ -15,7 +15,7 @@
                 <v-date-picker
                   label="Month"
                   type="month"
-                  v-model="month"
+                  v-model="monthModel"
                   required
                   id="month"
                   :loading="loading"
@@ -46,7 +46,7 @@
                 ></v-text-field>
                 <span
                   class="caption grey--text text--darken-1"
-                >Please enter a name for this batch in month of {{this.month}}. This must be unique for every batch within a month.</span>
+                >Please enter a name for this batch in month of {{this.formatedMonth}}. This must be unique for every batch within a month.</span>
               </v-card-text>
             </v-window-item>
             <v-window-item :value="3">
@@ -164,7 +164,7 @@
                     <v-list-item-icon>
                       <v-icon>mdi-calendar</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-title>{{month}}</v-list-item-title>
+                    <v-list-item-title>{{formatedMonth}}</v-list-item-title>
                   </v-list-item>
                   <v-subheader>Batch Name</v-subheader>
                   <v-list-item>
@@ -207,12 +207,12 @@
             >Next</v-btn>
             <v-btn
               v-if="step ===4"
-              :color="submited?'primary':'success'"
+              :color="submited?'success':'primary'"
               key="next"
               @click="submit"
               :disabled="submited && !success"
             >
-              <v-icon v-if="!submited">mdi-content-save</v-icon>
+              <v-icon v-if="!submited">mdi-account-multiple-check</v-icon>
               <v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon>Finish
             </v-btn>
           </v-card-actions>
@@ -232,13 +232,14 @@ export default Vue.extend({
   data: () => {
     return {
       step: 1,
-      month: "",
+      monthModel: "",
       batch: "",
       batchMessage: "",
       members: [] as members[],
-      memberModel: null as createUserFields | null,
+      memberModel: null as userInfo | null,
       noOfChits: null as string | null,
-      users: [] as createUserFields[],
+      users: [] as userInfo[],
+      loadedUsers:false as boolean,
       disableButtons: false as boolean,
       disableInputs: false as boolean,
       loading: false as boolean,
@@ -268,6 +269,30 @@ export default Vue.extend({
           return "Final";
       }
     },
+    month(): number {
+      return parseInt(this.monthModel.split("-")[1]);
+    },
+    year(): number {
+      return parseInt(this.monthModel.split("-")[0]);
+    },
+    formatedMonth(): string {
+      const date = new Date(this.monthModel);
+      const month = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      return month[date.getMonth()] + ", " + date.getFullYear();
+    },
   },
   watch: {
     step: function () {
@@ -282,15 +307,18 @@ export default Vue.extend({
     },
     addMember() {
       if (this.memberModel && this.noOfChits) {
-        let removed = this.users.splice(this.users.indexOf(this.memberModel), 1);
-        if(removed.length !== 1){
+        let removed = this.users.splice(
+          this.users.indexOf(this.memberModel),
+          1
+        );
+        if (removed.length !== 1) {
           this.users.push(...removed);
           return;
         }
         this.members.push({
           info: removed[0],
           noOfChits: parseFloat(this.noOfChits),
-        });;
+        });
         this.memberModel = null;
         this.noOfChits = null;
       }
@@ -323,27 +351,29 @@ export default Vue.extend({
       });
     },
     getUsers() {
+      if(this.loadedUsers)return;
       this.loading = true;
       this.disableInputs = true;
       window.ipcrenderer.once(
         "get-users-data",
-        (event, data: createUserFields[]) => {
+        (event, data: userInfo[]) => {
           this.users = data;
           console.log(data);
           this.disableInputs = false;
           this.loading = false;
+          this.loadedUsers = true;
         }
       );
       window.ipcrenderer.send("get-users-data");
     },
-    reloadUsers(){
+    reloadUsers() {
       this.loading = true;
       this.disableInputs = true;
       window.ipcrenderer.once(
         "get-users-data",
         (event, data: createUserFields[]) => {
           console.log(data);
-          this.members.forEach(member=>{
+          this.members.forEach((member) => {
             this.users.splice(this.users.indexOf(member.info), 1);
           });
           this.disableInputs = false;
@@ -356,7 +386,7 @@ export default Vue.extend({
       if (this.step > 3) return fn(true);
       switch (this.step) {
         case 1:
-          if (!this.month) return fn(false);
+          if (!this.monthModel) return fn(false);
           return fn(true);
           break;
         case 2:
@@ -373,7 +403,12 @@ export default Vue.extend({
               }
             }
           );
-          window.ipcrenderer.send("batch-exists", this.batch, this.month);
+          window.ipcrenderer.send(
+            "batch-exists",
+            this.batch,
+            this.month,
+            this.year
+          );
           break;
         case 3:
           if (!this.members) return fn(false);
@@ -390,6 +425,10 @@ export default Vue.extend({
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
+      const finalMembers:createGroupFields["members"] = [];
+      this.members.forEach(member => {
+        finalMembers.push({UID:member.info.UID, noOfChits:member.noOfChits});
+      });
       window.ipcrenderer.once(
         "create-group",
         (event, err: sqliteError, data: createGroupFields) => {
@@ -424,8 +463,9 @@ export default Vue.extend({
       window.ipcrenderer.send("create-group", {
         month: this.month,
         batch: this.batch,
-        members: this.members,
-      });
+        year: this.year,
+        members: finalMembers,
+      } as createGroupFields);
     },
   },
   components: {},
@@ -436,7 +476,7 @@ export default Vue.extend({
 });
 
 interface members {
-  info: createUserFields;
+  info: userInfo;
   noOfChits: number;
 }
 </script>

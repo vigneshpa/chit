@@ -59,7 +59,7 @@ function loadMain() {
         preload: join(__dirname, "./preload.js")
       },
       show: false,
-      backgroundColor: "#000000"
+      backgroundColor: (config.theme === "light") ? "#ffffff" : "#000000"
     });
     mainWindow.on("closed", function () {
       appQuit();

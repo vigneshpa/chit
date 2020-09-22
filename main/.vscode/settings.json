@@ -2,7 +2,7 @@
     "json.schemas": [
         {
             "fileMatch": [
-                "/default.config.json"
+                "/app/default.config.json"
             ],
             "url": "/.vscode/config.schema.json"
         }

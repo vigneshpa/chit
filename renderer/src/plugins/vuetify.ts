@@ -2,25 +2,33 @@ import '@mdi/font/css/materialdesignicons.css';
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 
-let darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
+
+let darktheme: boolean = darkModeMedia.matches;
+
+let theme: Theme = (window.config?.theme) || "system";
+
+if (theme !== "system") {
+    darktheme = (theme === "dark");
+} else {
+    darkModeMedia.addEventListener("change", function (ev) {
+        vuetify.framework.theme.dark = ev.matches;
+    });
+}
 
 Vue.use(Vuetify);
 const vuetify = new Vuetify({
-    theme:{
-        dark:darkModeMedia.matches,
-        disable:false
+    theme: {
+        dark: darktheme,
+        disable: false
     },
-    icons:{
-        iconfont:"mdi"
+    icons: {
+        iconfont: "mdi"
     }
 });
 window.vuetify = vuetify;
 
-darkModeMedia.addEventListener("change", function(ev){
-    vuetify.framework.theme.dark = ev.matches;
-});
-
-window.openExternal = function(url){
+window.openExternal = function (url) {
     window.ipcrenderer.send("open-external", url);
 };
 

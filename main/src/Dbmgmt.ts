@@ -28,9 +28,9 @@ class Dbmgmt {
   
       await this.db.transaction(function (db1) {
         return Promise.all([
-          this.db.run(`CREATE TABLE \`users\` (\`UID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL, \`phone\` TEXT NOT NULL UNIQUE, \`address\` TEXT)`),
-          this.db.run(`CREATE TABLE \`groups\` (\`GID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL UNIQUE, \`month\`  INTEGER NOT NULL, \`year\` INTEGER NOT NULL, \`batch\` TEXT NOT NULL, \`winners\` JSON NOT NULL)`),
-          this.db.run(`CREATE TABLE \`cheats\` (\`CID\` INTEGER NOT NULL PRIMARY KEY, \`GID\` INTEGER NOT NULL, \`UID\` INTEGER NOT NULL, \`no_of_cheats\` REAL NOT NULL ${monthColumns}, FOREIGN KEY (\`GID\`) REFERENCES \`groups\` ( \`GID\` ), FOREIGN KEY (\`UID\`) REFERENCES \`users\` (\`UID\`) )`),
+          db1.run(`CREATE TABLE \`users\` (\`UID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL, \`phone\` TEXT NOT NULL UNIQUE, \`address\` TEXT)`),
+          db1.run(`CREATE TABLE \`groups\` (\`GID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL UNIQUE, \`month\`  INTEGER NOT NULL, \`year\` INTEGER NOT NULL, \`batch\` TEXT NOT NULL, \`winners\` JSON NOT NULL)`),
+          db1.run(`CREATE TABLE \`chits\` (\`CID\` INTEGER NOT NULL PRIMARY KEY, \`GID\` INTEGER NOT NULL, \`UID\` INTEGER NOT NULL, \`no_of_chits\` REAL NOT NULL ${monthColumns}, FOREIGN KEY (\`GID\`) REFERENCES \`groups\` ( \`GID\` ), FOREIGN KEY (\`UID\`) REFERENCES \`users\` (\`UID\`) )`),
         ]);
       });
     }
@@ -55,16 +55,16 @@ class Dbmgmt {
   
     return { result, success };
   }
-  async createGroup(year: number, month: number, batch: string, members: { UID: number, noOfCheats: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
+  async createGroup(year: number, month: number, batch: string, members: { UID: number, noOfChits: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
     let result: createGroupFields;
-    let success: boolean;
+    let success: boolean = true;
     let gName: string = year + "-" + month + "-" + batch;
     let total = 0;
     for (const member of members) {
-      total += member.noOfCheats;
+      total += member.noOfChits;
     }
     if (total !== 20) {
-      throw new Error("Total number of cheats is not equal to 20");
+      throw new Error("Total number of chits is not equal to 20");
     }
     try {
       await this.db.run("INSERT INTO `groups` (`name`, `year`, `month`, `batch`, `winners`) VALUES (?, ?, ?, ?, '[]');", [gName, year, month, batch]);
@@ -80,10 +80,10 @@ class Dbmgmt {
     }
   
     if (success) {
-      this.db.transaction(function (db1) {
+      await this.db.transaction(function (db1) {
         let iterable: Promise<any>[] = [];
         for (const member of members) {
-          iterable.push(db1.run("INSERT INTO `cheats` (`UID`, `GID`, `no_of_cheats`, `month1_toBePaid`) VALUES (?, ?, ?)", [member.UID, result.GID, member.noOfCheats, 5000 * member.noOfCheats]));
+          iterable.push(db1.run("INSERT INTO `chits` (`UID`, `GID`, `no_of_chits`, `month1_toBePaid`) VALUES (?, ?, ?, ?)", [member.UID, result.GID, member.noOfChits, 5000 * member.noOfChits]));
         }
         return Promise.all(iterable);
       });
@@ -91,8 +91,8 @@ class Dbmgmt {
   
     return { success, result };
   }
-  async listUsers(): Promise<createUserFields[]> {
-    let result: createUserFields[] = await this.db.all("SELECT * FROM `users`");
+  async listUsers(): Promise<userInfo[]> {
+    let result: userInfo[] = await this.db.all("SELECT * FROM `users`");
     return result;
   }
   async listGroups(): Promise<createGroupFields[]> {
@@ -112,8 +112,8 @@ class Dbmgmt {
     if(result.phone===phone) return true;
     return false;
   }
-  async checkBatch(batch:string, month:string){
-    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=?", batch, month);
+  async checkBatch(batch:string, month:number, year:number){
+    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=? AND `year`=?", batch, month, year);
     if(result.batch === batch) return true;
     return false;
   }

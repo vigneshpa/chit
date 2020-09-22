@@ -268,7 +268,7 @@ export default Vue.extend({
         name: this.name,
         phone: this.phone,
         address: this.address,
-      });
+      } as createUserFields);
     },
   },
   computed: {

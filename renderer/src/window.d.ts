@@ -8,6 +8,7 @@ declare global {
         app: Vue;
         store: Store<State>;
         vuetify:typeof Vuetify;
+        config:Configuration
     }
     interface State {
         appLoading: boolean;

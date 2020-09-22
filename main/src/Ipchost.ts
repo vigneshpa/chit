@@ -27,7 +27,7 @@ class Ipchosts {
             let response: { result: any; success?: boolean; };
             console.log("\nRecived Message From Renderer to create user\n", event, data);
             try {
-                response = await this.dbmgmt.createUser(data.name, data.phone, data.address,);
+                response = await this.dbmgmt.createUser(data.name, data.phone, data.address);
             } catch (err1) {
                 err = err1;
             }
@@ -48,7 +48,7 @@ class Ipchosts {
 
         ipcMain.on("get-users-data", async event => {
             console.log("Recived message from renderer to get users data");
-            const result = await this.dbmgmt.listUsers();
+            const result:userInfo[] = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);
         });
@@ -77,12 +77,12 @@ class Ipchosts {
             event.sender.send("phone-exists", err, result);
         });
 
-        ipcMain.on("batch-exists", async (event, batch: string, month:string) => {
+        ipcMain.on("batch-exists", async (event, batch: string, month:number, year:number) => {
             let err: sqliteError;
             let result: boolean;
             console.log("Checking existance of Batch  " + batch + " in month " + month);
             try {
-                result = await this.dbmgmt.checkBatch(batch, month);
+                result = await this.dbmgmt.checkBatch(batch, month, year);
             } catch (e) {
                 err = e;
             }
