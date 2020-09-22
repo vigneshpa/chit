@@ -1,8 +1,8 @@
-# Chit Management Syatem
+# Chit Management System
 
 ## About this Software
 
-   This software aims to automate most of the work doene by chit
+   This software aims to automate most of the work done by chit
    business holders. This software is available under free [GPL3](./LICENSE.md) license.
 
 >This is a free software.   
