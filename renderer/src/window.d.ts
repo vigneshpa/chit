@@ -8,7 +8,9 @@ declare global {
         app: Vue;
         store: Store<State>;
         vuetify:typeof Vuetify;
-        config:Configuration
+        config:Configuration;
+        openExternal:(url:string)=>Void;
+        resizeWindowToCard:()=>Void;
     }
     interface State {
         appLoading: boolean;

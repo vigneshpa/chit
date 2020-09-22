@@ -10,6 +10,6 @@
         "inlineSourceMap": true
     },
     "compileOnSave": true,
-    "include": ["src/**/*", "types/chit.d.ts"],
+    "include": ["src/**/*", "../types/chit.d.ts"],
     "exclude": ["node_modules/**/*"],
 }

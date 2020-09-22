@@ -3,6 +3,7 @@
   <create-group v-else-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
 </template>
 <script lang="ts">
+import "@/assets/common.scss";
 import CreateUser from "./CreateUser.vue";
 import CreateGroup from "./CreateGroup.vue";
 import Vue from "vue";

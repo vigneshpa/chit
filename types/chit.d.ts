@@ -39,3 +39,7 @@ declare enum Theme{
     dark = "dark",
     light = "light"
 }
+declare enum Page{
+    dashboard = "dashboard",
+    settings = "settings"
+}

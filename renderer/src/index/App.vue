@@ -15,7 +15,7 @@
 
     <v-app-bar app clipped-left color="blue" dark v-bind:loading="this.$store.state.appLoading">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>Chit Management system</v-toolbar-title>
+      <v-toolbar-title :v-text="pageTitle"></v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -56,12 +56,14 @@
 
 <script lang="ts">
 import "@/assets/common.scss";
-export default {
+import Vue from "vue";
+export default Vue.extend({
   props: {
     source: String,
   },
   data: () => ({
     drawer: null,
+    page: "dashboard" as Page,
     addList: [
       {
         title: "Add User",
@@ -90,14 +92,30 @@ export default {
       { title: "Settings", key: 2, onClick: () => {}, icon: "mdi-cog" },
     ],
   }),
-  methods:{
-    openGithub(ev:Event){
+  computed:{
+    pageTitle():string{
+      let title: string;
+      switch (this.page) {
+        case "dashboard":
+          title = "Dashboard";
+          break;
+        case "settings":
+          title = "Settings";
+          break;
+        default:
+          title = "Chit Management Syatem";
+      }
+      return title;
+    },
+  },
+  methods: {
+    openGithub(ev: Event) {
       ev.preventDefault();
       window.openExternal("https://github.com/vigneshpa");
-    }
+    },
   },
   created() {},
-};
+});
 </script>
 <style>
 html {
