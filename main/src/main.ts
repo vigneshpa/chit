@@ -2,7 +2,7 @@ console.log("Loading configurations and environment variables . . .");
 import config from "./config";
 
 console.log("Starting Electron . . . ");
-import { BrowserWindow, app, ipcMain } from "electron";
+import { BrowserWindow, app, ipcMain, nativeTheme } from "electron";
 import { join } from "path";
 import Dbmgmt from "./Dbmgmt";
 import Ipchosts from "./Ipchost";
@@ -14,7 +14,11 @@ let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 let formsWindow: BrowserWindow;
 
-app.on("ready",async function (launchInfo) {
+const darkmode = (config.theme === "system") ? nativeTheme.shouldUseDarkColors : (config.theme === "dark");
+nativeTheme.themeSource = darkmode?"dark":"light";
+console.log("Darkmode:", darkmode);
+
+app.on("ready", async launchInfo => {
   console.log("Got ready signal", "Displaying splash . . .");
   splash = new BrowserWindow({
     width: 500,
@@ -28,25 +32,20 @@ app.on("ready",async function (launchInfo) {
     skipTaskbar: true,
     transparent: false,
   });
-  await splash.loadFile(__dirname + "/resources/splash.html");
-  splash.on("closed", function () {
+  splash.on("closed", () => {
     splash = null;
   });
-  //splash.webContents.openDevTools();
+  await splash.loadFile(__dirname + "/resources/splash.html");
 });
 
-ipcMain.on("splash-ready", async function (event) {
+ipcMain.on("splash-ready", async event => {
   console.log("Splash is ready");
   splash.webContents.send("log", "Connecting to the database");
-  dbmgmt.start();
+  await dbmgmt.start();
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
-  const ipc = await import("./Ipchost");
-  ipchosts.setOnPingRecived(() => {
-    if (splash) splash.webContents.send("log", "Loading UI ");
-  });
-  ipchosts.initialise();
+  await ipchosts.initialise();
   splash.webContents.send("log", "Loading main window");
-  loadMain();
+  await loadMain();
 });
 
 async function loadMain() {
@@ -58,23 +57,16 @@ async function loadMain() {
         nodeIntegration: false,
         preload: join(__dirname, "./preload.js"),
         worldSafeExecuteJavaScript: true,
-        contextIsolation:false
+        contextIsolation: false
       },
       show: false,
-      backgroundColor: (config.theme === "light") ? "#ffffff" : "#000000"
+      darkTheme:darkmode,
+      backgroundColor: darkmode ? "#000000" : "#ffffff"
     });
+    mainWindow.setMenu(null);
     mainWindow.on("closed", function () {
       appQuit();
     });
-    //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
-    splash.webContents.send("log", "Executing vue.js framework");
-    if (config.isDevelopement) {
-      await mainWindow.loadURL("http://localhost:8000");
-      mainWindow.webContents.openDevTools();
-    } else {
-      await mainWindow.loadFile(join(__dirname, "./windows/index.html"));
-    }
-    mainWindow.setMenu(null);
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "UI is ready<br/>Waiting for idle signal");
       mainWindow.show();
@@ -82,33 +74,47 @@ async function loadMain() {
         splash?.close();
       }, 2000);
     });
+    splash.webContents.send("log", "Executing vue.js framework");
+    if (config.isDevelopement) {
+      await mainWindow.loadURL("http://localhost:8000");
+      mainWindow.webContents.openDevTools();
+    } else {
+      await mainWindow.loadFile(join(__dirname, "./windows/index.html"));
+    }
   } else {
     mainWindow.focus();
   }
 }
 
-ipchosts.setOnOpenForm(async function (type) {
+ipchosts.setOnPingRecived(() => {
+  if (splash) splash.webContents.send("log", "Loading UI ");
+});
+ipchosts.setOnOpenForm(async type => {
   if (!formsWindow) {
+    console.log("Recived message from renderer to open ", type);
     formsWindow = new BrowserWindow({
       height: 400,
       width: 550,
+      parent: mainWindow,
       webPreferences: {
         nodeIntegration: false,
         preload: join(__dirname, "./preload.js")
       },
-      resizable: true
+      resizable: true,
+      minimizable:false,
+      darkTheme:darkmode,
+      backgroundColor: darkmode ? "#000000" : "#ffffff"
     });
     formsWindow.setMenu(null);
-    console.log("Recived message from renderer to open ", type);
+    formsWindow.on("closed", function () {
+      formsWindow = null;
+    });
     if (config.isDevelopement) {
       await formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {
-      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), {query:{"form":type}});
+      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type } });
     }
-    formsWindow.on("closed", function () {
-      formsWindow = null;
-    });
   } else {
     console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
     formsWindow.focus();
@@ -124,6 +130,10 @@ let isAppQuitting = false;
 async function appQuit() {
   if (isAppQuitting) return;
   isAppQuitting = true;
+  try{
   await dbmgmt.closeDB();
+  }catch(e){
+    console.log(e);
+  }
   app.quit();
 }

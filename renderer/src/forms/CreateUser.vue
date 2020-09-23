@@ -159,6 +159,7 @@ export default Vue.extend({
     phoneChange() {
       if (!this.phone) return;
       let ph: string = this.phone;
+      this.phoneMessage = "";
       if (!(ph.startsWith("+") || ph.startsWith("0"))) {
         ph = "+91" + ph;
       }

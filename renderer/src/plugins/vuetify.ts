@@ -6,13 +6,14 @@ const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
 let darktheme: boolean = darkModeMedia.matches;
 
-let theme: Theme = window.config.theme;
+let theme: Configuration["theme"] = (window.config?.theme) || "system";
 
 if (theme !== "system") {
     darktheme = (theme === "dark");
 } else {
     darkModeMedia.addEventListener("change", function (ev) {
         vuetify.framework.theme.dark = ev.matches;
+        document.documentElement.setAttribute("data-theme", ev.matches?"dark":"light");
     });
 }
 
@@ -26,6 +27,7 @@ const vuetify = new Vuetify({
         iconfont: "mdi"
     }
 });
+document.documentElement.setAttribute("data-theme", darktheme?"dark":"light");
 window.vuetify = vuetify;
 
 window.openExternal = function (url) {

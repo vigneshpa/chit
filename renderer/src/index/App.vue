@@ -63,7 +63,7 @@ export default Vue.extend({
   },
   data: () => ({
     drawer: null,
-    page: "dashboard" as Page,
+    page: "dashboard" as ('dashboard'|'settings'),
     addList: [
       {
         title: "Add User",

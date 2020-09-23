@@ -1,3 +1,25 @@
+:root, [data-theme = "light"]{
+  --background-color:white;
+  --scroll-thumb-color:rgb(129, 129, 129);
+  --scroll-track-color:rgb(255, 255, 255);
+}
+[data-theme = "dark"]{
+  --background-color:black;
+  --scroll-thumb-color:rgb(128, 128, 128);
+  --scroll-track-color:rgb(0, 0, 0);
+}
+body{
+  background-color: var(--background-color);
+}
+html{
+  background-color: var(--background-color);
+}
+body::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb-color);
+}
+body::-webkit-scrollbar-track {
+  background-color: var(--scroll-track-color);
+}
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -7,32 +29,4 @@
 }
 ::-webkit-scrollbar-track{
   background-color: rgba(128, 128, 128, 0.2);
-}
-@media (prefers-color-scheme: light) {
-  body {
-    background-color: white;
-  }
-  html {
-    background-color: white;
-  }
-  body::-webkit-scrollbar-thumb {
-    background-color: rgb(129, 129, 129);
-  }
-  body::-webkit-scrollbar-track {
-    background-color: rgb(255, 255, 255);
-  }
-}
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: black;
-  }
-  html {
-    background-color: black;
-  }
-  body::-webkit-scrollbar-thumb {
-    background-color: rgb(128, 128, 128);
-  }
-  body::-webkit-scrollbar-track {
-    background-color: rgb(0, 0, 0);
-  }
 }

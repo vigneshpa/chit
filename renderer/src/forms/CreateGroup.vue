@@ -332,6 +332,7 @@ export default Vue.extend({
       let bch = this.batch;
       bch = bch.toUpperCase().replace(/[^A-Z]/g, "");
       bch = bch.charAt(bch.length - 1);
+      this.batchMessage = "";
       setTimeout(() => {
         this.batch = bch;
       }, 0);

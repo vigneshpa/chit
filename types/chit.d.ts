@@ -32,14 +32,5 @@ interface sqliteError extends Error{
 }
 interface Configuration{
     isDevelopement:boolean;
-    theme:Theme;
-}
-declare enum Theme{
-    system = "system",
-    dark = "dark",
-    light = "light"
-}
-declare enum Page{
-    dashboard = "dashboard",
-    settings = "settings"
+    theme:('system'|'dark'|'light');
 }

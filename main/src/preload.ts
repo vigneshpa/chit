@@ -5,8 +5,6 @@ interface preWindow extends Window {
 }
 const preWindow: preWindow = window;
 preWindow.ipcrenderer = require("electron").ipcRenderer;
-preWindow.config = global.config;
-console.log(global.config);
-console.log(global);
+preWindow.config = preWindow.ipcrenderer.sendSync("get-config");
 
 console.log("Loaded 'ipcrenderer' and 'config' into the window");

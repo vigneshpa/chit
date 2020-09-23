@@ -48,7 +48,7 @@ class Ipchosts {
 
         ipcMain.on("get-users-data", async event => {
             console.log("Recived message from renderer to get users data");
-            const result:userInfo[] = await this.dbmgmt.listUsers();
+            const result: userInfo[] = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);
         });
@@ -77,7 +77,7 @@ class Ipchosts {
             event.sender.send("phone-exists", err, result);
         });
 
-        ipcMain.on("batch-exists", async (event, batch: string, month:number, year:number) => {
+        ipcMain.on("batch-exists", async (event, batch: string, month: number, year: number) => {
             let err: sqliteError;
             let result: boolean;
             console.log("Checking existance of Batch  " + batch + " in month " + month);
@@ -91,17 +91,16 @@ class Ipchosts {
         });
 
 
-        ipcMain.on("show-message-box", (event, options:MessageBoxOptions)=>{
+        ipcMain.on("show-message-box", (event, options: MessageBoxOptions) => {
             dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), options);
         });
 
-        ipcMain.on("open-external", (event, url:string)=>{
+        ipcMain.on("open-external", (event, url: string) => {
             shell.openExternal(url);
         });
 
-        ipcMain.on("get-config", function(event){
-            event.returnValue =global.config;
-            return global.config;
+        ipcMain.on("get-config", async event => {
+            event.returnValue = global.config;
         });
     }
 }
