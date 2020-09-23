@@ -6,7 +6,7 @@ const darkModeMedia = window.matchMedia('(prefers-color-scheme: dark)');
 
 let darktheme: boolean = darkModeMedia.matches;
 
-let theme: Theme = (window.config?.theme) || "system";
+let theme: Theme = window.config.theme;
 
 if (theme !== "system") {
     darktheme = (theme === "dark");

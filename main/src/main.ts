@@ -14,7 +14,7 @@ let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 let formsWindow: BrowserWindow;
 
-app.on("ready", function (launchInfo) {
+app.on("ready",async function (launchInfo) {
   console.log("Got ready signal", "Displaying splash . . .");
   splash = new BrowserWindow({
     width: 500,
@@ -28,7 +28,7 @@ app.on("ready", function (launchInfo) {
     skipTaskbar: true,
     transparent: false,
   });
-  splash.loadFile(__dirname + "/resources/splash.html");
+  await splash.loadFile(__dirname + "/resources/splash.html");
   splash.on("closed", function () {
     splash = null;
   });
@@ -49,14 +49,16 @@ ipcMain.on("splash-ready", async function (event) {
   loadMain();
 });
 
-function loadMain() {
+async function loadMain() {
   if (!mainWindow) {
     mainWindow = new BrowserWindow({
       height: 720,
       width: 1080,
       webPreferences: {
         nodeIntegration: false,
-        preload: join(__dirname, "./preload.js")
+        preload: join(__dirname, "./preload.js"),
+        worldSafeExecuteJavaScript: true,
+        contextIsolation:false
       },
       show: false,
       backgroundColor: (config.theme === "light") ? "#ffffff" : "#000000"
@@ -67,10 +69,10 @@ function loadMain() {
     //mainWindow.loadFile(join(__dirname, "/windows/main/index.html"));
     splash.webContents.send("log", "Executing vue.js framework");
     if (config.isDevelopement) {
-      mainWindow.loadURL("http://localhost:8000");
+      await mainWindow.loadURL("http://localhost:8000");
       mainWindow.webContents.openDevTools();
     } else {
-      mainWindow.loadFile(join(__dirname, "./windows/index.html"));
+      await mainWindow.loadFile(join(__dirname, "./windows/index.html"));
     }
     mainWindow.setMenu(null);
     mainWindow.on("ready-to-show", function () {
@@ -85,7 +87,7 @@ function loadMain() {
   }
 }
 
-ipchosts.setOnOpenForm(function (type) {
+ipchosts.setOnOpenForm(async function (type) {
   if (!formsWindow) {
     formsWindow = new BrowserWindow({
       height: 400,
@@ -99,10 +101,10 @@ ipchosts.setOnOpenForm(function (type) {
     formsWindow.setMenu(null);
     console.log("Recived message from renderer to open ", type);
     if (config.isDevelopement) {
-      formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
+      await formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {
-      formsWindow.loadURL("file:///" + join(__dirname, "./windows/forms.html") + "?form=" + type);
+      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), {query:{"form":type}});
     }
     formsWindow.on("closed", function () {
       formsWindow = null;
@@ -120,7 +122,7 @@ ipchosts.setOnOpenForm(function (type) {
 });*/
 let isAppQuitting = false;
 async function appQuit() {
-  if(isAppQuitting) return;
+  if (isAppQuitting) return;
   isAppQuitting = true;
   await dbmgmt.closeDB();
   app.quit();

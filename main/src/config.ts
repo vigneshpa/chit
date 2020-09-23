@@ -12,12 +12,12 @@ console.log(
 let config: Configuration;
 const isDevelopement: boolean = process.env.NODE_ENV ? (process.env.NODE_ENV.toLowerCase() !== 'production' && process.env.NODE_ENV.toLowerCase() === 'developement') : false;
 if (isDevelopement) {
-    config = JSON.parse( (readFileSync(process.env.CONFIGURATION_FILE)).toString());
+    config = JSON.parse((readFileSync(process.env.CONFIGURATION_FILE)).toString());
 } else {
     let configPath = join(app.getPath("appData"), "./config.json");
     try {
         config = JSON.parse((readFileSync(configPath)).toString());
-    }catch(err){
+    } catch (err) {
         copyFileSync('./app/default.config.json', configPath);
         config = JSON.parse((readFileSync(configPath)).toString());
     }

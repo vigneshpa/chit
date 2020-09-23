@@ -98,6 +98,11 @@ class Ipchosts {
         ipcMain.on("open-external", (event, url:string)=>{
             shell.openExternal(url);
         });
+
+        ipcMain.on("get-config", function(event){
+            event.returnValue =global.config;
+            return global.config;
+        });
     }
 }
 
