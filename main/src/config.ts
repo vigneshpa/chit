@@ -1,10 +1,30 @@
 import * as dotenv from "dotenv";
-import { readFileSync } from "fs";
+import { app } from "electron";
+import { copyFileSync, readFileSync } from "fs";
+import { join } from "path";
 dotenv.config();
-console.log(process.env);
+console.log(
+    "printing environment variables //-----------------------------------------------------------------------//",
+    process.env,
+    "end  of  environment variables //-----------------------------------------------------------------------//"
+);
 
-let config:Configuration = JSON.parse(readFileSync(process.env.CONFIGURATION_FILE).toString());
-config.isDevelopement = process.env.NODE_ENV?(process.env.NODE_ENV.toLowerCase() !== 'production' && process.env.NODE_ENV.toLowerCase() === 'developement') : config.isDevelopement;
+let config: Configuration;
+const isDevelopement: boolean = process.env.NODE_ENV ? (process.env.NODE_ENV.toLowerCase() !== 'production' && process.env.NODE_ENV.toLowerCase() === 'developement') : false;
+if (isDevelopement) {
+    config = JSON.parse( (readFileSync(process.env.CONFIGURATION_FILE)).toString());
+} else {
+    let configPath = join(app.getPath("appData"), "./config.json");
+    try {
+        config = JSON.parse((readFileSync(configPath)).toString());
+    }catch(err){
+        copyFileSync('./app/default.config.json', configPath);
+        config = JSON.parse((readFileSync(configPath)).toString());
+    }
+}
+config.isDevelopement = isDevelopement;
 global.config = config;
+
+console.log(global.config);
 
 export default config;

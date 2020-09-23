@@ -6,7 +6,6 @@
 import CreateUser from "./CreateUser.vue";
 import CreateGroup from "./CreateGroup.vue";
 import Vue from "vue";
-import "@/assets/common.scss";
 
 const url = new URL(window.location.href);
 const form = url.searchParams.get("form");

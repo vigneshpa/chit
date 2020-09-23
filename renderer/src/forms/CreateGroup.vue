@@ -120,7 +120,7 @@
                       <v-list-item
                         v-for="member in members"
                         :key="member.info.UID+'memberDetail'"
-                        @click="()=>{}"
+                        @click="empty"
                       >
                         <v-list-item-content
                           :title="member.info.phone + '\n' + member.info.address"
@@ -180,7 +180,7 @@
                         <v-list-item-title>{{members.length}} Members</v-list-item-title>
                       </v-list-item-content>
                     </template>
-                    <v-list-item v-for="member in members" :key="member.info.UID+'memberFinal'">
+                    <v-list-item v-for="member in members" :key="member.info.UID+'memberFinal'" @click="empty">
                       <v-list-item-content
                         v-text="member.info.name"
                         :title="member.info.phone+'\n'+member.info.address"
@@ -301,6 +301,7 @@ export default Vue.extend({
     },
   },
   methods: {
+    empty(){},
     removeMember(member: members) {
       this.users.push(member.info);
       this.members.splice(this.members.indexOf(member), 1);

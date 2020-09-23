@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import "@/assets/common.scss";
+
 export default Vue.extend({
   props: {
     source: String,

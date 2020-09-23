@@ -118,7 +118,10 @@ ipchosts.setOnOpenForm(function (type) {
     appQuit();
   }
 });*/
-
+let isAppQuitting = false;
 async function appQuit() {
+  if(isAppQuitting) return;
+  isAppQuitting = true;
+  await dbmgmt.closeDB();
   app.quit();
 }

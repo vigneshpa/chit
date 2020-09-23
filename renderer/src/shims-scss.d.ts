@@ -1,4 +1,4 @@
 declare module '*.scss'{
-    import scss from "sass";
-    export default scss;
+    let style:any;
+    export default style; 
 }
