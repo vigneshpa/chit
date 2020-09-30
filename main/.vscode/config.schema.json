@@ -10,6 +10,20 @@
             "type":"string",
             "enum": ["dark", "light", "system"],
             "description":"Theme of the app"
+        },
+        "databaseFile":{
+            "type":"object",
+            "description": "This tells the application to where and how to find the database file.",
+            "properties": {
+                "location":{
+                    "type":"string",
+                    "description": "Location of the custom defined database file"
+                },
+                "isCustom":{
+                    "type":"boolean",
+                    "description": "Determines whether to use the custom defined database one or the default one."
+                }
+            }
         }
     }
 }

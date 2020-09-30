@@ -2,20 +2,26 @@ console.log("Loading configurations and environment variables . . .");
 import config from "./config";
 
 console.log("Starting Electron . . . ");
-import { BrowserWindow, app, ipcMain, nativeTheme } from "electron";
+import { BrowserWindow, app, ipcMain, nativeTheme, dialog } from "electron";
 import { join } from "path";
 import Dbmgmt from "./Dbmgmt";
 import Ipchosts from "./Ipchost";
-const dbFile: string = join(app.getPath("userData"), "/main.db");
+const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
 const ipchosts: Ipchosts = new Ipchosts(dbmgmt);
 
 let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 let formsWindow: BrowserWindow;
+let darkmode: boolean;
 
-const darkmode = (config.theme === "system") ? nativeTheme.shouldUseDarkColors : (config.theme === "dark");
-nativeTheme.themeSource = darkmode?"dark":"light";
+if (config.theme === "system") {
+  darkmode = nativeTheme.shouldUseDarkColors;
+  nativeTheme.themeSource = "system";
+} else {
+  darkmode = (config.theme === "dark");
+  nativeTheme.themeSource = config.theme;
+}
 console.log("Darkmode:", darkmode);
 
 app.on("ready", async launchInfo => {
@@ -41,7 +47,26 @@ app.on("ready", async launchInfo => {
 ipcMain.on("splash-ready", async event => {
   console.log("Splash is ready");
   splash.webContents.send("log", "Connecting to the database");
-  await dbmgmt.start();
+  if (!(await dbmgmt.connect())) {
+    let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom?{
+      message:`Looks like you have configured custom database file\nChit cannot find a database file at\n${config.databaseFile.location}\nAny folder or directory present in this location will be erased!\nDo you wish to create a new one ?`,
+      type:"warning",
+      buttons:["Yes", "No"],
+      cancelId:1
+    }:{
+      message:
+      `Looks like you are running Chit for first time\nData will be stored at\n${dbFile}`,
+      type:"info",
+      buttons:["OK"],
+      cancelId:0
+    });
+    if(res.response === 0){
+      await dbmgmt.createDB();
+    }else{
+      await appQuit();
+      return;
+    }
+  }
   splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
   await ipchosts.initialise();
   splash.webContents.send("log", "Loading main window");
@@ -60,7 +85,7 @@ async function loadMain() {
         contextIsolation: false
       },
       show: false,
-      darkTheme:darkmode,
+      darkTheme: darkmode,
       backgroundColor: darkmode ? "#000000" : "#ffffff"
     });
     mainWindow.setMenu(null);
@@ -95,14 +120,13 @@ ipchosts.setOnOpenForm(async type => {
     formsWindow = new BrowserWindow({
       height: 400,
       width: 550,
-      parent: mainWindow,
       webPreferences: {
         nodeIntegration: false,
         preload: join(__dirname, "./preload.js")
       },
       resizable: true,
-      minimizable:false,
-      darkTheme:darkmode,
+      minimizable: false,
+      darkTheme: darkmode,
       backgroundColor: darkmode ? "#000000" : "#ffffff"
     });
     formsWindow.setMenu(null);
@@ -130,10 +154,11 @@ let isAppQuitting = false;
 async function appQuit() {
   if (isAppQuitting) return;
   isAppQuitting = true;
-  try{
-  await dbmgmt.closeDB();
-  }catch(e){
+  try {
+    await dbmgmt.closeDB();
+    app.quit();
+  } catch (e) {
+    app.quit();
     console.log(e);
   }
-  app.quit();
 }

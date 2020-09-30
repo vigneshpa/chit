@@ -45,21 +45,32 @@ class Database {
     }
 
     close(fn?: (db: this) => Promise<any>): Promise<this> {
-        if (!this.db) {
-            return Promise.reject<this>(new Error('Database.close: database is not open'))
-        }
-        if (fn) {
-            return fn(this).then(result => {
-                return this.close().then(_ => {
-                    return result
-                })
-            }).catch((err: Error) => {
-                return this.close().then(_ => {
-                    return Promise.reject(err)
-                })
-            })
-        }
-        return new Promise((resolve: (value: this) => void, reject: (err: Error) => void) => {
+        //if (!this.db) {
+        //    return Promise.reject<this>(new Error('Database.close: database is not open'))
+        //}
+        // if (typeof fn ==="function") {
+        //     return fn(this).then(result => {
+        //         return this.close().then(_ => {
+        //             return result
+        //         })
+        //     }).catch((err: Error) => {
+        //         return this.close().then(_ => {
+        //             return Promise.reject(err)
+        //         })
+        //     })
+        // }
+        return new Promise(async (resolve: (value: this) => void, reject: (err: Error) => void) => {
+            if (!this.db) {
+                reject(new Error('Database.close: database is not open'));
+            }
+            if (fn && typeof fn === "function") {
+                try {
+                    await fn(this);
+                } catch (err) {
+                    reject(err);
+                    return;
+                }
+            }
             this.db.close(err => {
                 if (err) {
                     reject(err)
@@ -158,18 +169,29 @@ class Database {
         })
     }
 
-    transaction(fn: (db: this) => Promise<any[]>) {
-        return this.exec('BEGIN TRANSACTION').then(_ => {
-            return fn(this).then(result => {
-                return this.exec('END TRANSACTION').then(_ => {
-                    return result
-                })
-            }).catch(err => {
-                return this.exec('ROLLBACK TRANSACTION').then(_ => {
-                    return Promise.reject(err)
-                })
-            })
-        })
+    transaction(fn: (db: this) => Promise<any[] | void>) {
+        return new Promise(async (resolve: (value: any) => void, reject: (reason: any) => void) => {
+            await this.exec('BEGIN TRANSACTION');
+            try {
+                const result = await fn(this);
+                await this.exec('END TRANSACTION');
+                resolve(result);
+            } catch (err) {
+                this.exec('ROLLBACK TRANSACTION');
+                reject(err);
+            }
+        });
+        // return this.exec('BEGIN TRANSACTION').then(_ => {
+        //     return fn(this).then(result => {
+        //         return this.exec('END TRANSACTION').then(_ => {
+        //             return result
+        //         })
+        //     }).catch(err => {
+        //         return this.exec('ROLLBACK TRANSACTION').then(_ => {
+        //             return Promise.reject(err)
+        //         })
+        //     })
+        // })
     }
 
     prepare(sql: string, ...args: any[]) {

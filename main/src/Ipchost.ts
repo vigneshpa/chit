@@ -25,7 +25,7 @@ class Ipchosts {
         ipcMain.on("create-user", async (event, data: createUserFields) => {
             let err: sqliteError;
             let response: { result: any; success?: boolean; };
-            console.log("\nRecived Message From Renderer to create user\n", event, data);
+            console.log("\nRecived Message From Renderer to create user\n", event.sender.id, data);
             try {
                 response = await this.dbmgmt.createUser(data.name, data.phone, data.address);
             } catch (err1) {
@@ -37,7 +37,7 @@ class Ipchosts {
         ipcMain.on("create-group", async (event, data: createGroupFields) => {
             let err: sqliteError;
             let response: { result: any; success?: boolean; };
-            console.log("Recived message from Renderer to create group", event, data);
+            console.log("Recived message from Renderer to create group", event.sender.id, data);
             try {
                 response = await this.dbmgmt.createGroup(data.year, data.month, data.batch, data.members);
             } catch (err1) {
@@ -67,7 +67,7 @@ class Ipchosts {
         ipcMain.on("phone-exists", async (event, phone: string) => {
             let err: sqliteError;
             let result: boolean;
-            console.log("Checking existance phone number " + phone);
+            console.log("Checking existance of phone number " + phone);
             try {
                 result = await this.dbmgmt.checkPhone(phone);
             } catch (e) {

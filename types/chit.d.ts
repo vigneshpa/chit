@@ -33,4 +33,8 @@ interface sqliteError extends Error{
 interface Configuration{
     isDevelopement:boolean;
     theme:('system'|'dark'|'light');
+    databaseFile:{
+        isCustom?:boolean;
+        location?:string;
+    }
 }

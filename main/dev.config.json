@@ -1,4 +1,8 @@
 {
     "isDevelopement": true,
-    "theme": "system"
+    "theme": "system",
+    "databaseFile": {
+        "isCustom": true,
+        "location": "E:/main.db"
+    }
 }

@@ -16,10 +16,10 @@ if (isDevelopement) {
 } else {
     let configPath = join(app.getPath("appData"), "./config.json");
     try {
-        config = JSON.parse((readFileSync(configPath)).toString());
+        config = require(configPath);//JSON.parse((readFileSync(configPath)).toString());
     } catch (err) {
         copyFileSync('./app/default.config.json', configPath);
-        config = JSON.parse((readFileSync(configPath)).toString());
+        config = require(configPath);//JSON.parse((readFileSync(configPath)).toString());
     }
 }
 config.isDevelopement = isDevelopement;

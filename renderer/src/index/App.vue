@@ -2,20 +2,32 @@
   <v-app id="1_app">
     <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
-        <v-list-item v-for="item in drawerList" v-bind:key="item.key" @click="item.onClick">
+        <v-list-item
+          v-for="item in drawerList"
+          v-bind:key="item.key"
+          @click="page = item.name"
+          active-class="drawerActive"
+          :class="{ drawerActive: page === item.name }"
+        >
           <v-list-item-action v-if="item.icon">
-            <v-icon>{{item.icon}}</v-icon>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>{{item.title}}</v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-left color="blue" dark v-bind:loading="this.$store.state.appLoading">
+    <v-app-bar
+      app
+      clipped-left
+      color="blue"
+      dark
+      v-bind:loading="this.$store.state.appLoading"
+    >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title :v-text="pageTitle"></v-toolbar-title>
+      <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -25,12 +37,16 @@
         </template>
 
         <v-list>
-          <v-list-item v-for="item in addList" v-bind:key="item.key" @click="item.onClick">
+          <v-list-item
+            v-for="item in addList"
+            v-bind:key="item.key"
+            @click="item.onClick"
+          >
             <v-list-item-action v-if="item.icon">
-              <v-icon>{{item.icon}}</v-icon>
+              <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>{{item.title}}</v-list-item-title>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -38,14 +54,17 @@
     </v-app-bar>
 
     <v-main>
-      <v-container class="fill-height" fluid></v-container>
+        <v-fade-transition>
+          <dashboard v-if="this.page === 'dashboard'" tra/>
+          <settings v-else-if="this.page === 'settings'" />
+        </v-fade-transition>
     </v-main>
 
     <v-footer app dense>
       <v-spacer></v-spacer>
       <span>
         <a @click="openGithub">
-          <v-icon size="20">mdi-github</v-icon>vigneshpa
+          <v-icon size="20">mdi-github</v-icon>vigneshpa/chit
         </a>
         &copy; {{ new Date().getFullYear() }} GPL3
       </span>
@@ -56,6 +75,8 @@
 
 <script lang="ts">
 import Vue from "vue";
+import dashboard from "./pages/dashboard.vue";
+import settings from "./pages/settings.vue";
 
 export default Vue.extend({
   props: {
@@ -63,7 +84,7 @@ export default Vue.extend({
   },
   data: () => ({
     drawer: null,
-    page: "dashboard" as ('dashboard'|'settings'),
+    page: "dashboard" as "dashboard" | "settings",
     addList: [
       {
         title: "Add User",
@@ -85,42 +106,43 @@ export default Vue.extend({
     drawerList: [
       {
         title: "Dashboard",
+        name: "dashboard",
         key: 1,
-        onClick: () => {},
         icon: "mdi-view-dashboard",
       },
-      { title: "Settings", key: 2, onClick: () => {}, icon: "mdi-cog" },
+      {
+        title: "Settings",
+        name: "settings",
+        key: 2,
+        icon: "mdi-cog",
+      },
     ],
   }),
-  computed:{
-    pageTitle():string{
-      let title: string;
-      switch (this.page) {
-        case "dashboard":
-          title = "Dashboard";
-          break;
-        case "settings":
-          title = "Settings";
-          break;
-        default:
-          title = "Chit Management Syatem";
+  computed: {
+    pageTitle(): string {
+      for (const element of this.drawerList) {
+        if (element.name === this.page) {
+          return element.title;
+        }
       }
-      return title;
+      return "Chit Management System";
     },
   },
   methods: {
     openGithub(ev: Event) {
       ev.preventDefault();
-      window.openExternal("https://github.com/vigneshpa");
+      window.openExternal("https://github.com/vigneshpa/chit");
     },
   },
   created() {},
+  components: {
+    dashboard,
+    settings,
+  },
 });
 </script>
 <style>
 html {
-  overflow-x: hidden;
-  overflow-y: hidden;
-  overflow: hidden;
+  overflow: auto;
 }
 </style>
