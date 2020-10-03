@@ -13,6 +13,8 @@ declare global {
         resizeWindowToCard:()=>Void;
     }
     interface State {
+        darkmode: any;
         appLoading: boolean;
+        config:Configuration;
     }
 }

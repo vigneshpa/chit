@@ -9,19 +9,21 @@ import Ipchosts from "./Ipchost";
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
 const ipchosts: Ipchosts = new Ipchosts(dbmgmt);
+if(!config.databaseFile)config.databaseFile = {};
+config.databaseFile.location = dbFile;
 
 let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
 let formsWindow: BrowserWindow;
 let darkmode: boolean;
 
-if (config.theme === "system") {
-  darkmode = nativeTheme.shouldUseDarkColors;
-  nativeTheme.themeSource = "system";
-} else {
-  darkmode = (config.theme === "dark");
-  nativeTheme.themeSource = config.theme;
-}
+// if (config.theme === "system") {
+//   darkmode = nativeTheme.shouldUseDarkColors;
+//   nativeTheme.themeSource = "system";
+// } else {
+//   darkmode = (config.theme === "dark");
+//   nativeTheme.themeSource = config.theme;
+// }
 console.log("Darkmode:", darkmode);
 
 app.on("ready", async launchInfo => {
@@ -49,13 +51,13 @@ ipcMain.on("splash-ready", async event => {
   splash.webContents.send("log", "Connecting to the database");
   if (!(await dbmgmt.connect())) {
     let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom?{
-      message:`Looks like you have configured custom database file\nChit cannot find a database file at\n${config.databaseFile.location}\nAny folder or directory present in this location will be erased!\nDo you wish to create a new one ?`,
-      type:"warning",
+      message:`Looks like you have configured custom database file.\nChit cannot find a database file at\n${config.databaseFile.location}\nDo you wish to create a new one ?`,
+      type:"question",
       buttons:["Yes", "No"],
       cancelId:1
     }:{
       message:
-      `Looks like you are running Chit for first time\nData will be stored at\n${dbFile}`,
+      `Looks like you are running Chit for first time.\nData will be stored at\n${dbFile}`,
       type:"info",
       buttons:["OK"],
       cancelId:0
@@ -101,7 +103,7 @@ async function loadMain() {
     });
     splash.webContents.send("log", "Executing vue.js framework");
     if (config.isDevelopement) {
-      await mainWindow.loadURL("http://localhost:8000");
+      await mainWindow.loadURL("http://localhost:8080");
       mainWindow.webContents.openDevTools();
     } else {
       await mainWindow.loadFile(join(__dirname, "./windows/index.html"));
@@ -134,7 +136,7 @@ ipchosts.setOnOpenForm(async type => {
       formsWindow = null;
     });
     if (config.isDevelopement) {
-      await formsWindow.loadURL("http://localhost:8000/forms.html?form=" + type);
+      await formsWindow.loadURL("http://localhost:8080/forms.html?form=" + type);
       formsWindow.webContents.openDevTools();
     } else {
       await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type } });

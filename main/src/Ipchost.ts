@@ -1,4 +1,5 @@
 import { BrowserWindow, dialog, ipcMain, MessageBoxOptions, shell } from "electron";
+import { fstat, writeFile, writeFileSync, writeSync } from "fs";
 import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
@@ -99,8 +100,21 @@ class Ipchosts {
             shell.openExternal(url);
         });
 
-        ipcMain.on("get-config", async event => {
+        ipcMain.on("get-config", event => {
             event.returnValue = global.config;
+        });
+
+        ipcMain.on("update-config", (event, newConfig:Configuration)=>{
+            console.log("Updating Configuration file ...");
+            writeFile(newConfig.configPath, JSON.stringify(newConfig), (err)=>{
+
+                if(err){
+                    event.sender.send("update-config", false);
+                    throw err;
+                };
+                global.config = newConfig;
+                event.sender.send("update-config", true);
+            });
         });
     }
 }

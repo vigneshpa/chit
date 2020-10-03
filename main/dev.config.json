@@ -1,8 +1,1 @@
-{
-    "isDevelopement": true,
-    "theme": "system",
-    "databaseFile": {
-        "isCustom": true,
-        "location": "E:/main.db"
-    }
-}
+{"isDevelopement":true,"theme":"light","configPath":"./dev.config.json","databaseFile":{"location":"C:\\Users\\vigne\\AppData\\Roaming\\chit\\main.db"}}

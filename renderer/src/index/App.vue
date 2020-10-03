@@ -5,7 +5,7 @@
         <v-list-item
           v-for="item in drawerList"
           v-bind:key="item.key"
-          @click="page = item.name"
+          @click="page = item.name;drawer = null"
           active-class="drawerActive"
           :class="{ drawerActive: page === item.name }"
         >
@@ -54,13 +54,14 @@
     </v-app-bar>
 
     <v-main>
-        <v-fade-transition>
-          <dashboard v-if="this.page === 'dashboard'" tra/>
-          <settings v-else-if="this.page === 'settings'" />
-        </v-fade-transition>
+      <dashboard v-if="this.page === 'dashboard'" tra />
+      <settings v-else-if="this.page === 'settings'" />
     </v-main>
 
     <v-footer app dense>
+      <span>
+        {{ $store.state.config.databaseFile.location }}
+      </span>
       <v-spacer></v-spacer>
       <span>
         <a @click="openGithub">
@@ -68,7 +69,6 @@
         </a>
         &copy; {{ new Date().getFullYear() }} GPL3
       </span>
-      <v-spacer></v-spacer>
     </v-footer>
   </v-app>
 </template>
@@ -83,7 +83,7 @@ export default Vue.extend({
     source: String,
   },
   data: () => ({
-    drawer: null,
+    drawer: null as boolean | null,
     page: "dashboard" as "dashboard" | "settings",
     addList: [
       {
@@ -116,7 +116,7 @@ export default Vue.extend({
         key: 2,
         icon: "mdi-cog",
       },
-    ],
+    ]
   }),
   computed: {
     pageTitle(): string {
@@ -132,7 +132,7 @@ export default Vue.extend({
     openGithub(ev: Event) {
       ev.preventDefault();
       window.openExternal("https://github.com/vigneshpa/chit");
-    },
+    }
   },
   created() {},
   components: {

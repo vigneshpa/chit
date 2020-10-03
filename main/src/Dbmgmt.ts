@@ -109,7 +109,7 @@ class Dbmgmt {
   }
   async closeDB() {
     console.log("Closing database connections");
-    await this.db.close();
+    if(this.db.db)await this.db.close();
   }
   async checkPhone(phone: string) {
     let result = await this.db.get("SELECT `phone` FROM `users` WHERE `phone`=?", phone);

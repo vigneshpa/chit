@@ -10,19 +10,21 @@ console.log(
 );
 
 let config: Configuration;
+let configPath: string;
 const isDevelopement: boolean = process.env.NODE_ENV ? (process.env.NODE_ENV.toLowerCase() !== 'production' && process.env.NODE_ENV.toLowerCase() === 'developement') : false;
 if (isDevelopement) {
-    config = JSON.parse((readFileSync(process.env.CONFIGURATION_FILE)).toString());
+    configPath = process.env.CONFIGURATION_FILE;
 } else {
-    let configPath = join(app.getPath("appData"), "./config.json");
-    try {
-        config = require(configPath);//JSON.parse((readFileSync(configPath)).toString());
-    } catch (err) {
-        copyFileSync('./app/default.config.json', configPath);
-        config = require(configPath);//JSON.parse((readFileSync(configPath)).toString());
-    }
+    configPath = join(app.getPath("appData"), "./config.json");
+}
+try {
+    config = JSON.parse((readFileSync(configPath)).toString());
+} catch (err) {
+    copyFileSync('./app/default.config.json', configPath);
+    config = JSON.parse((readFileSync(configPath)).toString());
 }
 config.isDevelopement = isDevelopement;
+config.configPath = configPath;
 global.config = config;
 
 console.log(global.config);

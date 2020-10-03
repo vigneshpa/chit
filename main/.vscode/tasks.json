@@ -19,6 +19,10 @@
 			"problemMatcher": [],
 			"label": "npm: test",
 			"detail": "electron ."
+		},{
+			"type": "typescript",
+			"isBackground": false,
+			"tsconfig": "tsconfig.json"
 		}
 	]
 }

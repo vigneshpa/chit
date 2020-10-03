@@ -113,7 +113,7 @@
                     </v-btn>
                   </v-card-actions>
                 </v-card>
-                <div style="height:300px;overflow:auto">
+                <div style="height:304px;overflow:auto">
                   <v-subheader>Members of the new group:</v-subheader>
                   <v-list>
                     <v-fab-transition group>
