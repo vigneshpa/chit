@@ -104,11 +104,10 @@ class Ipchosts {
             event.returnValue = global.config;
         });
 
-        ipcMain.on("update-config", (event, newConfig:Configuration)=>{
+        ipcMain.on("update-config", (event, newConfig: Configuration) => {
             console.log("Updating Configuration file ...");
-            writeFile(newConfig.configPath, JSON.stringify(newConfig), (err)=>{
-
-                if(err){
+            writeFile(newConfig.configPath, JSON.stringify(newConfig), (err) => {
+                if (err) {
                     event.sender.send("update-config", false);
                     throw err;
                 };

@@ -1,22 +1,47 @@
 <template>
   <v-container fluid id="settings">
-    <v-card>
-    <v-card-title>Dark mode</v-card-title>
-    <v-card-text>
-    <v-switch v-model="darkModeFollowSystem" label="Follow system"></v-switch>
-    <v-expand-transition>
-    <v-radio-group
-      v-model="customColorScheme"
-      :disabled="darkModeFollowSystem"
-      v-if="!darkModeFollowSystem"
-      label="Choose color scheme"
-    >
-      <v-radio label="light" value="light"></v-radio>
-      <v-radio label="dark" value="dark"></v-radio>
-    </v-radio-group>
-    </v-expand-transition>
-    </v-card-text>
-    </v-card>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>Dark mode</v-card-title>
+          <v-card-text>
+            <v-switch
+              v-model="darkModeFollowSystem"
+              label="Follow system"
+            ></v-switch>
+            <v-expand-transition>
+              <v-radio-group
+                v-model="customColorScheme"
+                :disabled="darkModeFollowSystem"
+                v-if="!darkModeFollowSystem"
+                label="Choose color scheme"
+              >
+                <v-radio label="light" value="light"></v-radio>
+                <v-radio label="dark" value="dark"></v-radio>
+              </v-radio-group>
+            </v-expand-transition>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6">
+        <v-card>
+          <v-card-title>Database file</v-card-title>
+          <v-card-text>
+          <v-switch
+            label="Use app's default location to store data"
+            v-model="dbFileUseAppLocation"
+          ></v-switch>
+          <v-expand-transition>
+            <v-file-input
+              label="Choose a location"
+              v-model="dbFile"
+            ></v-file-input>
+          </v-expand-transition>
+          </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col cols="12" md="6"><v-card><v-card-title>Card Title</v-card-title></v-card></v-col>
+    </v-row>
   </v-container>
 </template>
 <script lang="ts">
@@ -44,7 +69,8 @@ export default Vue.extend({
           : "light";
     },
     customColorScheme() {
-      if(this.customColorScheme)window.store.commit("changeColorScheme", this.customColorScheme);
+      if (this.customColorScheme)
+        window.store.commit("changeColorScheme", this.customColorScheme);
     },
   },
   methods: {},
