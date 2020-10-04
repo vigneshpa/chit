@@ -1,5 +1,6 @@
-import { BrowserWindow, dialog, ipcMain, MessageBoxOptions, shell } from "electron";
-import { fstat, writeFile, writeFileSync, writeSync } from "fs";
+import { app, BrowserWindow, dialog, ipcMain, MessageBoxOptions, MessageBoxReturnValue, OpenDialogOptions, OpenDialogReturnValue, shell } from "electron";
+import { writeFile } from "fs";
+import { join } from "path";
 import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
@@ -96,6 +97,19 @@ class Ipchosts {
             dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), options);
         });
 
+        ipcMain.on("show-dialog", async (event, type: ("open" | "messagebox"), options: (OpenDialogOptions | MessageBoxOptions)) => {
+            let ret:(OpenDialogReturnValue|MessageBoxReturnValue);
+            switch (type) {
+                case "open":
+                    ret = await dialog.showOpenDialog(BrowserWindow.fromWebContents(event.sender), <OpenDialogOptions>options);
+                    break;
+                case "messagebox":
+                    ret = await dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), <MessageBoxOptions>options);
+                    break;
+            };
+            event.sender.send("show-dialog", ret);
+        });
+
         ipcMain.on("open-external", (event, url: string) => {
             shell.openExternal(url);
         });
@@ -111,6 +125,17 @@ class Ipchosts {
                     event.sender.send("update-config", false);
                     throw err;
                 };
+                if(!newConfig.databaseFile.isCustom)newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
+                //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
+                if(global.config.databaseFile.location !== newConfig.databaseFile.location ){
+                    dialog.showMessageBox({
+                        message:"Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+                        title:"Database file changed"
+                    });
+                    setTimeout(function(){
+                        app.quit();
+                    }, 10000);
+                }
                 global.config = newConfig;
                 event.sender.send("update-config", true);
             });

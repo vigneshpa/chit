@@ -9,7 +9,7 @@ import Ipchosts from "./Ipchost";
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
 const ipchosts: Ipchosts = new Ipchosts(dbmgmt);
-if(!config.databaseFile)config.databaseFile = {};
+if (!config.databaseFile) config.databaseFile = {};
 config.databaseFile.location = dbFile;
 
 let splash: BrowserWindow;
@@ -17,13 +17,13 @@ let mainWindow: BrowserWindow;
 let formsWindow: BrowserWindow;
 let darkmode: boolean;
 
-// if (config.theme === "system") {
-//   darkmode = nativeTheme.shouldUseDarkColors;
-//   nativeTheme.themeSource = "system";
-// } else {
-//   darkmode = (config.theme === "dark");
-//   nativeTheme.themeSource = config.theme;
-// }
+if (config.theme === "system") {
+  darkmode = nativeTheme.shouldUseDarkColors;
+  //nativeTheme.themeSource = "system";
+} else {
+  darkmode = (config.theme === "dark");
+  //nativeTheme.themeSource = config.theme;
+}
 console.log("Darkmode:", darkmode);
 
 app.on("ready", async launchInfo => {
@@ -50,22 +50,22 @@ ipcMain.on("splash-ready", async event => {
   console.log("Splash is ready");
   splash.webContents.send("log", "Connecting to the database");
   if (!(await dbmgmt.connect())) {
-    let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom?{
-      message:`Looks like you have configured custom database file.\nChit cannot find a database file at\n${config.databaseFile.location}\nDo you wish to create a new one ?`,
-      type:"question",
-      buttons:["Yes", "No"],
-      cancelId:1
-    }:{
-      message:
-      `Looks like you are running Chit for first time.\nData will be stored at\n${dbFile}`,
-      type:"info",
-      buttons:["OK"],
-      cancelId:0
-    });
-    if(res.response === 0){
+    let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom ? {
+      message: `Looks like you have configured custom database file.\nChit cannot find a database file at\n${config.databaseFile.location}\nDo you wish to create a new one ?`,
+      type: "question",
+      buttons: ["Yes", "No"],
+      cancelId: 1
+    } : {
+        message:
+          `Looks like you are running Chit for first time.\nData will be stored at\n${dbFile}`,
+        type: "info",
+        buttons: ["OK"],
+        cancelId: 0
+      });
+    if (res.response === 0) {
       await dbmgmt.createDB();
-    }else{
-      await appQuit();
+    } else {
+      app.quit();
       return;
     }
   }
@@ -92,7 +92,7 @@ async function loadMain() {
     });
     mainWindow.setMenu(null);
     mainWindow.on("closed", function () {
-      appQuit();
+      app.quit();
     });
     mainWindow.on("ready-to-show", function () {
       splash.webContents.send("log", "UI is ready<br/>Waiting for idle signal");
@@ -152,15 +152,22 @@ ipchosts.setOnOpenForm(async type => {
     appQuit();
   }
 });*/
-let isAppQuitting = false;
-async function appQuit() {
+var isAppQuitting = false;
+var doneQuitting = false;
+app.on("before-quit", async function (ev) {
+  if (!doneQuitting) {
+    ev.preventDefault();
+  } else {
+    return;
+  }
   if (isAppQuitting) return;
   isAppQuitting = true;
+  console.log("Closing database connections . . .");
   try {
     await dbmgmt.closeDB();
-    app.quit();
   } catch (e) {
-    app.quit();
     console.log(e);
   }
-}
+  doneQuitting = true;
+  app.quit();
+});

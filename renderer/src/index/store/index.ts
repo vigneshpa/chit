@@ -21,6 +21,9 @@ const store = new Vuex.Store({
       let isDark : boolean = (scheme === "system")?window.matchMedia('(prefers-color-scheme: dark)').matches:(scheme === "dark");
       window.vuetify.framework.theme.dark = isDark;
       document.documentElement.setAttribute("data-theme", isDark?"dark":"light");
+    },
+    async updateConfig(state){
+      await updateConfig();
     }
   },
   actions: {
@@ -40,10 +43,10 @@ function updateConfig(){
     window.ipcrenderer.send("update-config", window.store.state.config);
   });
 }
-window.ipcrenderer.send("ping");
-console.log("Sent ping to the renderer.");
 window.ipcrenderer.on("pong", function (event) {
   console.log("Got pong from the renderer");
 });
+window.ipcrenderer.send("ping");
+console.log("Sent ping to the renderer.");
 window.store = store;
 export default store;

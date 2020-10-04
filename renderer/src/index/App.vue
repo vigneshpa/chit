@@ -5,7 +5,10 @@
         <v-list-item
           v-for="item in drawerList"
           v-bind:key="item.key"
-          @click="page = item.name;drawer = null"
+          @click="
+            page = item.name;
+            drawer = null;
+          "
           active-class="drawerActive"
           :class="{ drawerActive: page === item.name }"
         >
@@ -54,8 +57,9 @@
     </v-app-bar>
 
     <v-main>
-      <dashboard v-if="this.page === 'dashboard'" tra />
+      <dashboard v-if="this.page === 'dashboard'" />
       <settings v-else-if="this.page === 'settings'" />
+      <users v-else-if="this.page === 'users'" />
     </v-main>
 
     <v-footer app dense>
@@ -77,6 +81,7 @@
 import Vue from "vue";
 import dashboard from "./pages/dashboard.vue";
 import settings from "./pages/settings.vue";
+import users from "./pages/users.vue";
 
 export default Vue.extend({
   props: {
@@ -111,12 +116,18 @@ export default Vue.extend({
         icon: "mdi-view-dashboard",
       },
       {
+        title: "Users",
+        name: "users",
+        key: 3,
+        icon: "mdi-account-multiple",
+      },
+      {
         title: "Settings",
         name: "settings",
         key: 2,
         icon: "mdi-cog",
       },
-    ]
+    ],
   }),
   computed: {
     pageTitle(): string {
@@ -132,12 +143,13 @@ export default Vue.extend({
     openGithub(ev: Event) {
       ev.preventDefault();
       window.openExternal("https://github.com/vigneshpa/chit");
-    }
+    },
   },
   created() {},
   components: {
     dashboard,
     settings,
+    users,
   },
 });
 </script>
