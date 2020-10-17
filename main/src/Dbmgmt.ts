@@ -4,10 +4,12 @@ import { promises } from "fs";
 class Dbmgmt {
   db: Database;
   dbFile: string;
+  today:Date;
   constructor(dbFile: string) {
     this.db = new Database();
     this.dbFile = dbFile;
     console.log("Stroing data at ", this.dbFile);
+    this.today = new Date();
   }
   async connect() {
     let exists: boolean = false;
@@ -42,6 +44,15 @@ class Dbmgmt {
     });
     console.log("Created new database");
   }
+  async closeDB() {
+    console.log("Closing database connections");
+    if(this.db.db)await this.db.close();
+  }
+  async checkPhone(phone: string) {
+    let result = await this.db.get("SELECT `phone` FROM `users` WHERE `phone`=?", phone);
+    if (result.phone === phone) return true;
+    return false;
+  }
   async createUser(userName: string, phone: string, address?: string): Promise<{ success: boolean; result: createUserFields }> {
     let result: createUserFields;
     let success: boolean;
@@ -59,6 +70,11 @@ class Dbmgmt {
     }
 
     return { result, success };
+  }
+  async checkBatch(batch: string, month: number, year: number) {
+    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=? AND `year`=?", batch, month, year);
+    if (result.batch === batch) return true;
+    return false;
   }
   async createGroup(year: number, month: number, batch: string, members: { UID: number, noOfChits: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
     let result: createGroupFields;
@@ -107,19 +123,67 @@ class Dbmgmt {
     });
     return result;
   }
-  async closeDB() {
-    console.log("Closing database connections");
-    if(this.db.db)await this.db.close();
+  async userDetails(UID:number){
+    let userInfo:userInfo = await this.db.get("SELECT * FROM `users` WHERE `UID` = ?", UID);
+    let userDetails:userInfoExtended = {
+      ...userInfo,
+      unpaid:[] as number[],
+      groups:[] as number[],
+      chits:[] as ChitInfoExtended[],
+      oldChits:[] as ChitInfoExtended[],
+    };
+    let chits:ChitInfoExtended[] = [];
+    let chitsRaw:ChitInfoWithGroup[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
+    
+    chitsRaw.forEach(chitRaw=>{
+      let payments:ChitInfoExtended["payments"] = [];
+      for(let i = 1; i <=20 ; i++){
+        payments.push({
+          month:i,
+          toBePaid:<number>chitRaw["month"+i+"_toBePaid"],
+          isPaid:<boolean>chitRaw["month"+i+"_isPaid"],
+        });
+      }
+      chits.push({
+        CID:chitRaw.CID,
+        GID:chitRaw.GID,
+        UID:chitRaw.UID,
+        name:chitRaw.name,
+        batch:chitRaw.batch,
+        month:chitRaw.month,
+        year:chitRaw.year,
+        payments
+      });
+    });
+
+    chits.forEach(chit=>{
+      userDetails.groups.push(chit.GID);
+      let todayMonths = this.today.getMonth()+(this.today.getFullYear()*12);
+      let chitMonths = chit.month+(chit.year*12);
+      let chitAge = todayMonths - chitMonths + 1;
+    });
+
+    // chits.forEach(chit=>{
+    //   if(!userDetails.groups.includes(chit.GID))userDetails.groups.push(chit.GID);
+    //   let todayMonths = this.today.getMonth()+(this.today.getFullYear()*12);
+    //   let chitMonths = chit.month+(chit.year*12);
+    //   let chitAge = todayMonths - chitMonths + 1;
+    //   /**
+    //    * If the group is older than 20 months
+    //    */
+    //   if(chitAge>20){
+    //     for(let i=1; i<=20; i++){
+    //       let toBePaid = chit.
+
+    //     }
+    //   }
+    //});
   }
-  async checkPhone(phone: string) {
-    let result = await this.db.get("SELECT `phone` FROM `users` WHERE `phone`=?", phone);
-    if (result.phone === phone) return true;
-    return false;
-  }
-  async checkBatch(batch: string, month: number, year: number) {
-    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=? AND `year`=?", batch, month, year);
-    if (result.batch === batch) return true;
-    return false;
+  async analyseDB(){
+    let groups = await this.listGroups();
+    groups.forEach(group=>{
+      
+    });
   }
 }
 

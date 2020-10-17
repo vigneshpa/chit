@@ -50,32 +50,42 @@
             md="4"
             lg="3"
           >
-            <v-card>
-              <v-card-title class="subheading font-weight-bold">
-                <span>{{ item.name }}</span
-                ><v-spacer /><v-icon @click="editUser(item.UID)"
-                  >mdi-account-details</v-icon
-                >
-              </v-card-title>
+            <v-hover
+              ><template v-slot:default="{ hover }">
+                <v-card>
+                  <v-card-title class="subheading font-weight-bold">
+                    <span>{{ item.name }}</span
+                    ><v-spacer /><v-icon>mdi-account-details</v-icon>
+                  </v-card-title>
 
-              <v-divider></v-divider>
+                  <v-divider></v-divider>
 
-              <v-list dense>
-                <v-list-item v-for="(key, index) in filteredKeys" :key="index">
-                  <v-list-item-content
-                    :class="{ 'blue--text': sortBy === key }"
-                  >
-                    {{ key }}:
-                  </v-list-item-content>
-                  <v-list-item-content
-                    class="align-end"
-                    :class="{ 'blue--text': sortBy === key }"
-                  >
-                    {{ item[keys[key]] }}
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card>
+                  <v-list dense>
+                    <v-list-item
+                      v-for="(key, index) in filteredKeys"
+                      :key="index"
+                    >
+                      <v-list-item-content
+                        :class="{ 'blue--text': sortBy === key }"
+                      >
+                        {{ key }}:
+                      </v-list-item-content>
+                      <v-list-item-content
+                        class="align-end"
+                        :class="{ 'blue--text': sortBy === key }"
+                      >
+                        {{ item[keys[key]] }}
+                      </v-list-item-content>
+                    </v-list-item>
+                  </v-list>
+                  <v-expand-transition>
+                    <v-overlay v-if="hover" absolute color="grey">
+                      <v-btn @click="editUser(item.UID)">View profile</v-btn>
+                    </v-overlay>
+                  </v-expand-transition>
+                </v-card>
+              </template>
+            </v-hover>
           </v-col>
         </v-row>
       </template>
@@ -124,9 +134,7 @@ export default Vue.extend({
     updateItemsPerPage(number: number) {
       this.itemsPerPage = number;
     },
-    editUser(UID:number){
-
-    },
+    editUser(UID: number) {},
   },
   mounted() {
     window.ipcrenderer.once("get-users-data", (event, data: userInfo[]) => {
