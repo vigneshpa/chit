@@ -100,6 +100,23 @@ class Database {
         })
     }
 
+    async runMultiple(sql: string, ...istmtArgs: any[][]) {
+        let sqlSplited: string[] = sql.split(";");
+        await this.exec('BEGIN TRANSACTION');
+        let i = 0;
+        for (let sqlStatement of sqlSplited) {
+            sqlStatement = sqlStatement.trim();
+            if (!istmtArgs[i]) istmtArgs[i] = [];
+            if (!sqlStatement) continue;
+
+            console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
+            await this.run(sqlStatement, ...istmtArgs[i]);
+
+            i++;
+        };
+        return this;
+    }
+
     get(sql: string, ...args: any[]) {
         return new Promise((resolve: (row: any) => void, reject: (err: Error) => void) => {
             if (!this.db) {
@@ -115,6 +132,20 @@ class Database {
             args.push(callback)
             this.db.get.apply(this.db, [sql, ...args])
         })
+    }
+
+    async getMultiple(sql: string, ...istmtArgs: any[][]) {
+        const result: any[] = [];
+        const sqlSplited: string[] = sql.split(";");
+        let i = 0;
+        for (let sqlStatement of sqlSplited) {
+            sqlStatement = sqlStatement.trim();
+            if (!sqlStatement) continue;
+            console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
+            result.push(await this.get(sqlStatement, ...istmtArgs[i]));
+            i++;
+        };
+        return result;
     }
 
     all(sql: string, ...args: any[]) {
@@ -174,6 +205,7 @@ class Database {
             await this.exec('BEGIN TRANSACTION');
             try {
                 const result = await fn(this);
+                await this.exec('COMMIT');
                 await this.exec('END TRANSACTION');
                 resolve(result);
             } catch (err) {

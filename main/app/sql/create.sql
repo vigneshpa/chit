@@ -17,7 +17,7 @@ CREATE TABLE [users] (
 [name] TEXT NOT NULL,
 [phone] TEXT NOT NULL UNIQUE,
 [address] TEXT,
-[profile] BLOB NOT NULL);
+[profile] BLOB);
 
 
 CREATE TABLE [groups] (

@@ -10,14 +10,15 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "windows": {
-                "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
-            },
+            //"windows": {
+            //    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+            //},
             "args": [
-                "."
+                ".",
+                "--unhandled-rejections=strict"
             ],
             "outputCapture": "std",
-            //"preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/app/**/*.js"
             ]

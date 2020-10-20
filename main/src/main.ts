@@ -1,3 +1,7 @@
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled Rejection at:', p, 'reason:', reason)
+  process.exit(1)
+});
 console.log("Loading configurations and environment variables . . .");
 import config from "./config";
 
