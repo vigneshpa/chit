@@ -33,7 +33,7 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
-            event.sender.send("create-user", err, response.result);
+            event.sender.send("create-user", err, response?.result);
         });
 
         ipcMain.on("create-group", async (event, data: createGroupFields) => {
@@ -49,7 +49,7 @@ class Ipchosts {
         });
 
         ipcMain.on("get-users-data", async event => {
-            console.log("Recived message from renderer to get users data");
+            // console.log("Recived message from renderer to get users data");
             const result: userInfo[] = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);

@@ -1,6 +1,8 @@
 import Database from "./sqlite3";
 import { promises } from "fs";
-
+import { readFile } from "fs";
+import { promisify } from "util";
+const readFileP = promisify(readFile);
 class Dbmgmt {
   db: Database;
   dbFile: string;
@@ -17,6 +19,7 @@ class Dbmgmt {
       exists = (await promises.stat(this.dbFile))?.isFile();
     } catch (e) {
       exists = false;
+      console.log("Unable to connect to the database file!It may not exists!");
       console.log(e);
     }
     if (!exists) return false;
@@ -30,17 +33,9 @@ class Dbmgmt {
     //If database file does not exixts creating it and structuring it.
     await this.db.open(this.dbFile);
     await this.db.run("PRAGMA foreign_keys=ON;");
-
-    let monthColumns: string = "";
-    for (let i = 1; i <= 20; i++) {
-      monthColumns += ", `month" + i + "_toBePaid` INTEGER";
-      monthColumns += ", `month" + i + "_isPaid` INTEGER";
-    }
-
-    await this.db.transaction(async function (db1) {
-      await db1.run(`CREATE TABLE \`users\` (\`UID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL, \`phone\` TEXT NOT NULL UNIQUE, \`address\` TEXT)`);
-      await db1.run(`CREATE TABLE \`groups\` (\`GID\` INTEGER NOT NULL PRIMARY KEY, \`name\` TEXT NOT NULL UNIQUE, \`month\`  INTEGER NOT NULL, \`year\` INTEGER NOT NULL, \`batch\` TEXT NOT NULL, \`winners\` JSON NOT NULL)`);
-      await db1.run(`CREATE TABLE \`chits\` (\`CID\` INTEGER NOT NULL PRIMARY KEY, \`GID\` INTEGER NOT NULL, \`UID\` INTEGER NOT NULL, \`no_of_chits\` REAL NOT NULL ${monthColumns}, FOREIGN KEY (\`GID\`) REFERENCES \`groups\` ( \`GID\` ), FOREIGN KEY (\`UID\`) REFERENCES \`users\` (\`UID\`) )`);
+    let sql = await readFileP("./app/sql/create.sql");
+    await this.db.transaction(async function(db1){
+      await db1.run(sql.toString());
     });
     console.log("Created new database");
   }
@@ -49,17 +44,19 @@ class Dbmgmt {
     if(this.db.db)await this.db.close();
   }
   async checkPhone(phone: string) {
-    let result = await this.db.get("SELECT `phone` FROM `users` WHERE `phone`=?", phone);
+    let sql = readFileP("./app/checkPhone.sql");
+    let result = await this.db.get((await sql).toString(), {$phone:phone});
     if (result.phone === phone) return true;
     return false;
   }
   async createUser(userName: string, phone: string, address?: string): Promise<{ success: boolean; result: createUserFields }> {
     let result: createUserFields;
     let success: boolean;
+    let sql = readFileP("./app/sql/createUser.sql");
 
     try {
-      await this.db.run("INSERT INTO `USERS` (`name`, `phone`, `address`) VALUES (?, ?, ?);", [userName, phone, address]);
-      result = await this.db.get("SELECT * FROM `users` WHERE `phone`= ?;", [phone]);
+      //await this.db.run("INSERT INTO `USERS` (`name`, `phone`, `address`) VALUES (?, ?, ?);", [userName, phone, address]);
+      result = await this.db.get((await sql).toString(), {$name:userName, $phone:phone, $address:address});
     } catch (err) {
       success = false;
       if (err.errno === 19) {
@@ -72,14 +69,15 @@ class Dbmgmt {
     return { result, success };
   }
   async checkBatch(batch: string, month: number, year: number) {
-    let result = await this.db.get("SELECT `batch` FROM `groups` WHERE `batch`=? AND `month`=? AND `year`=?", batch, month, year);
+    let sql = readFileP("./app/sql/checkBatch.sql");
+    let result = await this.db.get((await sql).toString(), {$batch:batch, $month:month, $year:year});
     if (result.batch === batch) return true;
     return false;
   }
   async createGroup(year: number, month: number, batch: string, members: { UID: number, noOfChits: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
     let result: createGroupFields;
     let success: boolean = true;
-    let gName: string = year + "-" + month + "-" + batch;
+    let gName: string = `${year}-${month}-${batch}`;
     let total = 0;
     for (const member of members) {
       total += member.noOfChits;
@@ -131,6 +129,9 @@ class Dbmgmt {
       groups:[] as number[],
       chits:[] as ChitInfoExtended[],
       oldChits:[] as ChitInfoExtended[],
+      noOfActiveBatches:0,
+      totalNoChits:0,
+      withdrawedChits:0,
     };
     let chits:ChitInfoExtended[] = [];
     let chitsRaw:ChitInfoWithGroup[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
