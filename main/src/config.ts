@@ -20,7 +20,7 @@ if (isDevelopement) {
 try {
     config = JSON.parse((readFileSync(configPath)).toString());
 } catch (err) {
-    copyFileSync('./app/default.config.json', configPath);
+    copyFileSync(join(__dirname, './default.config.json'), configPath);
     config = JSON.parse((readFileSync(configPath)).toString());
 }
 config.isDevelopement = isDevelopement;

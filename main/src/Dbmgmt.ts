@@ -2,6 +2,7 @@ import Database from "./sqlite3";
 import { promises, unlinkSync } from "fs";
 import { readFile } from "fs";
 import { promisify } from "util";
+import { join } from "path";
 const readFileP = promisify(readFile);
 
 class Dbmgmt {
@@ -34,7 +35,7 @@ class Dbmgmt {
     //If database file does not exixts creating it and structuring it.
     await this.db.open(this.dbFile);
     await this.db.run("PRAGMA foreign_keys=ON;");
-    let sql = await readFileP("./app/sql/create.sql");
+    let sql = await readFileP(join(__dirname, "./sql/create.sql"));
     console.log("Creating a new database");
 
     //Starting transaction
@@ -61,7 +62,7 @@ class Dbmgmt {
     if (this.db.db) await this.db.close();
   }
   async checkPhone(phone: string) {
-    let sql = await readFileP("./app/checkPhone.sql");
+    let sql = await readFileP(join(__dirname, "./checkPhone.sql"));
     let result = await this.db.get(sql.toString(), { $phone: phone });
     if (result.phone === phone) return true;
     return false;
@@ -69,7 +70,7 @@ class Dbmgmt {
   async createUser(userName: string, phone: string, address?: string): Promise<{ success: boolean; result: createUserFields }> {
     let result: createUserFields;
     let success: boolean;
-    let sql = await readFileP("./app/sql/createUser.sql");
+    let sql = await readFileP(join(__dirname, "./sql/createUser.sql"));
 
     this.db.exec("BEGIN TRANSACTION");
     try {
@@ -88,7 +89,7 @@ class Dbmgmt {
     return { result, success };
   }
   async checkBatch(batch: string, month: number, year: number) {
-    let sql = await readFileP("./app/sql/checkBatch.sql");
+    let sql = await readFileP(join(__dirname, "./sql/checkBatch.sql"));
     let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
     if (result.batch === batch) return true;
     return false;
@@ -105,9 +106,9 @@ class Dbmgmt {
     }
     //console.log(await this.db.get("SELECT * FROM `groups` WHERE `gName` = '" + gName + "';"));
 
-    const createGroupSQL = await readFileP("./app/sql/createGroup.sql");
-    const createChitSQL = await readFileP("./app/sql/createChit.sql");
-    const createPaymentSQL = await readFileP("./app/sql/createChitPayment.sql");
+    const createGroupSQL = await readFileP(join(__dirname, "./sql/createGroup.sql"));
+    const createChitSQL = await readFileP(join(__dirname, "./sql/createChit.sql"));
+    const createPaymentSQL = await readFileP(join(__dirname, "./sql/createChitPayment.sql"));
 
     //Starting transaction
     this.db.exec("BEGIN TRANSACTION");
