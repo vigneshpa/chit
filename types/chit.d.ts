@@ -10,7 +10,7 @@ interface createGroupFields{
     month:number;
     year:number;
     batch:string;
-    members?:{UID:number;noOfChits:number}[];
+    members?:{UID:number;no_of_chits:number}[];
     winners?:Array<number>;
 }
 interface userInfo{
@@ -21,56 +21,65 @@ interface userInfo{
     groups:number[];
     chits:ChitInfo[];
 }
-interface userInfoExtended{
-    UID:number;
-    name:string;
-    phone:string;
-    address:string;
-    noOfActiveBatches:number;
-    totalNoChits:number;
-    withdrawedChits:number;
-    groups:number[];
-    chits:ChitInfoExtended[];
-    oldChits:ChitInfoExtended[];
-    unpaid:any[];
-}
+// interface userInfoExtended{
+//     UID:number;
+//     name:string;
+//     phone:string;
+//     address:string;
+//     noOfActiveBatches:number;
+//     totalNoChits:number;
+//     withdrawedChits:number;
+//     groups:number[];
+//     chits:ChitInfoExtended[];
+//     oldChits:ChitInfoExtended[];
+//     unpaid:any[];
+// }
 interface GroupInfo{
     GID:number;
     name:string;
     month:number;
     year:number;
     batch:string;
-    winners:Array<number>;
+}
+interface GroupInfoExtended{
+    GID:number;
+    name:string;
+    month:number;
+    year:number;
+    batch:string;
+    members:ChitInfoWithPayments[];
 }
 interface ChitInfo{
     CID:number;
     GID:number;
     UID:number;
-    [monthi:string]:number|boolean;
+    no_of_chits:number;
 }
-interface ChitInfoWithGroup{
+// interface ChitInfoWithGroup{
+//     CID:number;
+//     GID:number;
+//     UID:number;
+//     name:string;
+//     month:number;
+//     year:number;
+//     batch:string;
+// }
+interface ChitInfoWithPayments{
     CID:number;
     GID:number;
     UID:number;
-    name:string;
-    month:number;
-    year:number;
-    batch:string;
-    [monthi:string]:number|boolean|string;
-}
-interface ChitInfoExtended{
-    CID:number;
-    GID:number;
-    UID:number;
-    name:string;
-    month:number;
-    year:number;
-    batch:string;
+    no_of_chits:number
     payments:{
         month:number;
-        toBePaid:number;
+        to_be_paid:number;
         isPaid:boolean;
     }[];
+}
+interface Payments{
+    PID:number;
+    CID:number;
+    to_be_paid:number;
+    is_paid:number;
 }
 interface sqliteError extends Error{
     errno?:number;

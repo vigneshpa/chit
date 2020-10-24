@@ -45,7 +45,7 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
-            event.sender.send("create-group", err, response.result);
+            event.sender.send("create-group", err, response?.result);
         });
 
         ipcMain.on("get-users-data", async event => {

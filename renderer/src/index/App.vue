@@ -120,6 +120,11 @@ export default Vue.extend({
         name: "users",
         key: 3,
         icon: "mdi-account-multiple",
+      },{
+        title: "Groups",
+        name:"groups",
+        key:4,
+        icon:"mdi-account-group"
       },
       {
         title: "Settings",

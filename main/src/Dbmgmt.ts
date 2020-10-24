@@ -1,8 +1,7 @@
 import Database from "./sqlite3";
-import { promises, unlink, unlinkSync } from "fs";
+import { promises, unlinkSync } from "fs";
 import { readFile } from "fs";
 import { promisify } from "util";
-import { app } from "electron";
 const readFileP = promisify(readFile);
 
 class Dbmgmt {
@@ -21,7 +20,7 @@ class Dbmgmt {
       exists = (await promises.stat(this.dbFile))?.isFile();
     } catch (e) {
       exists = false;
-      console.log("Unable to connect to the database file!It may not exists!");
+      console.log("Unable to connect to the database file! It may not exists!");
       console.log(e);
     }
     if (!exists) return false;
@@ -37,12 +36,19 @@ class Dbmgmt {
     await this.db.run("PRAGMA foreign_keys=ON;");
     let sql = await readFileP("./app/sql/create.sql");
     console.log("Creating a new database");
+
+    //Starting transaction
     this.db.exec("BEGIN TRANSACTION;");
     try {
       await this.db.runMultiple(sql.toString());
     } catch (e) {
+
+      //Rolling back changes if any ERROR occoured
+      await this.db.exec("ROLLBACK TRANSACTION");
+      await this.db.close();
+
+      //Deleting the created database file
       unlinkSync(this.dbFile);
-      this.db.exec("ROLLBACK TRANSACTION");
       console.log("Unable to create database file");
       console.log(e);
       process.kill(1);
@@ -55,20 +61,19 @@ class Dbmgmt {
     if (this.db.db) await this.db.close();
   }
   async checkPhone(phone: string) {
-    let sql = readFileP("./app/checkPhone.sql");
-    let result = await this.db.get((await sql).toString(), { $phone: phone });
+    let sql = await readFileP("./app/checkPhone.sql");
+    let result = await this.db.get(sql.toString(), { $phone: phone });
     if (result.phone === phone) return true;
     return false;
   }
   async createUser(userName: string, phone: string, address?: string): Promise<{ success: boolean; result: createUserFields }> {
     let result: createUserFields;
     let success: boolean;
-    let sql = readFileP("./app/sql/createUser.sql");
+    let sql = await readFileP("./app/sql/createUser.sql");
 
     this.db.exec("BEGIN TRANSACTION");
     try {
-      //await this.db.run("INSERT INTO `USERS` (`name`, `phone`, `address`) VALUES (?, ?, ?);", [userName, phone, address]);
-      result = (await this.db.getMultiple((await sql).toString(), [{ $name: userName, $phone: phone, $address: address }], [{$phone:phone}]))[1];
+      result = (await this.db.getMultiple(sql.toString(), [{ $name: userName, $phone: phone, $address: address }], [{ $phone: phone }]))[1];
     } catch (err) {
       this.db.exec("ROLLBACK TRANSACTION");
       success = false;
@@ -83,55 +88,66 @@ class Dbmgmt {
     return { result, success };
   }
   async checkBatch(batch: string, month: number, year: number) {
-    let sql = readFileP("./app/sql/checkBatch.sql");
-    let result = await this.db.get((await sql).toString(), { $batch: batch, $month: month, $year: year });
+    let sql = await readFileP("./app/sql/checkBatch.sql");
+    let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
     if (result.batch === batch) return true;
     return false;
   }
-  async createGroup(year: number, month: number, batch: string, members: { UID: number, noOfChits: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
-    let result: createGroupFields;
-    let success: boolean = true;
+  async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }> {
+    let result: GroupInfoExtended | null = null;
     let gName: string = `${year}-${month}-${batch}`;
     let total = 0;
     for (const member of members) {
-      total += member.noOfChits;
+      total += member.no_of_chits;
     }
     if (total !== 20) {
       throw new Error("Total number of chits is not equal to 20");
     }
-    //console.log(await this.db.get("SELECT * FROM `groups` WHERE `name` = '" + gName + "';"));
+    //console.log(await this.db.get("SELECT * FROM `groups` WHERE `gName` = '" + gName + "';"));
 
     const createGroupSQL = await readFileP("./app/sql/createGroup.sql");
     const createChitSQL = await readFileP("./app/sql/createChit.sql");
+    const createPaymentSQL = await readFileP("./app/sql/createChitPayment.sql");
+
     //Starting transaction
     this.db.exec("BEGIN TRANSACTION");
-    //Creating Batch
-    result = this.db.getMultiple(createGroupSQL.toString(),[{$name:name, $batch:batch, $month:month, $year:year}], [{$name:name}])[1];
-    //Adding members
-    for (const member of members) {
-      this.db.getMultiple(createGroupSQL.toString(), [{$UID:member.UID, $GID:result.GID}], [{}])
-    }
 
+    //ERROR handeling
     try {
-      await this.db.run("INSERT INTO `groups` (`name`, `year`, `month`, `batch`, `winners`) VALUES (?, ?, ?, ?, '[]');", [gName, year, month, batch]);
-      result = await this.db.get("SELECT * FROM `groups` WHERE `name` = '" + gName + "';");
-    } catch (err) {
-      success = false;
-      if (err.errno === 19) {
-        console.log(err);
-      }
-      throw err;
-    }
 
-    if (success) {
-      await this.db.transaction(async function (db1) {
-        for (const member of members) {
-          await db1.run("INSERT INTO `chits` (`UID`, `GID`, `no_of_chits`, `month1_toBePaid`) VALUES (?, ?, ?, ?);", [member.UID, result.GID, member.noOfChits, 5000 * member.noOfChits]);
+      //Creating Batch
+      let group: GroupInfo = (await this.db.getMultiple(createGroupSQL.toString(), [{ $name: gName, $batch: batch, $month: month, $year: year }], [{ $name: gName }]))[1];
+      let membersInfo:ChitInfoWithPayments[] = [];
+
+      //Adding members
+      for (const member of members) {
+        let memberInfo: ChitInfoWithPayments = (await this.db.getMultiple(createChitSQL.toString(), [{ $UID: member.UID, $GID: group.GID, $no_of_chits:member.no_of_chits }], [{ $UID: member.UID, $GID: group.GID }]))[1];
+        memberInfo.payments = [];
+
+        //Adding payments
+        for (let i = 1; i <= 20; i++) {
+          memberInfo.payments.push(await this.db.getMultiple(createPaymentSQL.toString(), [{ $CID: memberInfo.CID, $nmonth: i, $to_be_paid: memberInfo.no_of_chits*5000 }], [{ $CID: memberInfo.CID, $nmonth: i }])[0]);
         }
-      });
-    }
+        membersInfo.push(memberInfo);
+      }
+      result = {...group, members:membersInfo};
+    } catch (e) {
+      //If any ERROR occoured
+      console.log(e);
 
-    return { success, result };
+      //Rolling back changes
+      this.db.exec("ROLLBACK TRANSACTION");
+
+      //Setting success to false
+
+      //returning
+      return { success:false, result };
+    }
+    //Commiting transaction
+    this.db.exec("END TRANSACTION");
+
+    console.log(result);
+    return { success:true, result };
   }
   async listUsers(): Promise<userInfo[]> {
     let result: userInfo[] = await this.db.all("SELECT * FROM `users`");
@@ -146,47 +162,47 @@ class Dbmgmt {
     return result;
   }
   async userDetails(UID: number) {
-    let userInfo: userInfo = await this.db.get("SELECT * FROM `users` WHERE `UID` = ?", UID);
-    let userDetails: userInfoExtended = {
-      ...userInfo,
-      unpaid: [] as number[],
-      groups: [] as number[],
-      chits: [] as ChitInfoExtended[],
-      oldChits: [] as ChitInfoExtended[],
-      noOfActiveBatches: 0,
-      totalNoChits: 0,
-      withdrawedChits: 0,
-    };
-    let chits: ChitInfoExtended[] = [];
-    let chitsRaw: ChitInfoWithGroup[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
+    // let userInfo: userInfo = await this.db.get("SELECT * FROM `users` WHERE `UID` = ?", UID);
+    // let userDetails: userInfoExtended = {
+    //   ...userInfo,
+    //   unpaid: [] as number[],
+    //   groups: [] as number[],
+    //   chits: [] as ChitInfoExtended[],
+    //   oldChits: [] as ChitInfoExtended[],
+    //   noOfActiveBatches: 0,
+    //   totalNoChits: 0,
+    //   withdrawedChits: 0,
+    // };
+    // let chits: ChitInfoExtended[] = [];
+    // let chitsRaw: ChitInfoWithGroup[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
 
-    chitsRaw.forEach(chitRaw => {
-      let payments: ChitInfoExtended["payments"] = [];
-      for (let i = 1; i <= 20; i++) {
-        payments.push({
-          month: i,
-          toBePaid: <number>chitRaw["month" + i + "_toBePaid"],
-          isPaid: <boolean>chitRaw["month" + i + "_isPaid"],
-        });
-      }
-      chits.push({
-        CID: chitRaw.CID,
-        GID: chitRaw.GID,
-        UID: chitRaw.UID,
-        name: chitRaw.name,
-        batch: chitRaw.batch,
-        month: chitRaw.month,
-        year: chitRaw.year,
-        payments
-      });
-    });
+    // chitsRaw.forEach(chitRaw => {
+    //   let payments: ChitInfoExtended["payments"] = [];
+    //   for (let i = 1; i <= 20; i++) {
+    //     payments.push({
+    //       month: i,
+    //       to_be_paid: <number>chitRaw["month" + i + "_to_be_paid"],
+    //       isPaid: <boolean>chitRaw["month" + i + "_isPaid"],
+    //     });
+    //   }
+    //   chits.push({
+    //     CID: chitRaw.CID,
+    //     GID: chitRaw.GID,
+    //     UID: chitRaw.UID,
+    //     name: chitRaw.name,
+    //     batch: chitRaw.batch,
+    //     month: chitRaw.month,
+    //     year: chitRaw.year,
+    //     payments
+    //   });
+    // });
 
-    chits.forEach(chit => {
-      userDetails.groups.push(chit.GID);
-      let todayMonths = this.today.getMonth() + (this.today.getFullYear() * 12);
-      let chitMonths = chit.month + (chit.year * 12);
-      let chitAge = todayMonths - chitMonths + 1;
-    });
+    // chits.forEach(chit => {
+    //   userDetails.groups.push(chit.GID);
+    //   let todayMonths = this.today.getMonth() + (this.today.getFullYear() * 12);
+    //   let chitMonths = chit.month + (chit.year * 12);
+    //   let chitAge = todayMonths - chitMonths + 1;
+    // });
 
     // chits.forEach(chit=>{
     //   if(!userDetails.groups.includes(chit.GID))userDetails.groups.push(chit.GID);
@@ -198,7 +214,7 @@ class Dbmgmt {
     //    */
     //   if(chitAge>20){
     //     for(let i=1; i<=20; i++){
-    //       let toBePaid = chit.
+    //       let to_be_paid = chit.
 
     //     }
     //   }

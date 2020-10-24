@@ -102,14 +102,13 @@ class Database {
 
     async runMultiple(sql: string, ...istmtArgs: any[][]) {
         let sqlSplited: string[] = sql.split(";");
-        await this.exec('BEGIN TRANSACTION');
         let i = 0;
         for (let sqlStatement of sqlSplited) {
             sqlStatement = sqlStatement.trim();
             if (!istmtArgs[i]) istmtArgs[i] = [];
             if (!sqlStatement) continue;
 
-            console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
+            //console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
             await this.run(sqlStatement, ...istmtArgs[i]);
 
             i++;
@@ -141,7 +140,7 @@ class Database {
         for (let sqlStatement of sqlSplited) {
             sqlStatement = sqlStatement.trim();
             if (!sqlStatement) continue;
-            console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
+            //console.log("Executing SQL:", sqlStatement, istmtArgs[i]);
             result.push(await this.get(sqlStatement, ...istmtArgs[i]));
             i++;
         };

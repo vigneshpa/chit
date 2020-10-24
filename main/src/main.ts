@@ -166,7 +166,7 @@ app.on("before-quit", async function (ev) {
   }
   if (isAppQuitting) return;
   isAppQuitting = true;
-  console.log("Closing database connections . . .");
+  console.log("Closing database connection . . .");
   try {
     await dbmgmt.closeDB();
   } catch (e) {

@@ -70,7 +70,7 @@
                     ></v-autocomplete>
                     <v-text-field
                       prepend-icon="mdi-number"
-                      v-model="noOfChits"
+                      v-model="no_of_chits"
                       label="Number of Chits"
                       type="number"
                       :max="20-totalChits"
@@ -103,7 +103,7 @@
                   <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn
-                      :disabled="!memberModel || !noOfChits || !(parseFloat(noOfChits)>0) || (parseFloat(noOfChits)>(20-totalChits))"
+                      :disabled="!memberModel || !no_of_chits || !(parseFloat(no_of_chits)>0) || (parseFloat(no_of_chits)>(20-totalChits))"
                       @click="addMember"
                       color="primary"
                       id="add"
@@ -125,8 +125,8 @@
                         <v-list-item-content
                           :title="member.info.phone + '\n' + member.info.address"
                         >{{member.info.name}}</v-list-item-content>
-                        <v-chip v-text="member.noOfChits"></v-chip>
-                        <v-list-item-action @click="removeMember(member)">
+                        <v-chip v-text="member.no_of_chits"></v-chip>
+                        <v-list-item-action @click="removeMember(member)" v-if="!disableInputs">
                           <v-icon>mdi-close-circle</v-icon>
                         </v-list-item-action>
                       </v-list-item>
@@ -185,7 +185,7 @@
                         v-text="member.info.name"
                         :title="member.info.phone+'\n'+member.info.address"
                       ></v-list-item-content>
-                      <v-chip v-text="member.noOfChits"></v-chip>
+                      <v-chip v-text="member.no_of_chits"></v-chip>
                     </v-list-item>
                   </v-list-group>
                 </v-list>
@@ -237,7 +237,7 @@ export default Vue.extend({
       batchMessage: "",
       members: [] as members[],
       memberModel: null as userInfo | null,
-      noOfChits: null as string | null,
+      no_of_chits: null as string | null,
       users: [] as userInfo[],
       loadedUsers:false as boolean,
       disableButtons: false as boolean,
@@ -253,7 +253,7 @@ export default Vue.extend({
     totalChits() {
       let total = 0;
       this.members.forEach((member) => {
-        total += member.noOfChits;
+        total += member.no_of_chits;
       });
       return total;
     },
@@ -307,7 +307,7 @@ export default Vue.extend({
       this.members.splice(this.members.indexOf(member), 1);
     },
     addMember() {
-      if (this.memberModel && this.noOfChits) {
+      if (this.memberModel && this.no_of_chits) {
         let removed = this.users.splice(
           this.users.indexOf(this.memberModel),
           1
@@ -318,10 +318,10 @@ export default Vue.extend({
         }
         this.members.push({
           info: removed[0],
-          noOfChits: parseFloat(this.noOfChits),
+          no_of_chits: parseFloat(this.no_of_chits),
         });
         this.memberModel = null;
-        this.noOfChits = null;
+        this.no_of_chits = null;
       }
     },
     next() {
@@ -429,7 +429,7 @@ export default Vue.extend({
       this.skipValidation = true;
       const finalMembers:createGroupFields["members"] = [];
       this.members.forEach(member => {
-        finalMembers.push({UID:member.info.UID, noOfChits:member.noOfChits});
+        finalMembers.push({UID:member.info.UID, no_of_chits:member.no_of_chits});
       });
       window.ipcrenderer.once(
         "create-group",
@@ -479,6 +479,6 @@ export default Vue.extend({
 
 interface members {
   info: userInfo;
-  noOfChits: number;
+  no_of_chits: number;
 }
 </script>
