@@ -5,6 +5,23 @@ process.on('unhandledRejection', (reason, p) => {
 console.log("Loading configurations and environment variables . . .");
 import config from "./config";
 
+console.log("checking for updates . . .");
+import { autoUpdater } from "electron-updater";
+if(process.env.NODE_ENV === "production"){
+autoUpdater.on("update-downloaded", function(){
+  dialog.showMessageBoxSync({message:"An update is downloaded.\nThe app will restart in 10 seconds."});
+  setTimeout(function(){
+    autoUpdater.quitAndInstall();
+  }, 10000)
+});
+autoUpdater.on("update-available", function(){
+  if(dialog.showMessageBoxSync({message:"Do you want to download the update", buttons:["Yes", "No"]}) === 0){
+    autoUpdater.downloadUpdate();
+  }
+})
+autoUpdater.checkForUpdates();
+}
+
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain, nativeTheme, dialog } from "electron";
 import { join } from "path";
@@ -166,7 +183,7 @@ app.on("before-quit", async function (ev) {
   }
   if (isAppQuitting) return;
   isAppQuitting = true;
-  console.log("Closing database connection . . .");
+  console.log("Closing database connections . . .");
   try {
     await dbmgmt.closeDB();
   } catch (e) {

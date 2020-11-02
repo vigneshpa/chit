@@ -58,11 +58,11 @@ class Dbmgmt {
     console.log("Created new database");
   }
   async closeDB() {
-    console.log("Closing database connections");
     if (this.db.db) await this.db.close();
+    console.log("Database connections closed");
   }
   async checkPhone(phone: string) {
-    let sql = await readFileP(join(__dirname, "./checkPhone.sql"));
+    let sql = await readFileP(join(__dirname, "./sql/checkPhone.sql"));
     let result = await this.db.get(sql.toString(), { $phone: phone });
     if (result.phone === phone) return true;
     return false;

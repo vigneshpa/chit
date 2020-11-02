@@ -12,6 +12,7 @@ console.log(
 let config: Configuration;
 let configPath: string;
 const isDevelopement: boolean = process.env.NODE_ENV ? (process.env.NODE_ENV.toLowerCase() !== 'production' && process.env.NODE_ENV.toLowerCase() === 'developement') : false;
+process.env.NODE_ENV = isDevelopement?"developement":"production";
 if (isDevelopement) {
     configPath = process.env.CONFIGURATION_FILE;
 } else {

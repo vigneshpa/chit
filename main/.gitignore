@@ -1,4 +1,5 @@
 node_modules
 dist
+electron-builder.yml
 .env
 **/.env
