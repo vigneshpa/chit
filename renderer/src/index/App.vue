@@ -60,6 +60,7 @@
       <dashboard v-if="this.page === 'dashboard'" />
       <settings v-else-if="this.page === 'settings'" />
       <users v-else-if="this.page === 'users'" />
+      <groups v-else-if="this.page === 'groups'" />
     </v-main>
 
     <v-footer app dense>
@@ -82,6 +83,7 @@ import Vue from "vue";
 import dashboard from "./pages/dashboard.vue";
 import settings from "./pages/settings.vue";
 import users from "./pages/users.vue";
+import groups from "./pages/groups.vue";
 
 export default Vue.extend({
   props: {
@@ -155,6 +157,7 @@ export default Vue.extend({
     dashboard,
     settings,
     users,
+    groups,
   },
 });
 </script>

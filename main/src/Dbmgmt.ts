@@ -158,7 +158,7 @@ class Dbmgmt {
     let result: createGroupFields[];
     result = await this.db.all("SELECT * FROM `groups`");
     result.forEach((group, index) => {
-      group.winners = JSON.parse(<string>(<unknown>group.winners));
+      group.winners = JSON.parse(<string>(<unknown>group.winners?group.winners:"[]"));
     });
     return result;
   }
