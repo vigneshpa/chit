@@ -1,10 +1,12 @@
 <template>
   <create-user v-if="form === 'addUser'" v-bind:key="'app'"></create-user>
   <create-group v-else-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
+  <user-details v-else-if="form === 'UserDetails'" v-bind:key="'app'"></user-details>
 </template>
 <script lang="ts">
 import CreateUser from "./CreateUser.vue";
 import CreateGroup from "./CreateGroup.vue";
+import UserDetails from "./UserDetails.vue";
 import Vue from "vue";
 
 const url = new URL(window.location.href);
@@ -18,6 +20,7 @@ export default Vue.extend({
   components: {
     CreateUser,
     CreateGroup,
+    UserDetails,
   },
   mounted(){
       window.resizeWindowToCard();

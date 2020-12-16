@@ -146,7 +146,7 @@ async function loadMain() {
 ipchosts.setOnPingRecived(() => {
   if (splash) splash.webContents.send("log", "Loading UI ");
 });
-ipchosts.setOnOpenForm(async type => {
+ipchosts.setOnOpenForm(async (type, args:{[key:string]:string}) => {
   if (!formsWindow) {
     console.log("Recived message from renderer to open ", type);
     formsWindow = new BrowserWindow({
@@ -166,10 +166,11 @@ ipchosts.setOnOpenForm(async type => {
       formsWindow = null;
     });
     if (config.isDevelopement) {
-      await formsWindow.loadURL("http://localhost:8080/forms.html?form=" + type);
+      let searchParams = new URLSearchParams({"form":type, ...args});
+      await formsWindow.loadURL("http://localhost:8080/forms.html?"+searchParams.toString());
       formsWindow.webContents.openDevTools();
     } else {
-      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type } });
+      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type, ...args } });
     }
   } else {
     console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");

@@ -44,7 +44,7 @@
         <v-row>
           <v-col
             v-for="item in props.items"
-            :key="item.name"
+            :key="item.GID"
             cols="12"
             sm="6"
             md="4"

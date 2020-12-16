@@ -5,7 +5,7 @@ import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
     private dbmgmt: Dbmgmt;
-    private onOpenForm: (type: string) => void;
+    private onOpenForm: (type: string, args:{[key:string]:string}) => void;
     constructor(dbmgmt: Dbmgmt) {
         this.dbmgmt = dbmgmt;
     }
@@ -13,7 +13,7 @@ class Ipchosts {
     setOnPingRecived(onPingRecivedFn: () => void): void {
         this.onPingRecived = onPingRecivedFn;
     }
-    setOnOpenForm(onOpenFormFn: (type: string) => void) {
+    setOnOpenForm(onOpenFormFn: (type: string, args:{[key:string]:string}) => void) {
         this.onOpenForm = onOpenFormFn;
     }
     async initialise(): Promise<void> {
@@ -55,6 +55,12 @@ class Ipchosts {
             event.sender.send("get-users-data", result);
         });
 
+        ipcMain.on("get-user-details", async (event, UID: number) => {
+            const result: userInfoExtended = await this.dbmgmt.userDetails(UID);
+            console.log("Sending " + result.name + "'s data to the renderer");
+            event.sender.send("get-user-details", result);
+        });
+
         ipcMain.on("get-groups-data", async event => {
             console.log("Recived message from renderer to get groups data");
             const result = await this.dbmgmt.listGroups();
@@ -62,8 +68,8 @@ class Ipchosts {
             event.sender.send("get-groups-data", result);
         });
 
-        ipcMain.on("open-forms", (event, type: string) => {
-            this.onOpenForm(type);
+        ipcMain.on("open-forms", (event, type: string, args:{[key:string]:string}) => {
+            this.onOpenForm(type, args);
         });
 
         ipcMain.on("phone-exists", async (event, phone: string) => {
@@ -98,7 +104,7 @@ class Ipchosts {
         });
 
         ipcMain.on("show-dialog", async (event, type: ("open" | "messagebox"), options: (OpenDialogOptions | MessageBoxOptions)) => {
-            let ret:(OpenDialogReturnValue|MessageBoxReturnValue);
+            let ret: (OpenDialogReturnValue | MessageBoxReturnValue);
             switch (type) {
                 case "open":
                     ret = await dialog.showOpenDialog(BrowserWindow.fromWebContents(event.sender), <OpenDialogOptions>options);
@@ -125,14 +131,14 @@ class Ipchosts {
                     event.sender.send("update-config", false);
                     throw err;
                 };
-                if(!newConfig.databaseFile.isCustom)newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
+                if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
                 //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
-                if(global.config.databaseFile.location !== newConfig.databaseFile.location ){
+                if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
                     dialog.showMessageBox({
-                        message:"Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
-                        title:"Database file changed"
+                        message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+                        title: "Database file changed"
                     });
-                    setTimeout(function(){
+                    setTimeout(function () {
                         app.quit();
                     }, 10000);
                 }

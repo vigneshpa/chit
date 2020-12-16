@@ -44,7 +44,7 @@
         <v-row>
           <v-col
             v-for="item in props.items"
-            :key="item.name"
+            :key="item.UID"
             cols="12"
             sm="6"
             md="4"
@@ -134,7 +134,9 @@ export default Vue.extend({
     updateItemsPerPage(number: number) {
       this.itemsPerPage = number;
     },
-    editUser(UID: number) {},
+    editUser(UID: number) {
+      window.ipcrenderer.send("open-forms", "UserDetails", {UID:UID});
+    },
   },
   mounted() {
     window.ipcrenderer.once("get-users-data", (event, data: userInfo[]) => {

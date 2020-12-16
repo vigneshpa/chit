@@ -118,11 +118,11 @@ class Dbmgmt {
 
       //Creating Batch
       let group: GroupInfo = (await this.db.getMultiple(createGroupSQL.toString(), [{ $name: gName, $batch: batch, $month: month, $year: year }], [{ $name: gName }]))[1];
-      let membersInfo:ChitInfoWithPayments[] = [];
+      let membersInfo:ChitInfo[] = [];
 
       //Adding members
       for (const member of members) {
-        let memberInfo: ChitInfoWithPayments = (await this.db.getMultiple(createChitSQL.toString(), [{ $UID: member.UID, $GID: group.GID, $no_of_chits:member.no_of_chits }], [{ $UID: member.UID, $GID: group.GID }]))[1];
+        let memberInfo: ChitInfo = (await this.db.getMultiple(createChitSQL.toString(), [{ $UID: member.UID, $GID: group.GID, $no_of_chits:member.no_of_chits }], [{ $UID: member.UID, $GID: group.GID }]))[1];
         memberInfo.payments = [];
 
         //Adding payments
@@ -154,72 +154,73 @@ class Dbmgmt {
     let result: userInfo[] = await this.db.all("SELECT * FROM `users`");
     return result;
   }
-  async listGroups(): Promise<createGroupFields[]> {
-    let result: createGroupFields[];
+  async listGroups(): Promise<GroupInfo[]> {
+    let result: GroupInfo[];
     result = await this.db.all("SELECT * FROM `groups`");
     result.forEach((group, index) => {
       group.winners = JSON.parse(<string>(<unknown>group.winners?group.winners:"[]"));
     });
     return result;
   }
-  async userDetails(UID: number) {
-    // let userInfo: userInfo = await this.db.get("SELECT * FROM `users` WHERE `UID` = ?", UID);
-    // let userDetails: userInfoExtended = {
-    //   ...userInfo,
-    //   unpaid: [] as number[],
-    //   groups: [] as number[],
-    //   chits: [] as ChitInfoExtended[],
-    //   oldChits: [] as ChitInfoExtended[],
-    //   noOfActiveBatches: 0,
-    //   totalNoChits: 0,
-    //   withdrawedChits: 0,
-    // };
-    // let chits: ChitInfoExtended[] = [];
-    // let chitsRaw: ChitInfoWithGroup[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
+  async userDetails(UID: number) : Promise<userInfoExtended>{
+    let userInfo: userInfo = await this.db.get("SELECT * FROM `users` WHERE `UID` = ?", UID);
+    let userDetails: userInfoExtended = {
+      ...userInfo,
+      unpaid: [] as number[],
+      groups: [] as number[],
+      chits: [] as ChitInfo[],
+      oldChits: [] as ChitInfo[],
+      noOfActiveBatches: 0,
+      totalNoChits: 0,
+      withdrawedChits: 0,
+    };
+    let chits: ChitInfo[] = [];
+    let chitsRaw: ChitInfoRaw[] = await this.db.all("SELECT * FROM `chits` LEFT JOIN `groups` ON `chits`.`GID` = `groups`.`GID` WHERE UID = ?", [UID]);
 
-    // chitsRaw.forEach(chitRaw => {
-    //   let payments: ChitInfoExtended["payments"] = [];
-    //   for (let i = 1; i <= 20; i++) {
-    //     payments.push({
-    //       month: i,
-    //       to_be_paid: <number>chitRaw["month" + i + "_to_be_paid"],
-    //       isPaid: <boolean>chitRaw["month" + i + "_isPaid"],
-    //     });
-    //   }
-    //   chits.push({
-    //     CID: chitRaw.CID,
-    //     GID: chitRaw.GID,
-    //     UID: chitRaw.UID,
-    //     name: chitRaw.name,
-    //     batch: chitRaw.batch,
-    //     month: chitRaw.month,
-    //     year: chitRaw.year,
-    //     payments
-    //   });
-    // });
+    chitsRaw.forEach(chitRaw => {
+      let payments: ChitInfo["payments"] = [];
+      for (let i = 1; i <= 20; i++) {
+        payments.push({
+          month: i,
+          to_be_paid: <number>chitRaw["month" + i + "_to_be_paid"],
+          is_paid: <boolean>chitRaw["month" + i + "_isPaid"],
+        });
+      }
+      chits.push({
+        CID: chitRaw.CID,
+        GID: chitRaw.GID,
+        UID: chitRaw.UID,
+        no_of_chits:chitRaw.no_of_chits,
+        name:chitRaw.name,
+        year:chitRaw.year,
+        month:chitRaw.month,
+        batch:chitRaw.batch,
+        payments
+      });
+    });
 
-    // chits.forEach(chit => {
-    //   userDetails.groups.push(chit.GID);
-    //   let todayMonths = this.today.getMonth() + (this.today.getFullYear() * 12);
-    //   let chitMonths = chit.month + (chit.year * 12);
-    //   let chitAge = todayMonths - chitMonths + 1;
-    // });
+    chits.forEach(chit => {
+      userDetails.groups.push(chit.GID);
+      let todayMonths = this.today.getMonth() + (this.today.getFullYear() * 12);
+      let chitMonths = chit.month + (chit.year * 12);
+      let chitAge = todayMonths - chitMonths + 1;
+    });
 
-    // chits.forEach(chit=>{
-    //   if(!userDetails.groups.includes(chit.GID))userDetails.groups.push(chit.GID);
-    //   let todayMonths = this.today.getMonth()+(this.today.getFullYear()*12);
-    //   let chitMonths = chit.month+(chit.year*12);
-    //   let chitAge = todayMonths - chitMonths + 1;
-    //   /**
-    //    * If the group is older than 20 months
-    //    */
-    //   if(chitAge>20){
-    //     for(let i=1; i<=20; i++){
-    //       let to_be_paid = chit.
-
-    //     }
-    //   }
-    //});
+    chits.forEach(chit=>{
+      if(!userDetails.groups.includes(chit.GID))userDetails.groups.push(chit.GID);
+      let todayMonths = this.today.getMonth()+(this.today.getFullYear()*12);
+      let chitMonths = chit.month+(chit.year*12);
+      let chitAge = todayMonths - chitMonths + 1;
+      /**
+       * If the group is older than 20 months
+       */
+      if(chitAge>20){
+        userDetails.oldChits.push(chit);
+      }else{
+        userDetails.chits.push(chit);
+      }
+    });
+    return userDetails;
   }
   async analyseDB() {
     let groups = await this.listGroups();

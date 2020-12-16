@@ -18,28 +18,27 @@ interface userInfo{
     name:string;
     phone:string;
     address:string;
+}
+interface userInfoExtended{
+    UID:number;
+    name:string;
+    phone:string;
+    address:string;
+    noOfActiveBatches:number;
+    totalNoChits:number;
+    withdrawedChits:number;
     groups:number[];
     chits:ChitInfo[];
+    oldChits:ChitInfo[];
+    unpaid:any[];
 }
-// interface userInfoExtended{
-//     UID:number;
-//     name:string;
-//     phone:string;
-//     address:string;
-//     noOfActiveBatches:number;
-//     totalNoChits:number;
-//     withdrawedChits:number;
-//     groups:number[];
-//     chits:ChitInfoExtended[];
-//     oldChits:ChitInfoExtended[];
-//     unpaid:any[];
-// }
 interface GroupInfo{
     GID:number;
     name:string;
     month:number;
     year:number;
     batch:string;
+    winners:number[];
 }
 interface GroupInfoExtended{
     GID:number;
@@ -47,33 +46,28 @@ interface GroupInfoExtended{
     month:number;
     year:number;
     batch:string;
-    members:ChitInfoWithPayments[];
+    members:ChitInfo[];
 }
 interface ChitInfo{
     CID:number;
     GID:number;
     UID:number;
     no_of_chits:number;
+    name:string;
+    month:number;
+    year:number;
+    batch:string;
+    payments:{month:number;to_be_paid:number;is_paid:boolean;}[];
 }
-// interface ChitInfoWithGroup{
-//     CID:number;
-//     GID:number;
-//     UID:number;
-//     name:string;
-//     month:number;
-//     year:number;
-//     batch:string;
-// }
-interface ChitInfoWithPayments{
+interface ChitInfoRaw{
     CID:number;
     GID:number;
     UID:number;
-    no_of_chits:number
-    payments:{
-        month:number;
-        to_be_paid:number;
-        isPaid:boolean;
-    }[];
+    no_of_chits:number;
+    name:string;
+    month:number;
+    year:number;
+    batch:string;
 }
 interface Payments{
     PID:number;
