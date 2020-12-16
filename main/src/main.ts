@@ -105,7 +105,6 @@ async function update() {
     console.log(e);
   }
 }
-
 async function loadMain() {
   if (!mainWindow) {
     mainWindow = new BrowserWindow({
