@@ -4,9 +4,9 @@ import { copyFileSync, readFileSync } from "fs";
 import { join } from "path";
 dotenv.config();
 console.log(
-    "printing environment variables //-----------------------------------------------------------------------//",
+    "//----------------------- printing environment variables ------------------------------------------//",
     process.env,
-    "end  of  environment variables //-----------------------------------------------------------------------//"
+    "//----------------------- end  of  environment variables ------------------------------------------//"
 );
 
 let config: Configuration;

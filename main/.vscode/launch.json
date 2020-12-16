@@ -18,7 +18,7 @@
                 "--unhandled-rejections=strict"
             ],
             "outputCapture": "std",
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            //"preLaunchTask": "tsc: build - tsconfig.json",
             "outFiles": [
                 "${workspaceFolder}/app/**/*.js"
             ]

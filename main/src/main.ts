@@ -1,32 +1,16 @@
 process.on('unhandledRejection', (reason, p) => {
-  console.error('Unhandled Rejection at:', p, 'reason:', reason)
+  console.error('Unhandled Promise Rejection at:', p, 'reason:', reason)
   process.exit(1)
 });
 console.log("Loading configurations and environment variables . . .");
 import config from "./config";
-
-console.log("checking for updates . . .");
-import { autoUpdater } from "electron-updater";
-if(process.env.NODE_ENV === "production"){
-autoUpdater.on("update-downloaded", function(){
-  dialog.showMessageBoxSync({message:"An update is downloaded.\nThe app will restart in 10 seconds."});
-  setTimeout(function(){
-    autoUpdater.quitAndInstall();
-  }, 10000)
-});
-autoUpdater.on("update-available", function(){
-  if(dialog.showMessageBoxSync({message:"Do you want to download the update", buttons:["Yes", "No"]}) === 0){
-    autoUpdater.downloadUpdate();
-  }
-})
-autoUpdater.checkForUpdates();
-}
-
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain, nativeTheme, dialog } from "electron";
+import { autoUpdater } from "electron-updater";
 import { join } from "path";
 import Dbmgmt from "./Dbmgmt";
 import Ipchosts from "./Ipchost";
+
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
 const ipchosts: Ipchosts = new Ipchosts(dbmgmt);
@@ -48,7 +32,9 @@ if (config.theme === "system") {
 console.log("Darkmode:", darkmode);
 
 app.on("ready", async launchInfo => {
-  console.log("Got ready signal", "Displaying splash . . .");
+  console.log("Got ready signal");
+  await update();
+  console.log("Displaying splash . . .");
   splash = new BrowserWindow({
     width: 500,
     height: 300,
@@ -95,6 +81,30 @@ ipcMain.on("splash-ready", async event => {
   splash.webContents.send("log", "Loading main window");
   await loadMain();
 });
+
+async function update() {
+  console.log("checking for updates . . .");
+  if (process.env.NODE_ENV !== "production") {
+    console.log("Running in developement mode skipping update");
+    return;
+  }
+  autoUpdater.on("update-downloaded", function () {
+    dialog.showMessageBoxSync({ message: "An update is downloaded.\nThe app will restart in 10 seconds." });
+    setTimeout(function () {
+      autoUpdater.quitAndInstall();
+    }, 10000)
+  });
+  autoUpdater.on("update-available", function () {
+    if (dialog.showMessageBoxSync({ message: "Do you want to download the update\nApp needs to be restarted after installation.", buttons: ["Yes", "No"] }) === 0) {
+      autoUpdater.downloadUpdate();
+    }
+  });
+  try{
+    await autoUpdater.checkForUpdates();
+  }catch (e){
+    console.log(e);
+  }
+}
 
 async function loadMain() {
   if (!mainWindow) {
