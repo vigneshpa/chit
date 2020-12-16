@@ -71,7 +71,7 @@
         <a @click="openGithub">
           <v-icon size="20">mdi-github</v-icon>vigneshpa/chit
         </a>
-        &copy; {{ new Date().getFullYear() }} GPL3
+        &#127279; {{ new Date().getFullYear() }} GPL3
       </span>
     </v-footer>
   </v-app>
