@@ -85,5 +85,9 @@ interface Configuration{
     databaseFile:{
         isCustom?:boolean;
         location?:string;
+    },
+    updates:{
+        autoCheck:boolean;
+        autoDownload:boolean;
     }
 }

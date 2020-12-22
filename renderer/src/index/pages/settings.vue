@@ -6,10 +6,10 @@
       <v-tabs :vertical="$vuetify.breakpoint.mdAndUp">
         <v-tab><v-icon left>mdi-palette</v-icon> Theme </v-tab>
         <v-tab><v-icon left>mdi-database-lock</v-icon> Data </v-tab>
-        <v-tab><v-icon left>mdi-cable-data</v-icon> Test </v-tab>
+        <v-tab><v-icon left>mdi-update</v-icon> Updates </v-tab>
         <v-tab-item>
           <v-card flat>
-            <v-card-title>Dark mode</v-card-title>
+            <v-card-title><v-icon left>mdi-palette</v-icon> Color Scheme</v-card-title>
             <v-card-text>
               <v-switch
                 v-model="darkModeFollowSystem"
@@ -31,7 +31,7 @@
         </v-tab-item>
         <v-tab-item>
           <v-card flat>
-            <v-card-title>Database file</v-card-title>
+            <v-card-title><v-icon left>mdi-database-lock</v-icon> Database file</v-card-title>
             <v-card-text>
               <v-switch
                 label="Use app's default location to store data"
@@ -46,6 +46,15 @@
                   @click="chooseDBfile"
                 ></v-text-field>
               </v-expand-transition>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item>
+          <v-card flat>
+            <v-card-title><v-icon left>mdi-update</v-icon> Updates</v-card-title>
+            <v-card-text>
+              <v-switch label="Check for updates Automaticaly" v-model="updateAutomaticCheck"></v-switch>
+              <v-switch label="Download updates Automaticaly" v-model="updateAutomaticDownload"></v-switch>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -67,7 +76,8 @@ export default Vue.extend({
           ? null
           : (window.store.state.darkmode as "dark" | "light" | null),
       dbFileUseAppLocation: !window.config.databaseFile.isCustom,
-      dbFileLocation:window.config.databaseFile.location
+      dbFileLocation:window.config.databaseFile.location,
+      updateAutomaticCheck:window.config.updates.autoCheck
     };
   },
   watch: {
@@ -91,7 +101,8 @@ export default Vue.extend({
     dbFileLocation(){
       window.store.state.config.databaseFile.location = this.dbFileLocation;
       window.store.commit("updateConfig");
-    }
+    },
+    updateAutomaticCheck(){}
   },
   methods: {
     async chooseDBfile(ev:Event){

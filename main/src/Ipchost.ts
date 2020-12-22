@@ -1,3 +1,4 @@
+import { SSL_OP_EPHEMERAL_RSA } from "constants";
 import { app, BrowserWindow, dialog, ipcMain, MessageBoxOptions, MessageBoxReturnValue, OpenDialogOptions, OpenDialogReturnValue, shell } from "electron";
 import { writeFile } from "fs";
 import { join } from "path";
@@ -33,6 +34,7 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("create-user", err, response?.result);
         });
 
@@ -45,6 +47,7 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("create-group", err, response?.result);
         });
 
@@ -52,12 +55,14 @@ class Ipchosts {
             // console.log("Recived message from renderer to get users data");
             const result: userInfo[] = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-users-data", result);
         });
 
         ipcMain.on("get-user-details", async (event, UID: number) => {
             const result: userInfoExtended = await this.dbmgmt.userDetails(UID);
             console.log("Sending " + result.name + "'s data to the renderer");
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-user-details", result);
         });
 
@@ -65,6 +70,7 @@ class Ipchosts {
             console.log("Recived message from renderer to get groups data");
             const result = await this.dbmgmt.listGroups();
             console.log("Sending groups data to the renderer.");
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-groups-data", result);
         });
 
@@ -82,6 +88,7 @@ class Ipchosts {
                 err = e;
             }
             console.log("Phone number " + (result ? "" : "does not ") + "exists");
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("phone-exists", err, result);
         });
 
@@ -95,6 +102,7 @@ class Ipchosts {
                 err = e;
             }
             console.log("Batch " + (result ? "" : "does not ") + "exists");
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("batch-exists", err, result);
         });
 
@@ -113,6 +121,7 @@ class Ipchosts {
                     ret = await dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), <MessageBoxOptions>options);
                     break;
             };
+            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("show-dialog", ret);
         });
 
@@ -126,7 +135,7 @@ class Ipchosts {
 
         ipcMain.on("update-config", (event, newConfig: Configuration) => {
             console.log("Updating Configuration file ...");
-            writeFile(newConfig.configPath, JSON.stringify(newConfig), (err) => {
+            writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
                 if (err) {
                     event.sender.send("update-config", false);
                     throw err;
@@ -143,6 +152,7 @@ class Ipchosts {
                     }, 10000);
                 }
                 global.config = newConfig;
+                //await new Promise(r => setTimeout(r, 5000));
                 event.sender.send("update-config", true);
             });
         });

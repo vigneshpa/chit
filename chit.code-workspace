@@ -7,6 +7,9 @@
 			"path": "main"
 		},
 		{
+			"path": "web"
+		},
+		{
 			"path": "."
 		}
 	]

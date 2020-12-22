@@ -72,7 +72,9 @@
         <a @click="openGithub">
           <v-icon size="20">mdi-github</v-icon>vigneshpa/chit
         </a>
+        <a @click="openGithubLicense"  style="color:white">
         &#127279; {{ new Date().getFullYear() }} GPL3
+        </a>
       </span>
     </v-footer>
   </v-app>
@@ -150,6 +152,10 @@ export default Vue.extend({
     openGithub(ev: Event) {
       ev.preventDefault();
       window.openExternal("https://github.com/vigneshpa/chit");
+    },
+    openGithubLicense(ev: Event) {
+      ev.preventDefault();
+      window.openExternal("https://github.com/vigneshpa/chit/blob/master/LICENSE.md");
     },
   },
   created() {},
