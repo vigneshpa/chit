@@ -7,7 +7,7 @@ declare global {
         ipcrenderer: IpcRenderer;
         app: Vue;
         store: Store<State>;
-        vuetify:typeof Vuetify;
+        vuetify:Vuetify;
         config:Configuration;
         openExternal:(url:string)=>Void;
         resizeWindowToCard:()=>Void;

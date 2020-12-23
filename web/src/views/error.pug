@@ -1,0 +1,35 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{code} Error
+    style.
+      *{
+          font-family:Roboto
+      }
+      h1, p{
+          text-align:center
+      }
+      h1{
+          font-size:calc(0.5em + 4vmin)
+      }
+      p{
+          font-size:calc(0.5em + 2vmin)
+      }
+      #content {
+          margin:auto;
+          margin-top:10vmax;
+          text-align:center;
+      }
+    script.
+      function viewDetails(){
+        alert("#{JSON.stringify(details)}");
+      }
+  body
+    div#content
+      img(src=`./images/${code}.svg` style="width:20vmin")
+      h1 #{title}
+      p #{message}
+      if (details)
+        button(onclick="viewDetails()") view Details

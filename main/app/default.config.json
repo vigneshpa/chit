@@ -1,4 +1,8 @@
 {
     "isDevelopement": false,
-    "theme": "system"
+    "theme": "system",
+    "updates":{
+        "autoCheck":true,
+        "autoDownload":false
+    }
 }

@@ -1,7 +1,7 @@
-<template>
-  <create-user v-if="form === 'addUser'" v-bind:key="'app'"></create-user>
-  <create-group v-else-if="form === 'addGroup'" v-bind:key="'app'"></create-group>
-  <user-details v-else-if="form === 'UserDetails'" v-bind:key="'app'"></user-details>
+<template lang="pug">
+create-user(v-if="form === 'addUser'", v-bind:key="'app'")
+create-group(v-else-if="form === 'addGroup'", v-bind:key="'app'")
+user-details(v-else-if="form === 'UserDetails'", v-bind:key="'app'")
 </template>
 <script lang="ts">
 import CreateUser from "./CreateUser.vue";
@@ -22,9 +22,9 @@ export default Vue.extend({
     CreateGroup,
     UserDetails,
   },
-  mounted(){
-      window.resizeWindowToCard();
-  }
+  mounted() {
+    window.resizeWindowToCard();
+  },
 });
 window.resizeWindowToCard = function () {
   setTimeout(() => {

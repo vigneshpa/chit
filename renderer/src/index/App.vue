@@ -1,83 +1,59 @@
-<template>
-  <v-app id="1_app">
-    <v-navigation-drawer v-model="drawer" app clipped>
-      <v-list dense>
-        <v-list-item
-          v-for="item in drawerList"
-          v-bind:key="item.key"
-          @click="
-            page = item.name;
-            drawer = null;
-          "
-          active-class="drawerActive"
-          :class="{ drawerActive: page === item.name }"
-        >
-          <v-list-item-action v-if="item.icon">
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+<template lang="pug">
+v-app#1_app
+  v-navigation-drawer(v-model="drawer", app, clipped)
+    v-list(dense)
+      v-list-item(
+        v-for="item in drawerList",
+        v-bind:key="item.key",
+        @click="page = item.name; drawer = null",
+        active-class="drawerActive",
+        :class="{ drawerActive: page === item.name }"
+      )
+        v-list-item-action(v-if="item.icon")
+          v-icon {{ item.icon }}
+        v-list-item-content
+          v-list-item-title {{ item.title }}
 
-    <v-app-bar
-      app
-      clipped-left
-      color="blue"
-      dark
-      v-bind:loading="this.$store.state.appLoading"
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title>{{ pageTitle }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn dark icon v-bind="attrs" v-on="on">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
+  v-app-bar(
+    app,
+    clipped-left,
+    color="blue",
+    dark,
+    v-bind:loading="this.$store.state.appLoading"
+  )
+    v-app-bar-nav-icon(@click.stop="drawer = !drawer")
+    v-toolbar-title {{ pageTitle }}
+    v-spacer
+    v-menu(offset-y)
+      template(v-slot:activator="{ on, attrs }")
+        v-btn(dark, icon, v-bind="attrs", v-on="on")
+          v-icon mdi-plus
 
-        <v-list>
-          <v-list-item
-            v-for="item in addList"
-            v-bind:key="item.key"
-            @click="item.onClick"
-          >
-            <v-list-item-action v-if="item.icon">
-              <v-icon>{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
+      v-list
+        v-list-item(
+          v-for="item in addList",
+          v-bind:key="item.key",
+          @click="item.onClick"
+        )
+          v-list-item-action(v-if="item.icon")
+            v-icon {{ item.icon }}
+          v-list-item-content
+            v-list-item-title {{ item.title }}
 
-    <v-main>
-      <dashboard v-if="this.page === 'dashboard'" />
-      <settings v-else-if="this.page === 'settings'" />
-      <users v-else-if="this.page === 'users'" />
-      <groups v-else-if="this.page === 'groups'" />
-    </v-main>
+  v-main
+    dashboard(v-if="this.page === 'dashboard'")
+    settings(v-else-if="this.page === 'settings'")
+    users(v-else-if="this.page === 'users'")
+    groups(v-else-if="this.page === 'groups'")
 
-    <v-footer app dense>
-      <span>
-        {{ $store.state.config.databaseFile.location }}
-      </span>
-      <v-spacer></v-spacer>
-      <span>
-        <a @click="openGithub">
-          <v-icon size="20">mdi-github</v-icon>vigneshpa/chit
-        </a>
-        <a @click="openGithubLicense"  style="color:white">
-        &#127279; {{ new Date().getFullYear() }} GPL3
-        </a>
-      </span>
-    </v-footer>
-  </v-app>
+  v-footer(app, dense)
+    span {{ $store.state.config.databaseFile.location }}
+    v-spacer
+    span
+      a(@click="openGithub")
+        v-icon(size="20") mdi-github
+        | vigneshpa/chit
+      a(@click="openGithubLicense", style="color: white") &#127279; {{ new Date().getFullYear() }} GPL3
 </template>
 
 <script lang="ts">
@@ -124,11 +100,12 @@ export default Vue.extend({
         name: "users",
         key: 3,
         icon: "mdi-account-multiple",
-      },{
+      },
+      {
         title: "Groups",
-        name:"groups",
-        key:4,
-        icon:"mdi-account-group"
+        name: "groups",
+        key: 4,
+        icon: "mdi-account-group",
       },
       {
         title: "Settings",
@@ -155,7 +132,9 @@ export default Vue.extend({
     },
     openGithubLicense(ev: Event) {
       ev.preventDefault();
-      window.openExternal("https://github.com/vigneshpa/chit/blob/master/LICENSE.md");
+      window.openExternal(
+        "https://github.com/vigneshpa/chit/blob/master/LICENSE.md"
+      );
     },
   },
   created() {},

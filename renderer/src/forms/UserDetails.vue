@@ -1,37 +1,28 @@
-<template>
-  <v-app id="1_app">
-    <v-main>
-      <v-container id="container">
-        <v-card>
-          <v-card-title>{{ details.name }}</v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-list>
-              <v-list-item>
-                <v-list-item-content>User Identity Number</v-list-item-content>
-                <v-list-item-content> {{ details.UID }}</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>Phone Number</v-list-item-content>
-                <v-list-item-content> {{ details.phone }}</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>Address</v-list-item-content>
-                <v-list-item-content> {{ details.address }}</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>Active in {{details.noOfActiveBatches}} Batches.</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>Groups</v-list-item-content>
-                <v-list-item-content> {{ details.groups }}</v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card-text>
-        </v-card>
-      </v-container>
-    </v-main>
-  </v-app>
+<template lang="pug">
+v-app#1_app
+  v-main
+    v-container#container
+      v-card
+        v-card-title {{ details.name }}
+        v-divider
+        v-card-text
+          v-list
+            v-list-item
+              v-list-item-content User Identity Number
+              v-list-item-content {{ details.UID }}
+            v-list-item
+              v-list-item-content Phone Number
+              v-list-item-content {{ details.phone }}
+            v-list-item
+              v-list-item-content Address
+              v-list-item-content {{ details.address }}
+            v-list-item
+              v-list-item-content
+                | Active in
+                | {{ details.noOfActiveBatches }} Batches.
+            v-list-item
+              v-list-item-content Groups
+              v-list-item-content {{ details.groups }}
 </template>
 <script lang="ts">
 import Vue from "vue";

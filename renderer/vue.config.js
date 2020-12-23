@@ -8,6 +8,15 @@ module.exports = {
       }
     }
   },
+  chainWebpack: config => {
+    // Pug
+    config.module
+      .rule('pug')
+      .test(/\.pug$/)
+      .use('pug-loader')
+        .loader('pug-plain-loader')
+        .end()
+  },
   "pages": {
     "index": {
       "entry": "src/index/main.ts",

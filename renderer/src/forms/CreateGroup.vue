@@ -1,225 +1,176 @@
-<template>
-  <v-app id="1_app">
-    <v-main>
-      <v-container id="container">
-        <v-card class="mx-auto" max-width="500">
-          <v-card-title class="title font-weight-regular justify-space-between">
-            <span>{{ currentTitle }}</span>
-            <v-avatar color="lighten" class="headding grey--text" size="48">
-              <v-icon>mdi-account-multiple-plus</v-icon>
-            </v-avatar>
-          </v-card-title>
-          <v-window v-model="step">
-            <v-window-item :value="1">
-              <v-card-text>
-                <v-date-picker
-                  label="Month"
-                  type="month"
-                  v-model="monthModel"
-                  required
-                  id="month"
-                  :loading="loading"
-                  :readonly="disableInputs"
-                  v-on:keyup.enter="next"
-                  full-width
-                  color="primary"
-                ></v-date-picker>
-                <br />
-                <span
-                  class="caption grey--text text--darken-1"
-                >Please select year and month of the batch.</span>
-              </v-card-text>
-            </v-window-item>
-            <v-window-item :value="2">
-              <v-card-text>
-                <v-text-field
-                  label="Batch Name"
-                  prepend-icon="mdi-alphabetical-variant"
-                  required
-                  v-model="batch"
-                  v-on:keyup.enter="next"
-                  id="batch"
-                  :loading="loading"
-                  :readonly="disableInputs"
-                  :error-messages="batchMessage"
-                  @input="batchChange"
-                ></v-text-field>
-                <span
-                  class="caption grey--text text--darken-1"
-                >Please enter a name for this batch in month of {{this.formatedMonth}}. This must be unique for every batch within a month.</span>
-              </v-card-text>
-            </v-window-item>
-            <v-window-item :value="3">
-              <v-card-text>
-                <v-card :loading="loading">
-                  <v-card-text>
-                    <v-autocomplete
-                      v-model="memberModel"
-                      :items="users"
-                      :loading="loading"
-                      hide-no-data
-                      hide-selected
-                      item-text="name"
-                      item-value="UID"
-                      label="Member"
-                      prepend-icon="mdi-account"
-                      :readonly="disableInputs"
-                      return-object
-                      append-outer-icon="mdi-reload"
-                      @click:append-outer="reloadUsers"
-                    ></v-autocomplete>
-                    <v-text-field
-                      prepend-icon="mdi-number"
-                      v-model="no_of_chits"
-                      label="Number of Chits"
-                      type="number"
-                      :max="20-totalChits"
-                      min="0"
-                      :readonly="disableInputs"
-                      @keyup.enter="window.document.getElementById('add').click()"
-                    ></v-text-field>
-                  </v-card-text>
-                  <v-divider></v-divider>
-                  <v-expand-transition>
-                    <v-list
-                      v-if="memberModel"
-                      width="312"
-                      style="position:absolute;z-index:1"
-                      elevation="5"
-                    >
-                      <v-list-item v-for="(field, key) in memberModel" :key="key+'userDetail'">
-                        <v-list-item-content>
-                          <v-list-item-title v-text="field"></v-list-item-title>
-                          <v-list-item-subtitle v-text="key"></v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                      <v-list-item>
-                        <v-btn :disabled="!memberModel" @click="memberModel = null">
-                          <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                      </v-list-item>
-                    </v-list>
-                  </v-expand-transition>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn
-                      :disabled="!memberModel || !no_of_chits || !(parseFloat(no_of_chits)>0) || (parseFloat(no_of_chits)>(20-totalChits))"
-                      @click="addMember"
-                      color="primary"
-                      id="add"
-                    >
-                      Add
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-                <div style="height:304px;overflow:auto">
-                  <v-subheader>Members of the new group:</v-subheader>
-                  <v-list>
-                    <v-fab-transition group>
-                      <v-list-item
-                        v-for="member in members"
-                        :key="member.info.UID+'memberDetail'"
-                        @click="empty"
-                      >
-                        <v-list-item-content
-                          :title="member.info.phone + '\n' + member.info.address"
-                        >{{member.info.name}}</v-list-item-content>
-                        <v-chip v-text="member.no_of_chits"></v-chip>
-                        <v-list-item-action @click="removeMember(member)" v-if="!disableInputs">
-                          <v-icon>mdi-close-circle</v-icon>
-                        </v-list-item-action>
-                      </v-list-item>
-                    </v-fab-transition>
-                  </v-list>
-                </div>
-                <!-- <v-textarea
-                  label="Members"
-                  prepend-icon="mdi-home"
-                  outlined
-                  v-model="members"
-                  no-resize
-                  id="Members"
-                  :loading="loading"
-                  :readonly="disableInputs"
-                  rows="4"
-                ></v-textarea>-->
-                <span class="caption grey--text text--darken-1">
-                  Please add members for this group. Total no of chits must be 20.
-                  <br />
-                  {{totalChits}} alloted {{20-totalChits}} remaining.
-                </span>
-              </v-card-text>
-              <v-progress-linear :value="totalChits*5"></v-progress-linear>
-            </v-window-item>
-            <v-window-item :value="4">
-              <v-card-text>
-                <span>The details of the new Group are:</span>
-                <br />
-                <br />
-
-                <v-list>
-                  <v-subheader>Month</v-subheader>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-calendar</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>{{formatedMonth}}</v-list-item-title>
-                  </v-list-item>
-                  <v-subheader>Batch Name</v-subheader>
-                  <v-list-item>
-                    <v-list-item-icon>
-                      <v-icon>mdi-alphabetical-variant</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>{{batch}}</v-list-item-title>
-                  </v-list-item>
-                  <v-subheader>Members</v-subheader>
-                  <v-list-group prepend-icon="mdi-account-group" no-action>
-                    <template v-slot:activator>
-                      <v-list-item-content>
-                        <v-list-item-title>{{members.length}} Members</v-list-item-title>
-                      </v-list-item-content>
-                    </template>
-                    <v-list-item v-for="member in members" :key="member.info.UID+'memberFinal'" @click="empty">
-                      <v-list-item-content
-                        v-text="member.info.name"
-                        :title="member.info.phone+'\n'+member.info.address"
-                      ></v-list-item-content>
-                      <v-chip v-text="member.no_of_chits"></v-chip>
-                    </v-list-item>
-                  </v-list-group>
-                </v-list>
-                <br />
-                <span>Please check the details and click finish.</span>
-              </v-card-text>
-            </v-window-item>
-          </v-window>
-          <v-divider></v-divider>
-          <v-card-actions>
-            <v-btn :disabled="(step === 1) || disableButtons" text @click="step--">Back</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn
-              id="next"
-              v-if="step !==4"
-              color="primary"
-              @click="stepForward"
-              :disabled="disableButtons || (step === 3 && totalChits !== 20)"
-            >Next</v-btn>
-            <v-btn
-              v-if="step ===4"
-              :color="submited?'success':'primary'"
-              key="next"
-              @click="submit"
-              :disabled="submited && !success"
-            >
-              <v-icon v-if="!submited">mdi-account-multiple-check</v-icon>
-              <v-icon v-if="submited && success">mdi-checkbox-marked-circle-outline</v-icon>Finish
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-container>
-    </v-main>
-  </v-app>
+<template lang="pug">
+v-app#1_app
+  v-main
+    v-container#container
+      v-card.mx-auto(max-width="500")
+        v-card-title.title.font-weight-regular.justify-space-between
+          span {{ currentTitle }}
+          v-avatar.headding.grey--text(color="lighten", size="48")
+            v-icon mdi-account-multiple-plus
+        v-window(v-model="step")
+          v-window-item(:value="1")
+            v-card-text
+              v-date-picker#month(
+                label="Month",
+                type="month",
+                v-model="monthModel",
+                required,
+                :loading="loading",
+                :readonly="disableInputs",
+                v-on:keyup.enter="next",
+                full-width,
+                color="primary"
+              )
+              br
+              span.caption.grey--text.text--darken-1 Please select year and month of the batch.
+          v-window-item(:value="2")
+            v-card-text
+              v-text-field#batch(
+                label="Batch Name",
+                prepend-icon="mdi-alphabetical-variant",
+                required,
+                v-model="batch",
+                v-on:keyup.enter="next",
+                :loading="loading",
+                :readonly="disableInputs",
+                :error-messages="batchMessage",
+                @input="batchChange"
+              )
+              span.caption.grey--text.text--darken-1 Please enter a name for this batch in month of {{ this.formatedMonth }}. This must be unique for every batch within a month.
+          v-window-item(:value="3")
+            v-card-text
+              v-card(:loading="loading")
+                v-card-text
+                  v-autocomplete(
+                    v-model="memberModel",
+                    :items="users",
+                    :loading="loading",
+                    hide-no-data,
+                    hide-selected,
+                    item-text="name",
+                    item-value="UID",
+                    label="Member",
+                    prepend-icon="mdi-account",
+                    :readonly="disableInputs",
+                    return-object,
+                    append-outer-icon="mdi-reload",
+                    @click:append-outer="reloadUsers"
+                  )
+                  v-text-field(
+                    prepend-icon="mdi-number",
+                    v-model="no_of_chits",
+                    label="Number of Chits",
+                    type="number",
+                    :max="20 - totalChits",
+                    min="0",
+                    :readonly="disableInputs",
+                    @keyup.enter="window.document.getElementById('add').click()"
+                  )
+                v-divider
+                v-expand-transition
+                  v-list(
+                    v-if="memberModel",
+                    width="312",
+                    style="position: absolute; z-index: 1",
+                    elevation="5"
+                  )
+                    v-list-item(
+                      v-for="(field, key) in memberModel",
+                      :key="key + 'userDetail'"
+                    )
+                      v-list-item-content
+                        v-list-item-title(v-text="field")
+                        v-list-item-subtitle(v-text="key")
+                    v-list-item
+                      v-btn(
+                        :disabled="!memberModel",
+                        @click="memberModel = null"
+                      )
+                        v-icon mdi-close
+                v-card-actions
+                  v-spacer
+                  v-btn#add(
+                    :disabled="!memberModel || !no_of_chits || !(parseFloat(no_of_chits) > 0) || parseFloat(no_of_chits) > 20 - totalChits",
+                    @click="addMember",
+                    color="primary"
+                  )
+                    | Add
+                    v-icon mdi-plus
+              div(style="height: 304px; overflow: auto")
+                v-subheader Members of the new group:
+                v-list
+                  v-fab-transition(group)
+                    v-list-item(
+                      v-for="member in members",
+                      :key="member.info.UID + 'memberDetail'",
+                      @click="empty"
+                    )
+                      v-list-item-content(:title='member.info.phone+\'\n\'+member.info.address') {{ member.info.name }}
+                      v-chip(v-text="member.no_of_chits")
+                      v-list-item-action(
+                        @click="removeMember(member)",
+                        v-if="!disableInputs"
+                      )
+                        v-icon mdi-close-circle
+              span.caption.grey--text.text--darken-1
+                | Please add members for this group. Total no of chits must be 20.
+                br
+                | {{ totalChits }} alloted {{ 20 - totalChits }} remaining.
+            v-progress-linear(:value="totalChits * 5")
+          v-window-item(:value="4")
+            v-card-text
+              span The details of the new Group are:
+              br
+              br
+              v-list
+                v-subheader Month
+                v-list-item
+                  v-list-item-icon
+                    v-icon mdi-calendar
+                  v-list-item-title {{ formatedMonth }}
+                v-subheader Batch Name
+                v-list-item
+                  v-list-item-icon
+                    v-icon mdi-alphabetical-variant
+                  v-list-item-title {{ batch }}
+                v-subheader Members
+                v-list-group(prepend-icon="mdi-account-group", no-action)
+                  template(v-slot:activator)
+                    v-list-item-content
+                      v-list-item-title {{ members.length }} Members
+                  v-list-item(
+                    v-for="member in members",
+                    :key="member.info.UID + 'memberFinal'",
+                    @click="empty"
+                  )
+                    v-list-item-content(v-text="member.info.name" :title='member.info.phone+\'\n\'+member.info.address')
+                    v-chip(v-text="member.no_of_chits")
+              br
+              span Please check the details and click finish.
+        v-divider
+        v-card-actions
+          v-btn(
+            :disabled="step === 1 || disableButtons",
+            text,
+            @click="step--"
+          ) Back
+          v-spacer
+          v-btn#next(
+            v-if="step !== 4",
+            color="primary",
+            @click="stepForward",
+            :disabled="disableButtons || (step === 3 && totalChits !== 20)"
+          ) Next
+          v-btn(
+            v-if="step === 4",
+            :color="submited ? 'success' : 'primary'",
+            key="next",
+            @click="submit",
+            :disabled="submited && !success"
+          )
+            v-icon(v-if="!submited") mdi-account-multiple-check
+            v-icon(v-if="submited && success") mdi-checkbox-marked-circle-outline
+            | Finish
 </template>
 
 <script lang="ts">
@@ -239,7 +190,7 @@ export default Vue.extend({
       memberModel: null as userInfo | null,
       no_of_chits: null as string | null,
       users: [] as userInfo[],
-      loadedUsers:false as boolean,
+      loadedUsers: false as boolean,
       disableButtons: false as boolean,
       disableInputs: false as boolean,
       loading: false as boolean,
@@ -301,7 +252,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    empty(){},
+    empty() {},
     removeMember(member: members) {
       this.users.push(member.info);
       this.members.splice(this.members.indexOf(member), 1);
@@ -353,19 +304,16 @@ export default Vue.extend({
       });
     },
     getUsers() {
-      if(this.loadedUsers)return;
+      if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      window.ipcrenderer.once(
-        "get-users-data",
-        (event, data: userInfo[]) => {
-          this.users = data;
-          console.log(data);
-          this.disableInputs = false;
-          this.loading = false;
-          this.loadedUsers = true;
-        }
-      );
+      window.ipcrenderer.once("get-users-data", (event, data: userInfo[]) => {
+        this.users = data;
+        console.log(data);
+        this.disableInputs = false;
+        this.loading = false;
+        this.loadedUsers = true;
+      });
       window.ipcrenderer.send("get-users-data");
     },
     reloadUsers() {
@@ -427,9 +375,12 @@ export default Vue.extend({
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      const finalMembers:createGroupFields["members"] = [];
-      this.members.forEach(member => {
-        finalMembers.push({UID:member.info.UID, no_of_chits:member.no_of_chits});
+      const finalMembers: createGroupFields["members"] = [];
+      this.members.forEach((member) => {
+        finalMembers.push({
+          UID: member.info.UID,
+          no_of_chits: member.no_of_chits,
+        });
       });
       window.ipcrenderer.once(
         "create-group",

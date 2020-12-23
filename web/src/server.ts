@@ -1,7 +1,6 @@
 import App from "./app";
 import debug from "debug";
 import * as http from "http";
-import * as WebSocket from "ws";
 debug("test:server");
 const port = normalizePort(process.env.PORT || 8080);
 
@@ -11,21 +10,17 @@ app.app.set("port", port);
 
 const server = http.createServer(app.app);
 
-const wss = new WebSocket.Server({ clientTracking:false, noServer:true });
-
-wss.on('connection', function connection(ws) {
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-  });
-
-  ws.send('something');
-});
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
 
+
+
+
+
+
+//Functions
 function normalizePort(val:any):number|boolean {
     let port = parseInt(val, 10);
 

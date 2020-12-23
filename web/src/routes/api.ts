@@ -7,7 +7,7 @@ router.use('/v1', function(req, res, next){
 });
 
 router.use("/", function(req, res, next){
-    res.end("skjdnf");
+    res.status(404);
 });
 
 export default router;

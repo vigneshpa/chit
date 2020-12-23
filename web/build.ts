@@ -19,7 +19,7 @@ logger.timestamp = false;
         await remove('./dist/');
         // Copy front-end files
         await copy('./src/public', './dist/public');
-        // await copy('./src/views', './dist/views');
+        await copy('./src/views', './dist/views');
         // Copy production env file
         await copy('./src/prod.env', './dist/.env');
         // Copy back-end files

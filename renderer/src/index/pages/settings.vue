@@ -1,69 +1,69 @@
-<template>
-  <v-container fluid id="settings">
-    <v-card>
-      <v-card-title>Settings</v-card-title>
-      <v-divider></v-divider>
-      <v-tabs :vertical="$vuetify.breakpoint.mdAndUp">
-        <v-tab><v-icon left>mdi-palette</v-icon> Theme </v-tab>
-        <v-tab><v-icon left>mdi-database-lock</v-icon> Data </v-tab>
-        <v-tab><v-icon left>mdi-update</v-icon> Updates </v-tab>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-title><v-icon left>mdi-palette</v-icon> Color Scheme</v-card-title>
-            <v-card-text>
-              <v-switch
-                v-model="darkModeFollowSystem"
-                label="Follow system"
-              ></v-switch>
-              <v-expand-transition>
-                <v-radio-group
-                  v-model="customColorScheme"
-                  :disabled="darkModeFollowSystem"
-                  v-if="!darkModeFollowSystem"
-                  label="Choose color scheme"
-                >
-                  <v-radio label="light" value="light"></v-radio>
-                  <v-radio label="dark" value="dark"></v-radio>
-                </v-radio-group>
-              </v-expand-transition>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-title><v-icon left>mdi-database-lock</v-icon> Database file</v-card-title>
-            <v-card-text>
-              <v-switch
-                label="Use app's default location to store data"
-                v-model="dbFileUseAppLocation"
-              ></v-switch>
-              <v-expand-transition>
-                <v-text-field
-                  :disabled="dbFileUseAppLocation"
-                  readonly
-                  label="Database file Location"
-                  v-model="dbFileLocation"
-                  @click="chooseDBfile"
-                ></v-text-field>
-              </v-expand-transition>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-        <v-tab-item>
-          <v-card flat>
-            <v-card-title><v-icon left>mdi-update</v-icon> Updates</v-card-title>
-            <v-card-text>
-              <v-switch label="Check for updates Automaticaly" v-model="updateAutomaticCheck"></v-switch>
-              <v-switch label="Download updates Automaticaly" v-model="updateAutomaticDownload"></v-switch>
-            </v-card-text>
-          </v-card>
-        </v-tab-item>
-      </v-tabs>
-    </v-card>
-  </v-container>
+<template lang="pug">
+v-container#settings(fluid)
+  v-card
+    v-card-title Settings
+    v-divider
+    v-tabs(:vertical="$vuetify.breakpoint.mdAndUp")
+      v-tab
+        v-icon(left) mdi-palette
+        | Theme
+      v-tab
+        v-icon(left) mdi-database-lock
+        | Data
+      v-tab
+        v-icon(left) mdi-update
+        | Updates
+      v-tab-item
+        v-card(flat)
+          v-card-title
+            v-icon(left) mdi-palette
+            | Color Scheme
+          v-card-text
+            v-switch(v-model="darkModeFollowSystem", label="Follow system")
+            v-expand-transition
+              v-radio-group(
+                v-model="customColorScheme",
+                :disabled="darkModeFollowSystem",
+                v-if="!darkModeFollowSystem",
+                label="Choose color scheme"
+              )
+                v-radio(label="light", value="light")
+                v-radio(label="dark", value="dark")
+      v-tab-item
+        v-card(flat)
+          v-card-title
+            v-icon(left) mdi-database-lock
+            | Database file
+          v-card-text
+            v-switch(
+              label="Use app's default location to store data",
+              v-model="dbFileUseAppLocation"
+            )
+            v-expand-transition
+              v-text-field(
+                :disabled="dbFileUseAppLocation",
+                readonly,
+                label="Database file Location",
+                v-model="dbFileLocation",
+                @click="chooseDBfile"
+              )
+      v-tab-item
+        v-card(flat)
+          v-card-title
+            v-icon(left) mdi-update
+            | Updates
+          v-card-text
+            v-switch(
+              label="Check for updates Automaticaly",
+              v-model="updateAutomaticCheck"
+            )
+            v-switch(
+              label="Download updates Automaticaly",
+              v-model="updateAutomaticDownload"
+            )
 </template>
 <script lang="ts">
-import { OpenDialogOptions, OpenDialogReturnValue } from 'electron';
+import { OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import { config } from "process";
 import Vue from "vue";
 export default Vue.extend({
@@ -76,8 +76,9 @@ export default Vue.extend({
           ? null
           : (window.store.state.darkmode as "dark" | "light" | null),
       dbFileUseAppLocation: !window.config.databaseFile.isCustom,
-      dbFileLocation:window.config.databaseFile.location,
-      updateAutomaticCheck:window.config.updates.autoCheck
+      dbFileLocation: window.config.databaseFile.location,
+      updateAutomaticCheck: window.config.updates.autoCheck,
+      updateAutomaticDownload: window.config.updates.autoDownload,
     };
   },
   watch: {
@@ -94,33 +95,50 @@ export default Vue.extend({
       if (this.customColorScheme)
         window.store.commit("changeColorScheme", this.customColorScheme);
     },
-    dbFileUseAppLocation(){
-      window.store.state.config.databaseFile.isCustom = !this.dbFileUseAppLocation;
+    dbFileUseAppLocation() {
+      window.store.state.config.databaseFile.isCustom = !this
+        .dbFileUseAppLocation;
       window.store.commit("updateConfig");
     },
-    dbFileLocation(){
+    dbFileLocation() {
       window.store.state.config.databaseFile.location = this.dbFileLocation;
       window.store.commit("updateConfig");
     },
-    updateAutomaticCheck(){}
+    updateAutomaticCheck() {
+      window.store.state.config.updates.autoCheck = this.updateAutomaticCheck;
+      window.store.commit("updateConfig");
+    },
+    updateAutomaticDownload() {
+      window.store.state.config.updates.autoDownload = this.updateAutomaticDownload;
+      window.store.commit("updateConfig");
+    },
   },
   methods: {
-    async chooseDBfile(ev:Event){
+    async chooseDBfile(ev: Event) {
       window.store.state.config.databaseFile.isCustom = true;
-      let options:OpenDialogOptions = {
-        properties:["promptToCreate", "openFile"],
-        title:"Choose a database file",
-        message:"Choose a database file. If the file doesn't esists it will be created",
-        defaultPath:window.store.state.config.databaseFile.location,
-        filters:[{name:"SQLite Database", extensions:["db"]}]
+      let options: OpenDialogOptions = {
+        properties: ["promptToCreate", "openFile"],
+        title: "Choose a database file",
+        message:
+          "Choose a database file. If the file doesn't esists it will be created",
+        defaultPath: window.store.state.config.databaseFile.location,
+        filters: [{ name: "SQLite Database", extensions: ["db"] }],
       };
-      let ret = await new Promise((resolve:(value:OpenDialogReturnValue)=>void, reject:(reason:Error)=>void)=>{
-        window.ipcrenderer.once("show-dialog", (event, value:OpenDialogReturnValue)=>{
-          resolve(value);
-        })
-        window.ipcrenderer.send("show-dialog", "open", options);
-      });
-      if(!ret.canceled){
+      let ret = await new Promise(
+        (
+          resolve: (value: OpenDialogReturnValue) => void,
+          reject: (reason: Error) => void
+        ) => {
+          window.ipcrenderer.once(
+            "show-dialog",
+            (event, value: OpenDialogReturnValue) => {
+              resolve(value);
+            }
+          );
+          window.ipcrenderer.send("show-dialog", "open", options);
+        }
+      );
+      if (!ret.canceled) {
         this.dbFileLocation = ret.filePaths.join("");
       }
     },
