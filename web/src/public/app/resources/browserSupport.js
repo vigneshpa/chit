@@ -1,9 +1,18 @@
 alert("Browsers are not supported yet");
-let ipcrenderer = {
-    on(){},
-    send(){},
-    once(){}
+const ipcrenderer = {
+    on() { },
+    send() { },
+    once() { }
 };
-let config = {};
+const config = {
+    isDevelopement: false,
+    theme: "system",
+    databaseFile: {},
+    configPath: "",
+    updates: {
+        autoCheck: true,
+        autoDownload: false
+    }
+};
 window.ipcrenderer = ipcrenderer;
 window.config = config;

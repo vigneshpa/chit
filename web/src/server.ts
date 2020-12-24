@@ -1,8 +1,15 @@
-import App from "./app";
 import debug from "debug";
 import * as http from "http";
+import * as dotenv from "dotenv";
 debug("test:server");
-const port = normalizePort(process.env.PORT || 8080);
+
+dotenv.config({
+    path:"./.env"
+});
+
+import App from "./app";
+
+const port = normalizePort(process.env.PORT || 3000);
 
 const app = new App();
 

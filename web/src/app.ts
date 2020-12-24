@@ -1,28 +1,29 @@
 import * as express from "express";
 import * as path from "path";
 import * as logger from "morgan";
-import * as session from "express-session";
+import * as compression from "compression";
 
+import sessionParser from "./sessionParser";
 import router from "./routes";
 import { inspect } from "util";
 class App {
-    vueProjectLocation: string;
+    rendererPath: string;
     app: express.Application;
     sessionParser: express.RequestHandler;
     //user to uuid map
     map: Map<string, string>;
     constructor() {
-        this.vueProjectLocation = path.join(__dirname, process.env.VUEPATH || '../../main/app/windows');
+        this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../main/app/windows');
+        this.sessionParser = sessionParser;
+
+        //Creating app instance
         this.app = express();
-        this.sessionParser = session({
-            saveUninitialized: false,
-            secret: '177V1gne$#',
-            resave: false
-        });
+
+        //Setting up Morgan
         this.app.use(logger('dev'));
-        this.app.use(express.json());
-        this.app.use(express.urlencoded({ extended: false }));
-        this.app.use(this.sessionParser);
+
+        //Setting up compression
+        this.app.use(compression());
 
         //setting up view engine
         this.app.set("views", "./views");
@@ -30,9 +31,23 @@ class App {
 
         //mounting public
         this.app.use(express.static(path.join(__dirname, 'public')));
+        if (process.env.NODE_ENV !== 'production') {
+            const pugStatic = require("express-pug-static");
+            this.app.use(pugStatic({
+                baseDir: path.join(__dirname, '/static'),
+                baseUrl: '/'
+            }));
+        }
+
+        //Setting up request parsers
+        this.app.use(express.json());
+        this.app.use(express.urlencoded({ extended: false }));
+
+        //Injecting session parser
+        this.app.use(this.sessionParser);
 
         //mounting vue project
-        this.app.use("/app", express.static(this.vueProjectLocation));
+        this.app.use("/app", express.static(this.rendererPath));
 
 
         //adding router
@@ -45,7 +60,7 @@ class App {
 
         // Handle 500
         this.app.use(function (error: Error, req, res, next) {
-            res.status(500).render("error", { code: 500, title: "Sorry!", message: "Some unrecoverable error happened.Please contact us.", details:inspect(error)});
+            res.status(500).render("error", { code: 500, title: "Sorry!", message: "Some unrecoverable error happened.Please contact us.", details: inspect(error) });
         });
     }
 }

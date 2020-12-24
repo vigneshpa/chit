@@ -20,10 +20,14 @@ logger.timestamp = false;
         // Copy front-end files
         await copy('./src/public', './dist/public');
         await copy('./src/views', './dist/views');
+        //Building pug static files
+        await exec('pug ./src/static -o ./dist/public', './');
         // Copy production env file
         await copy('./src/prod.env', './dist/.env');
-        // Copy back-end files
+        // Building backend JS
         await exec('tsc --build tsconfig.prod.json', './')
+        // Building frontend JS
+        await exec('tsc --build tsconfig.public.json', './')
     } catch (err) {
         logger.err(err);
     }
