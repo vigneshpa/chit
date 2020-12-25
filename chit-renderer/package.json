@@ -1,0 +1,51 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "chit-types": "file:../chit-types",
+    "lodash": "^4.17.20",
+    "node-forge": "^0.10.0",
+    "vue": "^2.6.12",
+    "vuetify": "^2.3.22",
+    "vuex": "^3.6.0"
+  },
+  "devDependencies": {
+    "@mdi/font": "^5.8.55",
+    "@types/lodash": "^4.14.165",
+    "@types/node": "^14.14.14",
+    "@vue/cli-plugin-typescript": "^4.5.9",
+    "@vue/cli-plugin-vuex": "^4.5.9",
+    "@vue/cli-service": "^4.5.9",
+    "electron": "^10.2.0",
+    "pug": "^3.0.0",
+    "sass": "^1.30.0",
+    "sass-loader": "^10.1.0",
+    "typescript": "^4.1.3",
+    "vue-cli-plugin-pug": "^2.0.0",
+    "vue-cli-plugin-vuetify": "^2.0.8",
+    "vue-template-compiler": "^2.6.12",
+    "vuetify-loader": "^1.6.0"
+  },
+  "browserslist": {
+    "modern": [
+      "last 2 chrome versions"
+    ],
+    "production": [
+      "last 2 chrome versions"
+    ],
+    "developement": [
+      "last 1 chrome version",
+      "last 1 firefox version"
+    ],
+    "ssr": [
+      "node 12"
+    ]
+  },
+  "author": "Vignesh",
+  "license": "GPL-3.0"
+}

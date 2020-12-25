@@ -1,16 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "renderer"
-		},
-		{
-			"path": "main"
-		},
-		{
-			"path": "web"
-		},
-		{
 			"path": "."
 		}
-	]
+	],
+	"settings": {
+		"vetur.format.defaultFormatter.ts": "vscode-typescript",
+		"vetur.format.defaultFormatter.pug": "prettier",
+		"vetur.format.defaultFormatter.css": "prettier",
+		"vetur.format.defaultFormatter.html": "prettier"
+	}
 }
