@@ -1,4 +1,4 @@
-import Database from "./sqlite3";
+import Database from "./loaders/sqlite3";
 import { promises, unlinkSync } from "fs";
 import { readFile } from "fs";
 import { promisify } from "util";

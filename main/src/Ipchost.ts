@@ -1,28 +1,29 @@
-import { SSL_OP_EPHEMERAL_RSA } from "constants";
-import { app, BrowserWindow, dialog, ipcMain, MessageBoxOptions, MessageBoxReturnValue, OpenDialogOptions, OpenDialogReturnValue, shell } from "electron";
-import { writeFile } from "fs";
-import { join } from "path";
+import ipcMain from "./loaders/ipcMain";
 import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
     private dbmgmt: Dbmgmt;
-    private onOpenForm: (type: string, args:{[key:string]:string}) => void;
+    private events:{
+        "openForm"?:(type: string, args:{[key:string]:string})=>void;
+        "pingRecived"?:()=>void;
+        "showMessageBox"?:(options:any)=>Promise<any>;
+        "showOpenDialog"?:(options:any)=>Promise<any>;
+        "openExternal"?:(url:string)=>any;
+        "updateConfig"?:(newConfig:Configuration, callback:(err:Error, done:boolean)=>void)=>void;
+    }
+    public on(key:string, callback:(...args:any[])=>void):void{
+        this.events[key] = callback;
+    }
     constructor(dbmgmt: Dbmgmt) {
         this.dbmgmt = dbmgmt;
-    }
-    private onPingRecived: () => void = function () { }
-    setOnPingRecived(onPingRecivedFn: () => void): void {
-        this.onPingRecived = onPingRecivedFn;
-    }
-    setOnOpenForm(onOpenFormFn: (type: string, args:{[key:string]:string}) => void) {
-        this.onOpenForm = onOpenFormFn;
+        this.events = {};
     }
     async initialise(): Promise<void> {
         ipcMain.on("ping", event => {
             console.log("Recived ping from renderer");
             console.log("Sending pong to the renderer");
             event.sender.send("pong");
-            this.onPingRecived();
+            this.events.pingRecived();
         });
 
         ipcMain.on("create-user", async (event, data: createUserFields) => {
@@ -34,7 +35,6 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("create-user", err, response?.result);
         });
 
@@ -47,22 +47,18 @@ class Ipchosts {
             } catch (err1) {
                 err = err1;
             }
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("create-group", err, response?.result);
         });
 
         ipcMain.on("get-users-data", async event => {
-            // console.log("Recived message from renderer to get users data");
             const result: userInfo[] = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-users-data", result);
         });
 
         ipcMain.on("get-user-details", async (event, UID: number) => {
             const result: userInfoExtended = await this.dbmgmt.userDetails(UID);
             console.log("Sending " + result.name + "'s data to the renderer");
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-user-details", result);
         });
 
@@ -70,12 +66,11 @@ class Ipchosts {
             console.log("Recived message from renderer to get groups data");
             const result = await this.dbmgmt.listGroups();
             console.log("Sending groups data to the renderer.");
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("get-groups-data", result);
         });
 
         ipcMain.on("open-forms", (event, type: string, args:{[key:string]:string}) => {
-            this.onOpenForm(type, args);
+            this.events.openForm(type, args);
         });
 
         ipcMain.on("phone-exists", async (event, phone: string) => {
@@ -88,7 +83,6 @@ class Ipchosts {
                 err = e;
             }
             console.log("Phone number " + (result ? "" : "does not ") + "exists");
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("phone-exists", err, result);
         });
 
@@ -102,31 +96,29 @@ class Ipchosts {
                 err = e;
             }
             console.log("Batch " + (result ? "" : "does not ") + "exists");
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("batch-exists", err, result);
         });
 
 
-        ipcMain.on("show-message-box", (event, options: MessageBoxOptions) => {
-            dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), options);
+        ipcMain.on("show-message-box", (event, options) => {
+            this.events.showMessageBox( options);
         });
 
-        ipcMain.on("show-dialog", async (event, type: ("open" | "messagebox"), options: (OpenDialogOptions | MessageBoxOptions)) => {
-            let ret: (OpenDialogReturnValue | MessageBoxReturnValue);
+        ipcMain.on("show-dialog", async (event, type: ("open" | "messagebox"), options) => {
+            let ret;
             switch (type) {
                 case "open":
-                    ret = await dialog.showOpenDialog(BrowserWindow.fromWebContents(event.sender), <OpenDialogOptions>options);
+                    ret = await this.events.showOpenDialog(options);
                     break;
                 case "messagebox":
-                    ret = await dialog.showMessageBox(BrowserWindow.fromWebContents(event.sender), <MessageBoxOptions>options);
+                    ret = await this.events.showMessageBox(options);
                     break;
             };
-            //await new Promise(r => setTimeout(r, 5000));
             event.sender.send("show-dialog", ret);
         });
 
         ipcMain.on("open-external", (event, url: string) => {
-            shell.openExternal(url);
+            this.events.openExternal(url);
         });
 
         ipcMain.on("get-config", event => {
@@ -135,25 +127,12 @@ class Ipchosts {
 
         ipcMain.on("update-config", (event, newConfig: Configuration) => {
             console.log("Updating Configuration file ...");
-            writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
+            this.events.updateConfig(newConfig, (err, done)=>{
                 if (err) {
-                    event.sender.send("update-config", false);
+                    event.sender.send("update-config", done);
                     throw err;
                 };
-                if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
-                //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
-                if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
-                    dialog.showMessageBox({
-                        message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
-                        title: "Database file changed"
-                    });
-                    setTimeout(function () {
-                        app.quit();
-                    }, 10000);
-                }
-                global.config = newConfig;
-                //await new Promise(r => setTimeout(r, 5000));
-                event.sender.send("update-config", true);
+                event.sender.send("update-config", done);
             });
         });
     }

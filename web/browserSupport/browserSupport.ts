@@ -1,4 +1,5 @@
 alert("Browsers are not supported yet");
+const events = {};
 const ipcrenderer = {
     on(){},
     send(){},

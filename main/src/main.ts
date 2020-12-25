@@ -1,3 +1,25 @@
+/**
+ * This file communicates with electron api
+ */
+console.log("////////////////////////////////////////////////////////////////////////////");
+console.log("///////////////|     Chit Management System        |////////////////////////");
+console.log("////////////////////////////////////////////////////////////////////////////");
+console.log(`   ​Copyright (C) 2020  Vignesh Paranthaman<vignesh-p@outlook.com>
+
+​This program is free software: you can redistribute it and/or modify
+​it under the terms of the GNU General Public License as published by
+​the  Free  Software  Foundation, either version 3 of the License, or
+any later version.
+
+​This program is distributed in the hope that it will be useful,
+​but WITHOUT ANY WARRANTY; without even the implied warranty of
+​MERCHANTABILITY or  FITNESS FOR A PARTICULAR PURPOSE.  See the
+​GNU General Public License for more details.
+
+​You should have received a copy of the GNU General Public License
+​along with this program.  If not, see <https://www.gnu.org/licenses/>.`);
+console.log("\n\n");
+
 process.on('unhandledRejection', (reason, p) => {
   console.error('\n\nAPP CRASH:\nUnhandled Promise Rejection at:', p, 'reason:', reason);
   process.exit(1);
@@ -5,11 +27,12 @@ process.on('unhandledRejection', (reason, p) => {
 console.log("Loading configurations and environment variables . . .");
 import config from "./config";
 console.log("Starting Electron . . . ");
-import { BrowserWindow, app, ipcMain, nativeTheme, dialog } from "electron";
+import { BrowserWindow, app, ipcMain, nativeTheme, dialog, MessageBoxOptions, OpenDialogOptions, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import { join } from "path";
 import Dbmgmt from "./Dbmgmt";
 import Ipchosts from "./Ipchost";
+import { writeFile } from "fs";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
@@ -53,9 +76,69 @@ app.on("ready", async launchInfo => {
   await splash.loadFile(__dirname + "/resources/splash.html");
 });
 
+ipchosts.on("showMessageBox", ( options: MessageBoxOptions) => dialog.showMessageBox(options));
+ipchosts.on("showOpenDialog", ( options: OpenDialogOptions) => dialog.showOpenDialog(options));
+ipchosts.on("openExternal", (url:string)=>shell.openExternal(url));
+ipchosts.on("pingRecived", () => {
+  if (splash) splash?.webContents.send("log", "Loading UI ");
+});
+ipchosts.on("updateConfig", (newConfig:Configuration, cb:(err:Error, done:boolean)=>void)=>{
+  writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
+    if (err) {
+        cb(err, false);
+        throw err;
+    };
+    if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
+    //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
+    if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
+        dialog.showMessageBox({
+            message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+            title: "Database file changed"
+        });
+        setTimeout(()=>{
+            app.quit();
+        }, 10000);
+    }
+    global.config = newConfig;
+    //await new Promise(r => setTimeout(r, 5000));
+    cb(null, true);
+});
+});
+ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
+  if (!formsWindow) {
+    console.log("Recived message from renderer to open ", type);
+    formsWindow = new BrowserWindow({
+      height: 400,
+      width: 550,
+      webPreferences: {
+        nodeIntegration: false,
+        preload: join(__dirname, "./preload.js")
+      },
+      resizable: true,
+      minimizable: false,
+      darkTheme: darkmode,
+      backgroundColor: darkmode ? "#000000" : "#ffffff"
+    });
+    formsWindow.setMenu(null);
+    formsWindow.on("closed", function () {
+      formsWindow = null;
+    });
+    if (config.isDevelopement) {
+      let searchParams = new URLSearchParams({ "form": type, ...args });
+      await formsWindow.loadURL("http://localhost:8080/forms.html?" + searchParams.toString());
+      formsWindow.webContents.openDevTools();
+    } else {
+      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type, ...args } });
+    }
+  } else {
+    console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
+    formsWindow.focus();
+  }
+});
+
 ipcMain.on("splash-ready", async event => {
   console.log("Splash is ready");
-  splash.webContents.send("log", "Connecting to the database");
+  splash?.webContents.send("log", "Connecting to the database");
   if (!(await dbmgmt.connect())) {
     let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom ? {
       message: `Looks like you have configured custom database file.\nChit cannot find a database file at\n${config.databaseFile.location}\nDo you wish to create a new one ?`,
@@ -76,9 +159,9 @@ ipcMain.on("splash-ready", async event => {
       return;
     }
   }
-  splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
+  splash?.webContents.send("log", "Initialising Inter Process Communication(IPC)");
   await ipchosts.initialise();
-  splash.webContents.send("log", "Loading main window");
+  splash?.webContents.send("log", "Loading main window");
   await loadMain();
 });
 
@@ -99,9 +182,9 @@ async function update() {
       autoUpdater.downloadUpdate();
     }
   });
-  try{
+  try {
     await autoUpdater.checkForUpdates();
-  }catch (e){
+  } catch (e) {
     console.log(e);
   }
 }
@@ -125,13 +208,13 @@ async function loadMain() {
       app.quit();
     });
     mainWindow.on("ready-to-show", function () {
-      splash.webContents.send("log", "UI is ready<br/>Waiting for idle signal");
+      splash?.webContents.send("log", "UI is ready<br/>Waiting for idle signal");
       mainWindow.show();
       setTimeout(function () {
         splash?.close();
       }, 2000);
     });
-    splash.webContents.send("log", "Executing vue.js framework");
+    splash?.webContents.send("log", "Executing vue.js framework");
     if (config.isDevelopement) {
       await mainWindow.loadURL("http://localhost:8080");
       mainWindow.webContents.openDevTools();
@@ -142,41 +225,6 @@ async function loadMain() {
     mainWindow.focus();
   }
 }
-
-ipchosts.setOnPingRecived(() => {
-  if (splash) splash.webContents.send("log", "Loading UI ");
-});
-ipchosts.setOnOpenForm(async (type, args:{[key:string]:string}) => {
-  if (!formsWindow) {
-    console.log("Recived message from renderer to open ", type);
-    formsWindow = new BrowserWindow({
-      height: 400,
-      width: 550,
-      webPreferences: {
-        nodeIntegration: false,
-        preload: join(__dirname, "./preload.js")
-      },
-      resizable: true,
-      minimizable: false,
-      darkTheme: darkmode,
-      backgroundColor: darkmode ? "#000000" : "#ffffff"
-    });
-    formsWindow.setMenu(null);
-    formsWindow.on("closed", function () {
-      formsWindow = null;
-    });
-    if (config.isDevelopement) {
-      let searchParams = new URLSearchParams({"form":type, ...args});
-      await formsWindow.loadURL("http://localhost:8080/forms.html?"+searchParams.toString());
-      formsWindow.webContents.openDevTools();
-    } else {
-      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type, ...args } });
-    }
-  } else {
-    console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
-    formsWindow.focus();
-  }
-});
 
 /*app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
