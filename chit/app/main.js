@@ -34,7 +34,7 @@ const Ipchost_1 = require("./Ipchost");
 const fs_1 = require("fs");
 const dbFile = ((_a = config_1.default.databaseFile) === null || _a === void 0 ? void 0 : _a.isCustom) ? config_1.default.databaseFile.location : path_1.join(electron_1.app.getPath("userData"), "/main.db");
 const dbmgmt = new chit_db_1.default(dbFile);
-const ipchosts = new Ipchost_1.default(dbmgmt);
+const ipchosts = new Ipchost_1.default(electron_1.ipcMain, dbmgmt);
 if (!config_1.default.databaseFile)
     config_1.default.databaseFile = {};
 config_1.default.databaseFile.location = dbFile;
@@ -124,7 +124,7 @@ ipchosts.on("openForm", async (type, args) => {
             formsWindow.webContents.openDevTools();
         }
         else {
-            await formsWindow.loadFile(path_1.join(__dirname, "./windows/forms.html"), { query: { "form": type, ...args } });
+            await formsWindow.loadFile(path_1.join(__dirname, config_1.default.vueApp, "/forms.html"), { query: { "form": type, ...args } });
         }
     }
     else {
@@ -216,7 +216,7 @@ async function loadMain() {
             mainWindow.webContents.openDevTools();
         }
         else {
-            await mainWindow.loadFile(path_1.join(__dirname, "./windows/index.html"));
+            await mainWindow.loadFile(path_1.join(__dirname, config_1.default.vueApp, "/index.html"));
         }
     }
     else {

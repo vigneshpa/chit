@@ -8,8 +8,8 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w"
+    "build": "cp ./src/sql ./lib/sql -r && tsc",
+    "dev": "cp ./src/sql ./lib/sql -r && tsc -w"
   },
   "repository": {
     "type": "git",

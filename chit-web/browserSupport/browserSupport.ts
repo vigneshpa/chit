@@ -18,9 +18,6 @@ const config:Configuration = {
 window.ipcrenderer = ipcrenderer;
 window.config = config;
 interface Window{
-    ipcrenderer?:Ipcrenderer;
+    ipcrenderer?:ChitIpcRenderer;
     config?:Configuration;
-}
-interface Ipcrenderer{
-
 }

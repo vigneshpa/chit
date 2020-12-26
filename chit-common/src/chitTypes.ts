@@ -90,7 +90,21 @@ declare global {
         updates: {
             autoCheck: boolean;
             autoDownload: boolean;
-        }
+        },
+        vueApp: string
+    }
+    interface ChitIpcRenderer {
+
+    }
+    interface ChitIpcMain {
+        on(channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void, ...args: any[]): ChitIpcMain;
+    }
+    interface ChitIpcMainEvent {
+        sender: {
+            id: number;
+            send(channel: string, ...args: any[]): void
+        },
+        returnValue:any
     }
 }
 export { };

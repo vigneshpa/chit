@@ -105,7 +105,7 @@ v-app#1_app
                       :key="member.info.UID + 'memberDetail'",
                       @click="empty"
                     )
-                      v-list-item-content(:title='member.info.phone+\'\n\'+member.info.address') {{ member.info.name }}
+                      v-list-item-content(:title="member.info.phone + '\\n' + member.info.address") {{ member.info.name }}
                       v-chip(v-text="member.no_of_chits")
                       v-list-item-action(
                         @click="removeMember(member)",
@@ -143,7 +143,7 @@ v-app#1_app
                     :key="member.info.UID + 'memberFinal'",
                     @click="empty"
                   )
-                    v-list-item-content(v-text="member.info.name" :title='member.info.phone+\'\n\'+member.info.address')
+                    v-list-item-content(v-text="member.info.name" :title="member.info.phone + '\\n' + member.info.address")
                     v-chip(v-text="member.no_of_chits")
               br
               span Please check the details and click finish.

@@ -2,6 +2,7 @@
 import * as cp from "child_process";
 import * as fs from "fs-extra";
 import * as chalk from "chalk";
+import tc from "./time";
 
 const timestamps:{
   [key:string]:number
@@ -16,29 +17,25 @@ function end(){
   timestamps.end = Date.now();
   let buildTime;
   if(timestamps.start && timestamps.end){
-    buildTime = (timestamps.end-timestamps.start) + "ms";
+    buildTime = tc.msToHR(timestamps.end-timestamps.start);
   }
   log("Completed building"+(buildTime?" in "+buildTime:"") + ".");
 }
 
 function exec(
   command: string,
+  args?:string[],
   options?: {
     encoding?: "buffer";
-  } & cp.ExecOptions
+  } & cp.SpawnOptions
 ): Promise<number> {
   return new Promise((resolve, reject) => {
 
 
     log(chalk.dim("Executing " + command));
-    let execprs = cp.exec(command, options, (error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-    });
-    execprs.stdout.pipe(process.stdout);
-    execprs.stderr.pipe(process.stderr);
+    options = options?options:{};
+    options.stdio = options.stdio?options.stdio:"inherit";
+    let execprs = cp.spawn(command,args, options);
     execprs.on("exit", (code, signal) => {
       let color = "dim";
       if (code == 0) {
@@ -61,12 +58,13 @@ function exec(
     });
   });
 }
-function clean(dir: string) {
+async function clean(dir: string) {
   log(chalk.redBright(`Emptying ${dir} directory`));
-  return fs.emptyDir(dir);
+  await fs.remove(dir);
+  await fs.mkdirp(dir);
 }
 function copy(src: string, dest: string, options?: fs.CopyOptions) {
-  log(chalk.yellow(`Copying ${src} to ${dest}`));
+  log(chalk.yellow(`Copying `)+chalk.white(src)+chalk.yellow(` to `)+chalk.white(`${dest}`));
   return fs.copy(src, dest, options);
 }
 

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ipcMain_1 = require("./ipcMain");
 class Ipchosts {
-    constructor(dbmgmt) {
+    constructor(chitIpcMain, dbmgmt) {
+        this.chitIpcMain = chitIpcMain;
         this.dbmgmt = dbmgmt;
         this.events = {};
     }
@@ -10,13 +10,13 @@ class Ipchosts {
         this.events[key] = callback;
     }
     async initialise() {
-        ipcMain_1.default.on("ping", event => {
+        this.chitIpcMain.on("ping", event => {
             console.log("Recived ping from renderer");
             console.log("Sending pong to the renderer");
             event.sender.send("pong");
             this.events.pingRecived();
         });
-        ipcMain_1.default.on("create-user", async (event, data) => {
+        this.chitIpcMain.on("create-user", async (event, data) => {
             let err;
             let response;
             console.log("\nRecived Message From Renderer to create user\n", event.sender.id, data);
@@ -28,7 +28,7 @@ class Ipchosts {
             }
             event.sender.send("create-user", err, response === null || response === void 0 ? void 0 : response.result);
         });
-        ipcMain_1.default.on("create-group", async (event, data) => {
+        this.chitIpcMain.on("create-group", async (event, data) => {
             let err;
             let response;
             console.log("Recived message from Renderer to create group", event.sender.id, data);
@@ -40,26 +40,26 @@ class Ipchosts {
             }
             event.sender.send("create-group", err, response === null || response === void 0 ? void 0 : response.result);
         });
-        ipcMain_1.default.on("get-users-data", async (event) => {
+        this.chitIpcMain.on("get-users-data", async (event) => {
             const result = await this.dbmgmt.listUsers();
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);
         });
-        ipcMain_1.default.on("get-user-details", async (event, UID) => {
+        this.chitIpcMain.on("get-user-details", async (event, UID) => {
             const result = await this.dbmgmt.userDetails(UID);
             console.log("Sending " + result.name + "'s data to the renderer");
             event.sender.send("get-user-details", result);
         });
-        ipcMain_1.default.on("get-groups-data", async (event) => {
+        this.chitIpcMain.on("get-groups-data", async (event) => {
             console.log("Recived message from renderer to get groups data");
             const result = await this.dbmgmt.listGroups();
             console.log("Sending groups data to the renderer.");
             event.sender.send("get-groups-data", result);
         });
-        ipcMain_1.default.on("open-forms", (event, type, args) => {
+        this.chitIpcMain.on("open-forms", (event, type, args) => {
             this.events.openForm(type, args);
         });
-        ipcMain_1.default.on("phone-exists", async (event, phone) => {
+        this.chitIpcMain.on("phone-exists", async (event, phone) => {
             let err;
             let result;
             console.log("Checking existance of phone number " + phone);
@@ -72,7 +72,7 @@ class Ipchosts {
             console.log("Phone number " + (result ? "" : "does not ") + "exists");
             event.sender.send("phone-exists", err, result);
         });
-        ipcMain_1.default.on("batch-exists", async (event, batch, month, year) => {
+        this.chitIpcMain.on("batch-exists", async (event, batch, month, year) => {
             let err;
             let result;
             console.log("Checking existance of Batch  " + batch + " in month " + month);
@@ -85,10 +85,10 @@ class Ipchosts {
             console.log("Batch " + (result ? "" : "does not ") + "exists");
             event.sender.send("batch-exists", err, result);
         });
-        ipcMain_1.default.on("show-message-box", (event, options) => {
+        this.chitIpcMain.on("show-message-box", (event, options) => {
             this.events.showMessageBox(options);
         });
-        ipcMain_1.default.on("show-dialog", async (event, type, options) => {
+        this.chitIpcMain.on("show-dialog", async (event, type, options) => {
             let ret;
             switch (type) {
                 case "open":
@@ -101,13 +101,13 @@ class Ipchosts {
             ;
             event.sender.send("show-dialog", ret);
         });
-        ipcMain_1.default.on("open-external", (event, url) => {
+        this.chitIpcMain.on("open-external", (event, url) => {
             this.events.openExternal(url);
         });
-        ipcMain_1.default.on("get-config", event => {
+        this.chitIpcMain.on("get-config", event => {
             event.returnValue = global.config;
         });
-        ipcMain_1.default.on("update-config", (event, newConfig) => {
+        this.chitIpcMain.on("update-config", (event, newConfig) => {
             console.log("Updating Configuration file ...");
             this.events.updateConfig(newConfig, (err, done) => {
                 if (err) {

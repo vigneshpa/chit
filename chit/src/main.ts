@@ -36,7 +36,7 @@ import { writeFile } from "fs";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
-const ipchosts: Ipchosts = new Ipchosts(dbmgmt);
+const ipchosts: Ipchosts = new Ipchosts(ipcMain, dbmgmt);
 if (!config.databaseFile) config.databaseFile = {};
 config.databaseFile.location = dbFile;
 
@@ -128,7 +128,7 @@ ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
       await formsWindow.loadURL("http://localhost:8080/forms.html?" + searchParams.toString());
       formsWindow.webContents.openDevTools();
     } else {
-      await formsWindow.loadFile(join(__dirname, "./windows/forms.html"), { query: { "form": type, ...args } });
+      await formsWindow.loadFile(join(__dirname, config.vueApp, "/forms.html"), { query: { "form": type, ...args } });
     }
   } else {
     console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
@@ -219,7 +219,7 @@ async function loadMain() {
       await mainWindow.loadURL("http://localhost:8080");
       mainWindow.webContents.openDevTools();
     } else {
-      await mainWindow.loadFile(join(__dirname, "./windows/index.html"));
+      await mainWindow.loadFile(join(__dirname, config.vueApp, "/index.html"));
     }
   } else {
     mainWindow.focus();
