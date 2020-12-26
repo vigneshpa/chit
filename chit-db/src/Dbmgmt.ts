@@ -3,7 +3,7 @@ import { promises, unlinkSync } from "fs";
 import { readFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
-import "chit-types";
+import "chit-common";
 const readFileP = promisify(readFile);
 
 class Dbmgmt {

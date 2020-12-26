@@ -4,10 +4,12 @@
   "description": "Chit management program",
   "main": "app/main.js",
   "scripts": {
-    "test": "electron .",
-    "pack": "electron-builder --dir --publish never",
-    "dist": "electron-builder --publish never",
-    "deploy": "electron-builder build --win --publish always"
+    "start": "electron .",
+    "watch": "cp ./dev.env ./app/.env && tsc -w",
+    "build": "ts-node build.ts",
+    "pack": "npm run build && electron-builder --dir --publish never",
+    "dist": "npm run build && electron-builder --publish never",
+    "deploy": "npm run build && electron-builder build --win --publish always"
   },
   "repository": {
     "type": "git",
@@ -31,11 +33,11 @@
     "electron-builder": "^22.9.1"
   },
   "dependencies": {
+    "chit-common": "file:../chit-common",
     "chit-db": "file:../chit-db",
     "dotenv": "^8.2.0",
     "electron-updater": "^4.3.5",
-    "lodash": "^4.17.20",
-    "sqlite3": "^5.0.0"
+    "lodash": "^4.17.20"
   },
   "build": {
     "appId": "com.electron.chit",

@@ -14,21 +14,21 @@ Everyone is permited to use and distribute copies of this software
 - Beautiful Google Material Design UI
 
 ## Involving in developement
-This software is completely written in JavaScript ( with TypeScript ) using [Electron](https://electronjs.org/) and [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ) frameworks.
+This software is completely written in JavaScript ( with TypeScript ) using [Electron](https://electronjs.org/) and [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ) frameworks for the desktop app and for the web app [Express](https://expressjs.com/) framework is used.
 [Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. This DataBase Management system used in this software is [SQlite3](https://www.sqlite.org). To involve in developement clone this repository localy by the following command.
 
 ```
 git clone https://github.com/vigneshpa/chit.git
 cd chit
-npm install
 ```
 
 ## Software structure
-   This software has two sub parts or modules(npm).
-1. Main
-2. Renderer
+   This software has five sub parts or modules(npm).
+1. Main(chit)
+2. Renderer(chit-renderer)
+3. DataAcess(chit-db)
 
-The main module does everything except from UI like database management,  windows management and system dialouges.This module uses native SQlite3 module for database management.   
+The main module does everything except from UI like database management,  windows management and system dialouges.This module imports chit-db module for database management.   
    
 The renderer module holds the UI of the app. This is a [vue-cli](https://cli.vuejs.org/) tool's project. This module builds into the app directory of the main module for packing.   
 
@@ -44,7 +44,7 @@ npm run serve
 ```
 Startind developement electron
 ```
-cd main
+cd chit
 electron .
 ```
 

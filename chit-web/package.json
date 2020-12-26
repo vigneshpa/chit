@@ -4,6 +4,7 @@
   "description": "## About this Software",
   "main": "dist/server.js",
   "dependencies": {
+    "chit-common": "file:../chit-common",
     "chit-db": "file:../chit-db",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",

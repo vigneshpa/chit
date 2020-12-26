@@ -7,7 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "chit-types": "file:../chit-types",
+    "chit-common": "file:../chit-common",
     "lodash": "^4.17.20",
     "node-forge": "^0.10.0",
     "vue": "^2.6.12",

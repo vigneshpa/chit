@@ -1,5 +1,5 @@
 import Database from "./sqlite3";
-import "chit-types";
+import "chit-common";
 declare class Dbmgmt {
     db: Database;
     dbFile: string;

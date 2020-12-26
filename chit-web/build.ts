@@ -1,67 +1,43 @@
 /**
- * Remove old files, copy front-end ones.
+ *  Chit Web build file.
  */
+import bt from "chit-common/src/buildTools";
+const buildDir = "./dist";
 
-import * as fs from 'fs-extra';
-import Logger from 'jet-logger';
-import * as childProcess from 'child_process';
-
-// Setup logger
-const logger = new Logger();
-logger.timestamp = false;
-
-
-
-
-(async () => {
+const build = async () => {
     try {
+
+        bt.start();
+
         // Remove current build
-        await remove('./dist/');
+        bt.logi("Cleaning current build");
+        await bt.clean(buildDir);
+
         // Copy front-end files
-        await copy('./src/public', './dist/public');
-        await copy('./src/views', './dist/views');
+        bt.logi("Copying front-end files")
+        await bt.copy('./src/public', './dist/public');
+        await bt.copy('./src/views', './dist/views');
+
         //Building pug static files
-        await exec('pug ./src/static -o ./dist/public', './');
+        bt.logi("Building pug static files");
+        await bt.exec('pug ./src/static -o ./dist/public');
+
         // Copy production env file
-        await copy('./src/prod.env', './dist/.env');
+        bt.logi("Copying configuration files");
+        await bt.copy('./src/prod.env', './dist/.env');
+
+        //Compiling TypeScript
+        bt.logi("Building frontend and backend TypeScript files");
         // Building backend JS
-        await exec('tsc --build tsconfig.prod.json', './')
+        await bt.exec('tsc --build tsconfig.prod.json');
         // Building frontend JS
-        await exec('tsc --build tsconfig.public.json', './')
+        await bt.exec('tsc --build tsconfig.json', {cwd:"./browserSupport"});
+
+        bt.end();
+
     } catch (err) {
-        logger.err(err);
+        bt.clean(buildDir);
+        throw err;
     }
-})();
-
-
-function remove(loc: string): Promise<void> {
-    return new Promise((res, rej) => {
-        return fs.remove(loc, (err) => {
-            return (!!err ? rej(err) : res());
-        });
-    });
-}
-
-
-function copy(src: string, dest: string): Promise<void> {
-    return new Promise((res, rej) => {
-        return fs.copy(src, dest, (err) => {
-            return (!!err ? rej(err) : res());
-        });
-    });
-}
-
-
-function exec(cmd: string, loc: string): Promise<void> {
-    return new Promise((res, rej) => {
-        return childProcess.exec(cmd, {cwd: loc}, (err, stdout, stderr) => {
-            if (!!stdout) {
-                logger.info(stdout);
-            }
-            if (!!stderr) {
-                logger.warn(stderr);
-            }
-            return (!!err ? rej(err) : res());
-        });
-    });
-}
+};
+build();

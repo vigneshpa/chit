@@ -5,7 +5,7 @@ const fs_1 = require("fs");
 const fs_2 = require("fs");
 const util_1 = require("util");
 const path_1 = require("path");
-require("chit-types");
+require("chit-common");
 const readFileP = util_1.promisify(fs_2.readFile);
 class Dbmgmt {
     constructor(dbFile) {

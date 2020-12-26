@@ -1,3 +1,4 @@
-main/electron-builder.yml
+electron-builder.yml
 node_modules
 dist
+app

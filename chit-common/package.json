@@ -1,9 +1,9 @@
 {
-  "name": "chit-db",
+  "name": "chit-common",
   "version": "0.1.0",
-  "description": "common database files for chit",
-  "main": "lib/Dbmgmt.js",
-  "types": "lib/Dbmgmt.d.ts",
+  "description": "TypeDefinitions and common files for chit",
+  "main": "lib/chitTypes.js",
+  "types": "lib/chitTypes.d.ts",
   "files": [
     "lib/**/*"
   ],
@@ -17,7 +17,7 @@
   },
   "keywords": [
     "chit",
-    "database"
+    "types"
   ],
   "author": "vigneshpa",
   "license": "GPL-3.0",
@@ -26,10 +26,11 @@
   },
   "homepage": "https://github.com/vigneshpa/chit#readme",
   "devDependencies": {
+    "@types/fs-extra": "^9.0.6",
     "@types/node": "^14.14.16"
   },
   "dependencies": {
-    "chit-common": "file:../chit-common",
-    "sqlite3": "^5.0.0"
+    "chalk": "^4.1.0",
+    "fs-extra": "^9.0.1"
   }
 }

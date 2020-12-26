@@ -2,7 +2,9 @@ import * as dotenv from "dotenv";
 import { app } from "electron";
 import { copyFileSync, readFileSync } from "fs";
 import { join } from "path";
-dotenv.config();
+dotenv.config({
+    path:join(__dirname, "./.env")
+});
 console.log(
     "//----------------------- printing environment variables ------------------------------------------//",
     process.env,

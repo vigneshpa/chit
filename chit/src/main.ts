@@ -30,7 +30,7 @@ console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain, nativeTheme, dialog, MessageBoxOptions, OpenDialogOptions, shell } from "electron";
 import { autoUpdater } from "electron-updater";
 import { join } from "path";
-import Dbmgmt from "./Dbmgmt";
+import Dbmgmt from "chit-db";
 import Ipchosts from "./Ipchost";
 import { writeFile } from "fs";
 
