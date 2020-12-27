@@ -1,8 +1,7 @@
 /**
  * Chit Build file
  */
-import bt from "chit-common/src/buildTools";
-
+import bt from "../buildTools";
 const build = async () => {
 
   bt.start();

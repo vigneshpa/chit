@@ -29,12 +29,14 @@ console.log("Starting Electron . . . ");
 const electron_1 = require("electron");
 const electron_updater_1 = require("electron-updater");
 const path_1 = require("path");
-const chit_db_1 = require("chit-db");
-const Ipchost_1 = require("./Ipchost");
+const chit_common_1 = require("chit-common");
+const chit_common_2 = require("chit-common");
 const fs_1 = require("fs");
+const sqlite3_1 = require("./sqlite3");
 const dbFile = ((_a = config_1.default.databaseFile) === null || _a === void 0 ? void 0 : _a.isCustom) ? config_1.default.databaseFile.location : path_1.join(electron_1.app.getPath("userData"), "/main.db");
-const dbmgmt = new chit_db_1.default(dbFile);
-const ipchosts = new Ipchost_1.default(electron_1.ipcMain, dbmgmt);
+const chitDB = new sqlite3_1.default();
+const dbmgmt = new chit_common_1.Dbmgmt(dbFile, chitDB);
+const ipchosts = new chit_common_2.Ipchost(electron_1.ipcMain, dbmgmt, global.config);
 if (!config_1.default.databaseFile)
     config_1.default.databaseFile = {};
 config_1.default.databaseFile.location = dbFile;

@@ -13,7 +13,7 @@ class App {
     //user to uuid map
     map: Map<string, string>;
     constructor() {
-        this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../main/app/windows');
+        this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../chit/app/renderer');
         this.sessionParser = sessionParser;
 
         //Creating app instance

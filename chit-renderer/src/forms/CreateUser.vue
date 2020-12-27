@@ -95,7 +95,6 @@ v-app#1_app
 </template>
 
 <script lang="ts">
-import { MessageBoxOptions } from "electron";
 import { inspect } from "util";
 import Vue from "vue";
 
@@ -213,7 +212,7 @@ export default Vue.extend({
               type: "error",
               title: "Cannot create User!",
               detail: inspect(err),
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = false;
           } else if (data) {
             window.ipcrenderer.send("show-message-box", {
@@ -221,7 +220,7 @@ export default Vue.extend({
               type: "info",
               title: "Created New User!",
               detail: inspect(data),
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = true;
           } else {
             window.ipcrenderer.send("show-message-box", {
@@ -230,7 +229,7 @@ export default Vue.extend({
               type: "error",
               title: "Cannot create User!",
               detail: "err and detail variables are undefined",
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = false;
           }
         }

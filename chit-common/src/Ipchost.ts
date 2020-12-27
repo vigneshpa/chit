@@ -1,12 +1,14 @@
-import Dbmgmt from "chit-db";
+import Dbmgmt from "./Dbmgmt";
 
 class Ipchosts {
-    constructor(chitIpcMain:ChitIpcMain, dbmgmt: Dbmgmt) {
+    constructor(chitIpcMain: ChitIpcMain, dbmgmt: Dbmgmt, config: Configuration) {
         this.chitIpcMain = chitIpcMain;
         this.dbmgmt = dbmgmt;
         this.events = {};
+        this.config = config;
     }
-    private chitIpcMain:ChitIpcMain
+    private config: Configuration;
+    private chitIpcMain: ChitIpcMain;
     private dbmgmt: Dbmgmt;
     private events: {
         "openForm"?: (type: string, args: { [key: string]: string }) => void;
@@ -123,7 +125,7 @@ class Ipchosts {
         });
 
         this.chitIpcMain.on("get-config", event => {
-            event.returnValue = global.config;
+            event.returnValue = this.config;
         });
 
         this.chitIpcMain.on("update-config", (event, newConfig: Configuration) => {

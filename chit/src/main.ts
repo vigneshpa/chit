@@ -29,14 +29,19 @@ import config from "./config";
 console.log("Starting Electron . . . ");
 import { BrowserWindow, app, ipcMain, nativeTheme, dialog, MessageBoxOptions, OpenDialogOptions, shell } from "electron";
 import { autoUpdater } from "electron-updater";
-import { join } from "path";
-import Dbmgmt from "chit-db";
-import Ipchosts from "./Ipchost";
-import { writeFile } from "fs";
+import * as path from "path";
+const join = path.join;
+import { Dbmgmt } from "chit-common";
+import { Ipchost } from "chit-common";
+import * as fs from "fs";
+const writeFile = fs.writeFile;
+import * as util from "util";
+import Database from "./sqlite3";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
-const dbmgmt: Dbmgmt = new Dbmgmt(dbFile);
-const ipchosts: Ipchosts = new Ipchosts(ipcMain, dbmgmt);
+const chitDB = new Database();
+const dbmgmt: Dbmgmt = new Dbmgmt(dbFile, chitDB, {fs:fs, path:path, util:util});
+const ipchosts: Ipchost = new Ipchost(ipcMain, dbmgmt, global.config);
 if (!config.databaseFile) config.databaseFile = {};
 config.databaseFile.location = dbFile;
 
@@ -76,33 +81,33 @@ app.on("ready", async launchInfo => {
   await splash.loadFile(__dirname + "/resources/splash.html");
 });
 
-ipchosts.on("showMessageBox", ( options: MessageBoxOptions) => dialog.showMessageBox(options));
-ipchosts.on("showOpenDialog", ( options: OpenDialogOptions) => dialog.showOpenDialog(options));
-ipchosts.on("openExternal", (url:string)=>shell.openExternal(url));
+ipchosts.on("showMessageBox", (options: MessageBoxOptions) => dialog.showMessageBox(options));
+ipchosts.on("showOpenDialog", (options: OpenDialogOptions) => dialog.showOpenDialog(options));
+ipchosts.on("openExternal", (url: string) => shell.openExternal(url));
 ipchosts.on("pingRecived", () => {
   if (splash) splash?.webContents.send("log", "Loading UI ");
 });
-ipchosts.on("updateConfig", (newConfig:Configuration, cb:(err:Error, done:boolean)=>void)=>{
+ipchosts.on("updateConfig", (newConfig: Configuration, cb: (err: Error, done: boolean) => void) => {
   writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
     if (err) {
-        cb(err, false);
-        throw err;
+      cb(err, false);
+      throw err;
     };
     if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
     //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
     if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
-        dialog.showMessageBox({
-            message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
-            title: "Database file changed"
-        });
-        setTimeout(()=>{
-            app.quit();
-        }, 10000);
+      dialog.showMessageBox({
+        message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+        title: "Database file changed"
+      });
+      setTimeout(() => {
+        app.quit();
+      }, 10000);
     }
     global.config = newConfig;
     //await new Promise(r => setTimeout(r, 5000));
     cb(null, true);
-});
+  });
 });
 ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
   if (!formsWindow) {

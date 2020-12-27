@@ -174,7 +174,6 @@ v-app#1_app
 </template>
 
 <script lang="ts">
-import { MessageBoxOptions } from "electron";
 import { inspect } from "util";
 import Vue from "vue";
 
@@ -391,7 +390,7 @@ export default Vue.extend({
               type: "error",
               title: "Cannot create Group!",
               detail: inspect(err),
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = false;
           } else if (data) {
             window.ipcrenderer.send("show-message-box", {
@@ -399,7 +398,7 @@ export default Vue.extend({
               type: "info",
               title: "Created New Group!",
               detail: inspect(data),
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = true;
           } else {
             window.ipcrenderer.send("show-message-box", {
@@ -408,7 +407,7 @@ export default Vue.extend({
               type: "error",
               title: "Cannot create Group!",
               detail: "err and detail variables are undefined or not truthly",
-            } as MessageBoxOptions);
+            } as ChitMessageBoxOptions);
             this.success = false;
           }
         }

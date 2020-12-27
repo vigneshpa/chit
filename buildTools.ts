@@ -2,7 +2,7 @@
 import * as cp from "child_process";
 import * as fs from "fs-extra";
 import * as chalk from "chalk";
-import tc from "./time";
+import tc from "./chit-common/src/time";
 
 const timestamps:{
   [key:string]:number

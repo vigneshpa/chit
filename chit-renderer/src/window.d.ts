@@ -1,11 +1,10 @@
-import { IpcRenderer } from "electron";
 import Vuetify from "vuetify/lib";
 import { Store } from "vuex";
 import "chit-common";
 
 declare global {
     interface Window {
-        ipcrenderer: IpcRenderer;
+        ipcrenderer: ChitIpcRenderer;
         app: Vue;
         store: Store<State>;
         vuetify:Vuetify;

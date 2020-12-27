@@ -1,4 +1,5 @@
 alert("Browsers are not supported yet");
+const events = {};
 const ipcrenderer = {
     on() { },
     send() { },
@@ -12,7 +13,8 @@ const config = {
     updates: {
         autoCheck: true,
         autoDownload: false
-    }
+    },
+    vueApp: null
 };
 window.ipcrenderer = ipcrenderer;
 window.config = config;

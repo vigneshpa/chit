@@ -1,25 +1,25 @@
-import Database from "./sqlite3";
-import { promises, unlinkSync } from "fs";
-import { readFile } from "fs";
-import { promisify } from "util";
-import { join } from "path";
-import "chit-common";
-const readFileP = promisify(readFile);
-
 class Dbmgmt {
-  db: Database;
+  db: ChitDatabase;
   dbFile: string;
   today: Date;
-  constructor(dbFile: string) {
-    this.db = new Database();
+  fs:any;
+  util:any;
+  readFileP:any;
+  path:any;
+  constructor(dbFile: string, chitDB:ChitDatabase, nm:{fs:any, util:any, path:any}){
+    this.db = chitDB;
     this.dbFile = dbFile;
     console.log("Stroing data at ", this.dbFile);
     this.today = new Date();
+    this.readFileP = this.util.promisify(this.fs.readFile);
+    this.path = nm.path;
+    this.fs = nm.fs;
+    this.util = nm.util;
   }
   async connect() {
     let exists: boolean = false;
     try {
-      exists = (await promises.stat(this.dbFile))?.isFile();
+      exists = (await this.fs.promises.stat(this.dbFile))?.isFile();
     } catch (e) {
       exists = false;
       console.log("Unable to connect to the database file! It may not exists!");
@@ -36,7 +36,7 @@ class Dbmgmt {
     //If database file does not exixts creating it and structuring it.
     await this.db.open(this.dbFile);
     await this.db.run("PRAGMA foreign_keys=ON;");
-    let sql = await readFileP(join(__dirname, "./sql/create.sql"));
+    let sql = await this.readFileP(this.path.join(__dirname, "./sql/create.sql"));
     console.log("Creating a new database");
 
     //Starting transaction
@@ -50,7 +50,7 @@ class Dbmgmt {
       await this.db.close();
 
       //Deleting the created database file
-      unlinkSync(this.dbFile);
+      this.fs.unlinkSync(this.dbFile);
       console.log("Unable to create database file");
       console.log(e);
       process.kill(1);
@@ -63,7 +63,7 @@ class Dbmgmt {
     console.log("Database connections closed");
   }
   async checkPhone(phone: string) {
-    let sql = await readFileP(join(__dirname, "./sql/checkPhone.sql"));
+    let sql = await this.readFileP(this.path.join(__dirname, "./sql/checkPhone.sql"));
     let result = await this.db.get(sql.toString(), { $phone: phone });
     if (result.phone === phone) return true;
     return false;
@@ -71,7 +71,7 @@ class Dbmgmt {
   async createUser(userName: string, phone: string, address?: string): Promise<{ success: boolean; result: createUserFields }> {
     let result: createUserFields;
     let success: boolean;
-    let sql = await readFileP(join(__dirname, "./sql/createUser.sql"));
+    let sql = await this.readFileP(this.path.join(__dirname, "./sql/createUser.sql"));
 
     this.db.exec("BEGIN TRANSACTION");
     try {
@@ -90,7 +90,7 @@ class Dbmgmt {
     return { result, success };
   }
   async checkBatch(batch: string, month: number, year: number) {
-    let sql = await readFileP(join(__dirname, "./sql/checkBatch.sql"));
+    let sql = await this.readFileP(this.path.join(__dirname, "./sql/checkBatch.sql"));
     let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
     if (result.batch === batch) return true;
     return false;
@@ -107,9 +107,9 @@ class Dbmgmt {
     }
     //console.log(await this.db.get("SELECT * FROM `groups` WHERE `gName` = '" + gName + "';"));
 
-    const createGroupSQL = await readFileP(join(__dirname, "./sql/createGroup.sql"));
-    const createChitSQL = await readFileP(join(__dirname, "./sql/createChit.sql"));
-    const createPaymentSQL = await readFileP(join(__dirname, "./sql/createChitPayment.sql"));
+    const createGroupSQL = await this.readFileP(this.path.join(__dirname, "./sql/createGroup.sql"));
+    const createChitSQL = await this.readFileP(this.path.join(__dirname, "./sql/createChit.sql"));
+    const createPaymentSQL = await this.readFileP(this.path.join(__dirname, "./sql/createChitPayment.sql"));
 
     //Starting transaction
     this.db.exec("BEGIN TRANSACTION");

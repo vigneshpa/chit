@@ -1,9 +1,9 @@
 /**
  *  Chit Web build file.
  */
-import bt from "chit-common/src/buildTools";
+import bt from "../buildTools";
+import rollup from "rollup";
 const buildDir = "./dist";
-
 const build = async () => {
     try {
 
@@ -20,7 +20,7 @@ const build = async () => {
 
         //Building pug static files
         bt.logi("Building pug static files");
-        await bt.exec('pug ./src/static -o ./dist/public');
+        await bt.exec("pug", ["./src/static", "-o", "./dist/public"]);
 
         // Copy production env file
         bt.logi("Copying configuration files");
@@ -29,9 +29,9 @@ const build = async () => {
         //Compiling TypeScript
         bt.logi("Building frontend and backend TypeScript files");
         // Building backend JS
-        await bt.exec('tsc --build tsconfig.prod.json');
+        await bt.exec('tsc', ['--build', 'tsconfig.prod.json']);
         // Building frontend JS
-        await bt.exec('tsc --build tsconfig.json', {cwd:"./browserSupport"});
+        await bt.exec('tsc', ['--build', 'tsconfig.json'], {cwd:"./browserSupport"});
 
         bt.end();
 

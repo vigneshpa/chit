@@ -1,3 +1,4 @@
+import "./vendorTypes";
 declare global {
     interface createUserFields {
         UID?: number;
@@ -94,17 +95,27 @@ declare global {
         vueApp: string
     }
     interface ChitIpcRenderer {
-
+        once: (channel: string, listener: (event: ChitIpcRendererEvent, ...args: any[]) => void) => ChitIpcRenderer;
+        on: (channel: string, listener: (event: ChitIpcRendererEvent, ...args: any[]) => void) => ChitIpcRenderer;
+        send(channel: string, ...args: any[]): void
+        id: number;
     }
     interface ChitIpcMain {
-        on(channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void, ...args: any[]): ChitIpcMain;
+        on: (channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void) => ChitIpcMain;
+        once: (channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void) => ChitIpcMain;
     }
     interface ChitIpcMainEvent {
-        sender: {
-            id: number;
-            send(channel: string, ...args: any[]): void
-        },
-        returnValue:any
+        sender: ChitIpcRenderer,
+        reply: Function
+        returnValue: any
+    }
+    interface ChitIpcRendererEvent {
+        sender: ChitIpcMain,
+        reply: Function
+        returnValue: any
     }
 }
-export { };
+import Dbmgmt from "./Dbmgmt";
+import time from "./time";
+import Ipchost from "./Ipchost";
+export { Dbmgmt, time, Ipchost };

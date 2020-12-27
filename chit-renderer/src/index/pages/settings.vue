@@ -63,7 +63,6 @@ v-container#settings(fluid)
             )
 </template>
 <script lang="ts">
-import { OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import { config } from "process";
 import Vue from "vue";
 export default Vue.extend({
@@ -116,7 +115,7 @@ export default Vue.extend({
   methods: {
     async chooseDBfile(ev: Event) {
       window.store.state.config.databaseFile.isCustom = true;
-      let options: OpenDialogOptions = {
+      let options: ChitOpenDialogOptions = {
         properties: ["promptToCreate", "openFile"],
         title: "Choose a database file",
         message:
@@ -126,12 +125,12 @@ export default Vue.extend({
       };
       let ret = await new Promise(
         (
-          resolve: (value: OpenDialogReturnValue) => void,
+          resolve: (value: ChitOpenDialogReturnValue) => void,
           reject: (reason: Error) => void
         ) => {
           window.ipcrenderer.once(
             "show-dialog",
-            (event, value: OpenDialogReturnValue) => {
+            (event, value: ChitOpenDialogReturnValue) => {
               resolve(value);
             }
           );

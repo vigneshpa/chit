@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "outDir": "../src/public/app/resources/",
+        "outDir": "./dist",
         "strict": false,
-        "target": "ES6",
+        "target": "ES2019",
+        "rootDir": "src",
         "module": "ES6",
         "lib": [
             "ES2019",
@@ -15,13 +16,12 @@
         ],
         "removeComments": true,
         "inlineSourceMap": false,
-        "moduleResolution": "classic",
+        "moduleResolution": "node",
         "typeRoots": [
             "../node_modules/@types"
         ]
     },
     "include": [
-        "./**/*",
-        "../node_modules/chit-common/src/chitTypes.ts"
+        "./src/**/*",
     ]
 }
