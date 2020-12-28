@@ -63,7 +63,6 @@ v-container#settings(fluid)
             )
 </template>
 <script lang="ts">
-import { config } from "process";
 import Vue from "vue";
 export default Vue.extend({
   data: function () {

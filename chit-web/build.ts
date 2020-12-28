@@ -2,7 +2,6 @@
  *  Chit Web build file.
  */
 import bt from "../buildTools";
-import rollup from "rollup";
 const buildDir = "./dist";
 const build = async () => {
     try {
@@ -31,7 +30,7 @@ const build = async () => {
         // Building backend JS
         await bt.exec('tsc', ['--build', 'tsconfig.prod.json']);
         // Building frontend JS
-        await bt.exec('tsc', ['--build', 'tsconfig.json'], {cwd:"./browserSupport"});
+        await bt.exec('npx', ['rollup', '-c']);
 
         bt.end();
 

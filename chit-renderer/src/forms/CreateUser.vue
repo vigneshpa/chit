@@ -95,7 +95,6 @@ v-app#1_app
 </template>
 
 <script lang="ts">
-import { inspect } from "util";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -211,7 +210,7 @@ export default Vue.extend({
               message: "Some error occoured during the creation of User",
               type: "error",
               title: "Cannot create User!",
-              detail: inspect(err),
+              detail: err.toString(),
             } as ChitMessageBoxOptions);
             this.success = false;
           } else if (data) {
@@ -219,7 +218,7 @@ export default Vue.extend({
               message: "User created SUCCESSFULLY !",
               type: "info",
               title: "Created New User!",
-              detail: inspect(data),
+              detail: data.toString(),
             } as ChitMessageBoxOptions);
             this.success = true;
           } else {

@@ -105,14 +105,17 @@ declare global {
         once: (channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void) => ChitIpcMain;
     }
     interface ChitIpcMainEvent {
-        sender: ChitIpcRenderer,
+        sender: ChitIpcMainWebcontents,
         reply: Function
-        returnValue: any
+        returnValue?: any
+    }
+    interface ChitIpcMainWebcontents{
+        send(channel: string, ...args: any[]): void
+        id: number;
     }
     interface ChitIpcRendererEvent {
-        sender: ChitIpcMain,
-        reply: Function
-        returnValue: any
+        sender: ChitIpcRenderer;
+        senderId: number;
     }
 }
 import Dbmgmt from "./Dbmgmt";

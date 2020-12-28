@@ -34,7 +34,7 @@ class Ipchosts {
             let response: { result: any; success?: boolean; };
             console.log("\nRecived Message From Renderer to create user\n", event.sender.id, data);
             try {
-                response = await this.dbmgmt.createUser(data.name, data.phone, data.address);
+                response = await this.dbmgmt.runQuery("createUser", data.name, data.phone, data.address);
             } catch (err1) {
                 err = err1;
             }
@@ -46,7 +46,7 @@ class Ipchosts {
             let response: { result: any; success?: boolean; };
             console.log("Recived message from Renderer to create group", event.sender.id, data);
             try {
-                response = await this.dbmgmt.createGroup(data.year, data.month, data.batch, data.members);
+                response = await this.dbmgmt.runQuery("createGroup", data.year, data.month, data.batch, data.members);
             } catch (err1) {
                 err = err1;
             }
@@ -54,20 +54,20 @@ class Ipchosts {
         });
 
         this.chitIpcMain.on("get-users-data", async event => {
-            const result: userInfo[] = await this.dbmgmt.listUsers();
+            const result: userInfo[] = await this.dbmgmt.runQuery("listUsers");
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);
         });
 
         this.chitIpcMain.on("get-user-details", async (event, UID: number) => {
-            const result: userInfoExtended = await this.dbmgmt.userDetails(UID);
+            const result: userInfoExtended = await this.dbmgmt.runQuery("userDetails", UID);
             console.log("Sending " + result.name + "'s data to the renderer");
             event.sender.send("get-user-details", result);
         });
 
         this.chitIpcMain.on("get-groups-data", async event => {
             console.log("Recived message from renderer to get groups data");
-            const result = await this.dbmgmt.listGroups();
+            const result = await this.dbmgmt.runQuery("listGroups");
             console.log("Sending groups data to the renderer.");
             event.sender.send("get-groups-data", result);
         });
@@ -81,7 +81,7 @@ class Ipchosts {
             let result: boolean;
             console.log("Checking existance of phone number " + phone);
             try {
-                result = await this.dbmgmt.checkPhone(phone);
+                result = await this.dbmgmt.runQuery("checkPhone", phone);
             } catch (e) {
                 err = e;
             }
@@ -94,7 +94,7 @@ class Ipchosts {
             let result: boolean;
             console.log("Checking existance of Batch  " + batch + " in month " + month);
             try {
-                result = await this.dbmgmt.checkBatch(batch, month, year);
+                result = await this.dbmgmt.runQuery("checkBatch", batch, month, year);
             } catch (e) {
                 err = e;
             }
@@ -137,6 +137,10 @@ class Ipchosts {
                 };
                 event.sender.send("update-config", done);
             });
+        });
+        this.chitIpcMain.on("db-run-query", async (event, query: string, ...args) => {
+            let result = await this.dbmgmt.runQuery(query, ...args);
+            event.sender.send("db-run-query", result);
         });
     }
 }

@@ -174,7 +174,6 @@ v-app#1_app
 </template>
 
 <script lang="ts">
-import { inspect } from "util";
 import Vue from "vue";
 
 export default Vue.extend({
@@ -389,7 +388,7 @@ export default Vue.extend({
               message: "Some error occoured during the creation of Group",
               type: "error",
               title: "Cannot create Group!",
-              detail: inspect(err),
+              detail: err.toString(),
             } as ChitMessageBoxOptions);
             this.success = false;
           } else if (data) {
@@ -397,7 +396,7 @@ export default Vue.extend({
               message: "Group created SUCCESSFULLY !",
               type: "info",
               title: "Created New Group!",
-              detail: inspect(data),
+              detail: data.toString(),
             } as ChitMessageBoxOptions);
             this.success = true;
           } else {

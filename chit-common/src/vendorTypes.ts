@@ -1,4 +1,4 @@
-import * as events from "events";
+import {EventEmitter} from "events";
 declare global {
   module sqlite3 {
 
@@ -44,7 +44,7 @@ declare global {
       each(...params: any[]): this;
     }
 
-    export class Database extends events.EventEmitter {
+    export class Database extends EventEmitter {
       constructor(filename: string, callback?: (err: Error | null) => void);
       constructor(filename: string, mode?: number, callback?: (err: Error | null) => void);
 
