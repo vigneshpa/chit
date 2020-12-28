@@ -1,5 +1,6 @@
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+//import cjs from "@rollup/plugin-commonjs";
 
 export default [
   {
@@ -10,6 +11,7 @@ export default [
     },
     plugins: [
       nodeResolve(),
+      //cjs(),
       typescript({ tsconfig: "browserSupport/tsconfig.json" }),
     ],
   },
@@ -21,6 +23,7 @@ export default [
     },
     plugins: [
       nodeResolve(),
+      //cjs(),
       typescript({ tsconfig: "browserSupport/tsconfig.worker.json" }),
     ],
   },

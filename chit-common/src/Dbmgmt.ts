@@ -7,7 +7,7 @@ class Dbmgmt {
   db: ChitDatabase;
   dbFile: string;
   today: Date;
-  constructor(dbFile: string, chitDB: ChitDatabase) {
+  constructor(dbFile: string, chitDB?: ChitDatabase) {
     this.db = chitDB;
     this.dbFile = dbFile;
     console.log("Stroing data at ", this.dbFile);

@@ -1,7 +1,7 @@
-log("Shared worker started");
 import { Ipchost } from "chit-common";
 import Dbmgmt from "./Dbmgmt";
-import config from "./Cofig";
+import config from "./config";
+log("Shared worker started");
 declare global {
   interface Event {
     ports: readonly MessagePort[];
@@ -26,7 +26,7 @@ const ipcmain: ChitIpcMain = {
 };
 
 
-let ipchosts = new Ipchost(ipcmain, new Dbmgmt(), config);
+let ipchosts = new Ipchost(ipcmain, new Dbmgmt("any"), config);
 
 self.addEventListener("connect", function (ev) {
   let port = ev.ports[connections];

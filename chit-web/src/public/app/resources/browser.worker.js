@@ -1,6 +1,25 @@
 (function () {
     'use strict';
 
+    let config = {
+        isDevelopement: false,
+        theme: "system",
+        databaseFile: {},
+        configPath: "",
+        updates: {
+            autoCheck: true,
+            autoDownload: false
+        },
+        vueApp: null
+    };
+    let ls = localStorage.getItem('config');
+    if (ls) {
+        config = JSON.parse(ls);
+    }
+    else {
+        localStorage.setItem("config", JSON.stringify(config));
+    }
+
     log("Shared worker started");
     var connections = 0;
     const listeners = {};

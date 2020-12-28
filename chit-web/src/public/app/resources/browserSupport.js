@@ -1,7 +1,40 @@
 (function () {
     'use strict';
 
+    function msToHR(ms) {
+        const S = (ms / 1000);
+        const s = (S % 60).toFixed(3);
+        const m = Math.floor(S / 60) % 60;
+        const h = Math.floor(S / 3600) % 24;
+        const d = Math.floor(S / 86400);
+        return s + "s " + m + "m " + h + "h " + (d == 0 ? "" : d + "d ");
+    }
+    var time = {
+        msToHR
+    };
+
+    let config = {
+        isDevelopement: false,
+        theme: "system",
+        databaseFile: {},
+        configPath: "",
+        updates: {
+            autoCheck: true,
+            autoDownload: false
+        },
+        vueApp: null
+    };
+    let ls = localStorage.getItem('config');
+    if (ls) {
+        config = JSON.parse(ls);
+    }
+    else {
+        localStorage.setItem("config", JSON.stringify(config));
+    }
+    var config$1 = config;
+
     alert("Browsers are not supported yet");
+    time.msToHR(3600000);
     if (!window.SharedWorker) {
         alert("Shared Workers are not supported in your browser\nSome functionalities may be missing.");
     }
@@ -52,18 +85,7 @@
             }
         }
     };
-    const config = {
-        isDevelopement: false,
-        theme: "system",
-        databaseFile: {},
-        configPath: "",
-        updates: {
-            autoCheck: true,
-            autoDownload: false
-        },
-        vueApp: null
-    };
     window.ipcrenderer = ipcrenderer;
-    window.config = config;
+    window.config = config$1;
 
 }());

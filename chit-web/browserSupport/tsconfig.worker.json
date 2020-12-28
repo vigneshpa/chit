@@ -2,6 +2,7 @@
     "compilerOptions": {
         "strict": false,
         "target": "ES6",
+        "rootDir": "src",
         "module": "ES6",
         "lib": [
             "ES2019",
@@ -10,14 +11,13 @@
             "ES2020.symbol.wellknown",
             "ES2020.Promise",
             "ES6",
-            "webworker"
+            "DOM"
         ],
         "removeComments": true,
         "inlineSourceMap": false,
         "moduleResolution": "Node"
     },
     "include": [
-        "src/browser.worker.ts"
-    ],
-    "exclude": ["../node_modules"]
+        "./src/browser.worker.ts"
+    ]
 }

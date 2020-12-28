@@ -1,5 +1,7 @@
 alert("Browsers are not supported yet");
-import { } from "chit-common";
+import { time } from "chit-common";
+time.msToHR(3600000);
+import config from "./config";
 declare global {
     interface Window {
         ipcrenderer?: ChitIpcRenderer;
@@ -11,8 +13,7 @@ declare global {
 
 if (!window.SharedWorker) {
     alert("Shared Workers are not supported in your browser\nSome functionalities may be missing.");
-}
-
+};
 const mainWorker = new SharedWorker("/app/resources/browser.worker.js", { name: "mainWorker" });
 mainWorker.port.start();
 mainWorker.port.addEventListener("message", function (e) {
@@ -59,16 +60,5 @@ mainWorker.port.onmessage = function (ev) {
     }
 }
 
-const config: Configuration = {
-    isDevelopement: false,
-    theme: "system",
-    databaseFile: {},
-    configPath: "",
-    updates: {
-        autoCheck: true,
-        autoDownload: false
-    },
-    vueApp: null
-};
 window.ipcrenderer = ipcrenderer;
 window.config = config;

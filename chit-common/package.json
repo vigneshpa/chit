@@ -4,6 +4,7 @@
   "description": "TypeDefinitions, Dbmgmt and common files for chit",
   "main": "lib/chitCommon.js",
   "types": "lib/types/chitCommon.d.ts",
+  "type": "module",
   "files": [
     "lib/**/*"
   ],

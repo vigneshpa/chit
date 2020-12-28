@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Chit management program",
   "main": "app/main.js",
+  "type": "module",
   "scripts": {
     "start": "electron .",
     "watch": "cp ./dev.env ./app/.env && tsc -w",
