@@ -142,8 +142,59 @@
         ;
     }
 
+    class Ipcmain {
+        constructor() {
+            this.onceListeners = {};
+            this.listeners = {};
+            this.noOfPorts = 0;
+        }
+        ipcmainevent(connection) {
+            return { sender: connection, reply: connection.send };
+        }
+        ;
+        ;
+        addPort(port) {
+            let portId = this.noOfPorts;
+            this.ports[portId] = port;
+            this.connections[portId] = {
+                id: portId,
+                send(channel, ...args) {
+                    console.log("IPCMain: Sending ", channel, args, " to renderer ", portId);
+                    port.postMessage({ channel, args });
+                }
+            };
+            let connection = this.connections[portId];
+            this.noOfPorts++;
+            port.addEventListener("message", (ev) => {
+                if (ev.data.channel) {
+                    console.log("IPCMain: Recived message ", ev.data, " from renderer ", portId);
+                    if (this.listeners[ev.data.channel])
+                        this.listeners[ev.data.channel].forEach((listener) => { var _a; return listener(this.ipcmainevent(connection), ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
+                    if (this.onceListeners[ev.data.channel]) {
+                        this.onceListeners[ev.data.channel].forEach((listener) => { var _a; return listener(this.ipcmainevent(connection), ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
+                        this.onceListeners[ev.data.channel] = null;
+                    }
+                }
+            });
+            port.postMessage({ toIpcClass: true, id: portId });
+            return connection;
+        }
+        on(channel, listener) {
+            if (!this.listeners[channel])
+                this.listeners[channel] = [];
+            this.listeners[channel].push(listener);
+            return this;
+        }
+        ;
+        once(channel, listener) {
+            if (!this.onceListeners[channel])
+                this.onceListeners[channel] = [];
+            this.onceListeners[channel].push(listener);
+            return this;
+        }
+    }
+
     log("Shared worker started");
-    var connections = 0;
     const config = {
         "configPath": null,
         "databaseFile": {
@@ -157,99 +208,52 @@
         },
         "vueApp": "/app"
     };
-    const listeners = {};
-    const onceListeners = {};
-    const ipcmain = {
-        on(channel, listener) {
-            if (!listeners[channel])
-                listeners[channel] = [];
-            listeners[channel].push(listener);
-            console.log("Added listener to channel " + channel);
-            return this;
-        },
-        once(channel, listener) {
-            if (!onceListeners[channel])
-                onceListeners[channel] = [];
-            onceListeners[channel].push(listener);
-            console.log("Added once listener to channel ", channel, ":", onceListeners.length);
-            return this;
-        }
-    };
+    const ipcmain = new Ipcmain();
     const ipchosts = new Ipchosts(ipcmain, new Dbmgmt("any"), config);
-    self.addEventListener("connect", (ev) => {
-        let mainPort = ev.ports[0];
-        let port = ev.ports[ev.ports.length - 1];
-        connections++;
-        log("Connections:" + connections);
-        port.addEventListener("message", (e) => {
-            log("Recived message ", e.data);
-            if (e.data.channel) {
-                if (listeners[e.data.channel])
-                    listeners[e.data.channel].forEach((listener) => { var _a; return listener(getEvent(), ...(_a = e.data) === null || _a === void 0 ? void 0 : _a.args); });
-                if (onceListeners[e.data.channel]) {
-                    onceListeners[e.data.channel].forEach((listener) => { var _a; return listener(getEvent(), ...(_a = e.data) === null || _a === void 0 ? void 0 : _a.args); });
-                    onceListeners[e.data.channel] = null;
-                }
-            }
-        }, false);
-        function getEvent(e) {
-            return {
-                reply() {
-                },
-                sender: getSender(),
-                returnValue: null
-            };
-        }
-        function getSender(e) {
-            return {
-                id: 1,
-                send(channel, ...args) {
-                    port.postMessage({ channel, args });
-                }
-            };
-        }
-        port.start();
-        mainPort.addEventListener("message", (ev) => {
-            if (ev.data.ipc) {
-                if (ev.data.query == "config") {
-                    Object.keys(config).forEach((key) => {
-                        config[key] = ev.data.config[key];
-                    });
-                    ipchosts.on("openExternal", (url) => {
-                        mainPort.postMessage({ query: "openExternal", url, ipc: true });
-                    });
-                    ipchosts.on("openForm", (type, args) => {
-                        mainPort.postMessage({ query: "openForm", type, args, ipc: true });
-                    });
-                    ipchosts.on("pingRecived", () => { });
-                    ipchosts.on("showMessageBox", (options) => {
-                        return new Promise((resolve, reject) => {
-                            mainPort.postMessage("showMessageBox");
-                            mainPort.onmessage = (evn) => {
-                                if (evn.data.ipc && evn.data.showMessageBox) {
-                                    resolve(evn.data.showMessageBox);
-                                }
-                            };
+    self.onmessage = (e) => {
+        log("Connected to ", e);
+    };
+    self.addEventListener("message", (ev) => {
+        var _a;
+        console.log("IPCMainRecive message", ev);
+        if (((_a = ev.data) === null || _a === void 0 ? void 0 : _a.command) == "config") {
+            log("Recive config from", ipcmain.noOfPorts);
+            const port = ev.ports[0];
+            let connection = ipcmain.addPort(port);
+            Object.keys(ev.data.config).forEach((key) => {
+                config[key] = ev.data.config[key];
+            });
+            if (connection.id == 1) {
+                ipchosts.on("openExternal", (url) => {
+                    connection.send("ipc", { command: "openExternal", url });
+                });
+                ipchosts.on("openForm", (type, args) => {
+                    connection.send("ipc", { command: "openForm", type, args });
+                });
+                ipchosts.on("pingRecived", () => { });
+                ipchosts.on("showMessageBox", (options) => {
+                    return new Promise((resolve, reject) => {
+                        connection.send("ipc", { command: "showMessageBox", options });
+                        ipcmain.once("ipc-showMessageBox", (event, data) => {
+                            resolve(data);
                         });
                     });
-                    ipchosts.on("showOpenDialog", async () => { });
-                    ipchosts.on("updateConfig", (newConfig) => {
-                        return new Promise((resolve, reject) => {
-                            mainPort.postMessage({ query: "updateConfig", newConfig });
-                            mainPort.onmessage = (env) => {
-                                if (env.data.ipc && env.data.query == "updateConfig") {
-                                    resolve(true);
-                                }
-                            };
+                });
+                ipchosts.on("showOpenDialog", async () => { });
+                ipchosts.on("updateConfig", (newConfig) => {
+                    return new Promise((resolve, reject) => {
+                        connection.send("ipc", { query: "updateConfig", newConfig });
+                        ipcmain.once("ipc-updateConfig", (event) => {
+                            resolve(true);
                         });
                     });
-                    ipchosts.initialise();
-                }
+                });
+                ipchosts.initialise();
             }
-        });
-    }, false);
+        }
+    });
     function log(...args) {
         console.log("ConsoleFromWorker:", ...args);
     }
 
-}());
+}.bind(self)());

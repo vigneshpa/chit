@@ -24,75 +24,87 @@
     }
     var config$1 = config;
 
+    class Ipcrenderer {
+        constructor(worker) {
+            this.worker = worker;
+            this.port = this.worker.port;
+            this.onceListeners = {};
+            this.listeners = {};
+            this.worker.port.onmessage = (ev) => {
+                if (ev.data.channel) {
+                    console.log("IPCRenderer: Recived message ", ev.data, " from main");
+                    if (this.listeners[ev.data.channel])
+                        this.listeners[ev.data.channel].forEach((listener) => { var _a; return listener(this.ipcrendererevent(), ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
+                    if (this.onceListeners[ev.data.channel]) {
+                        this.onceListeners[ev.data.channel].forEach((listener) => { var _a; return listener(this.ipcrendererevent(), ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
+                        this.onceListeners[ev.data.channel] = null;
+                    }
+                }
+            };
+            this.port.addEventListener("message", (ev) => {
+                var _a;
+                if ((_a = ev.data) === null || _a === void 0 ? void 0 : _a.toIpcClass) {
+                    this.id = ev.data.id;
+                    if (this.id = 0)
+                        alert("This tab holds the main process!\nDon't close this.");
+                }
+            });
+        }
+        ipcrendererevent() {
+            return { sender: this, senderId: this.id };
+        }
+        ;
+        ;
+        on(channel, listener) {
+            if (!this.listeners[channel])
+                this.listeners[channel] = [];
+            this.listeners[channel].push(listener);
+            return this;
+        }
+        ;
+        once(channel, listener) {
+            if (!this.onceListeners[channel])
+                this.onceListeners[channel] = [];
+            this.onceListeners[channel].push(listener);
+            return this;
+        }
+        send(channel, ...args) {
+            console.log("Posting message ", channel, ":", args, " to the worker");
+            this.port.postMessage({ channel, args });
+        }
+        ;
+    }
+
     alert("Browsers are not supported yet");
     if (!window.SharedWorker) {
         alert("Shared Workers are not supported in your browser\nSome functionalities may be missing.");
     }
     const mainWorker = new SharedWorker("/app/resources/browser.worker.js", { name: "mainWorker" });
-    mainWorker.port.start();
-    mainWorker.port.postMessage({ query: "config", config: config$1, ipc: true });
-    mainWorker.port.addEventListener("message", function (e) {
-        var _a, _b, _c, _d;
-        console.log("Recived ", e.data, " from shared worker");
-        if (((_a = e.data) === null || _a === void 0 ? void 0 : _a.query) == "openExternal") {
-            window.open(e.data.url, "_blank");
-        }
-        else if (((_b = e.data) === null || _b === void 0 ? void 0 : _b.query) == "openForm") {
-            let searchParams = new URLSearchParams({ type: e.data.type, ...e.data.args });
-            window.open("forms.html?" + searchParams.toString(), "_blank");
-        }
-        else if (((_c = e.data) === null || _c === void 0 ? void 0 : _c.query) == "showMessageBox") {
-            let ret = { response: confirm(), checkboxChecked: false };
-            mainWorker.port.postMessage({ "showMessageBox": ret, ipc: true });
-        }
-        else if (((_d = e.data) === null || _d === void 0 ? void 0 : _d.query) == "updateConfig") {
-            updateConfig(e.data.newConfig);
-            mainWorker.port.postMessage({ query: "updateConfig", ipc: true });
-        }
-    }, false);
     console.log("started shared worker");
+    mainWorker.port.postMessage({ command: "config", config: config$1 });
+    window.ipcrenderer = new Ipcrenderer(mainWorker);
+    window.ipcrenderer.on("ipc", (event, data) => {
+        switch (data.command) {
+            case "openExternal":
+                window.open(data.url, "_blank");
+                break;
+            case "openForm":
+                let searchParams = new URLSearchParams({ type: data.type, ...data.args });
+                window.open("forms.html?" + searchParams.toString(), "_blank");
+                break;
+            case "showMessageBox":
+                let ret = { response: confirm(data.options.message), checkboxChecked: false };
+                event.sender.send("ipc-showMessageBox", { command: "showMessageBox", data: ret });
+                break;
+            case "updateConfig":
+                updateConfig(data.newConfig);
+                event.sender.send("ipc-updateConfig", { command: "updateConfig" });
+                break;
+        }
+    });
     mainWorker.onerror = function (ev) {
         throw ev;
     };
-    const listeners = {};
-    const onceListeners = {};
-    window.listeners = listeners;
-    window.onceListeners = onceListeners;
-    const ipcrenderer = {
-        on(channel, listener) {
-            if (!listeners[channel])
-                listeners[channel] = [];
-            listeners[channel].push(listener);
-            console.log("Added listener to channel " + channel);
-            return this;
-        },
-        send(channel, ...args) {
-            console.log("Posting message ", channel, ":", args, " to the worker");
-            mainWorker.port.postMessage({ channel, args });
-        },
-        once(channel, listener) {
-            if (!onceListeners[channel])
-                onceListeners[channel] = [];
-            onceListeners[channel].push(listener);
-            console.log("Added once listener to channel ", channel, ":", onceListeners.length);
-            return this;
-        },
-        id: 1
-    };
-    const ipcrendererevent = {
-        sender: ipcrenderer, senderId: 1
-    };
-    mainWorker.port.onmessage = function (ev) {
-        if (ev.data.channel) {
-            if (listeners[ev.data.channel])
-                listeners[ev.data.channel].forEach((listener) => { var _a; return listener(ipcrendererevent, ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
-            if (onceListeners[ev.data.channel]) {
-                onceListeners[ev.data.channel].forEach((listener) => { var _a; return listener(ipcrendererevent, ...(_a = ev.data) === null || _a === void 0 ? void 0 : _a.args); });
-                onceListeners[ev.data.channel] = null;
-            }
-        }
-    };
-    window.ipcrenderer = ipcrenderer;
     window.config = config$1;
 
 }());
