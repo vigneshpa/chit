@@ -28,9 +28,10 @@ export default Vue.extend({
 });
 window.resizeWindowToCard = function () {
   setTimeout(() => {
-    window.resizeTo(
+    let cont = document.getElementById("container");
+    if(cont)window.resizeTo(
       550,
-      document.getElementById("container")!.offsetHeight + 42
+      cont.offsetHeight + 42
     );
   }, 350);
 };

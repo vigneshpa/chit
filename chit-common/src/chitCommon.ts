@@ -121,4 +121,6 @@ declare global {
 import Dbmgmt from "./Dbmgmt";
 import time from "./time";
 import Ipchost from "./Ipchost";
-export { Dbmgmt, time, Ipchost };
+export {time};
+export {Dbmgmt};
+export {Ipchost};

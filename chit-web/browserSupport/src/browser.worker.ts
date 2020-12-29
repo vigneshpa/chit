@@ -1,76 +1,74 @@
 import { Ipchost } from "chit-common";
 import Dbmgmt from "./Dbmgmt";
-import config from "./config";
+import Ipcmain from "./Ipcmain";
 log("Shared worker started");
 declare global {
   interface Event {
     ports: readonly MessagePort[];
   }
+  interface Window {
+    ipcmain: ChitIpcMain;
+  }
 }
-var connections = 0; // count active connections
-const listeners: { [channel: string]: ((event: ChitIpcMainEvent, ...args: any[]) => void)[] } = {};
-const onceListeners: { [channel: string]: ((event: ChitIpcMainEvent, ...args: any[]) => void)[] } = {};
-const ipcmain: ChitIpcMain = {
-  on(channel, listener) {
-    if (!listeners[channel]) listeners[channel] = [];
-    listeners[channel].push(listener);
-    console.log("Added listener to channel " + channel);
-    return this;
+const config: Configuration = {
+  "configPath": null,
+  "databaseFile": {
+    "isCustom": false
   },
-  once(channel, listener) {
-    if (!onceListeners[channel]) onceListeners[channel] = [];
-    onceListeners[channel].push(listener);
-    console.log("Added once listener to channel ", channel, ":", onceListeners.length);
-    return this;
-  }
+  "isDevelopement": false,
+  "theme": "system",
+  "updates": {
+    "autoCheck": true,
+    "autoDownload": false
+  },
+  "vueApp": "/app"
 };
+const ipcmain = new Ipcmain();
 
+const ipchosts = new Ipchost(ipcmain, new Dbmgmt("any"), config);
 
-let ipchosts = new Ipchost(ipcmain, new Dbmgmt("any"), config);
+self.addEventListener("message", (ev) => {
+  if (ev.data?.command == "config") {
+    const port = ev.ports[0];
+    let connection = ipcmain.addPort(port);
 
-self.addEventListener("connect", function (ev) {
-  let port = ev.ports[connections];
-  connections++;
-  log("Connections:" + connections);
-  port.addEventListener("message", function (e: MessageEvent<any>) {
-    if (e.data.channel) {
-      if (listeners[e.data.channel]) listeners[e.data.channel].forEach((listener) => listener({
-        reply() {
-        },
-        sender: getSender(e), returnValue: null
-      }, ...e.data?.args));
-      if (onceListeners[e.data.channel]) {
-        onceListeners[e.data.channel].forEach((listener) => listener(getEvent(e), ...e.data?.args));
-        onceListeners[e.data.channel] = null;
-      }
+    //Copy new config
+    Object.keys(ev.data.config).forEach((key) => {
+      config[key] = ev.data.config[key];
+    });
+
+    //If main process
+    if (connection.id == 1) {
+
+      //Handeling Ipchost events
+      ipchosts.on("openExternal", (url) => {
+        connection.send("ipc", { command: "openExternal", url });
+      });
+      ipchosts.on("openForm", (type, args) => {
+        connection.send("ipc", { command: "openForm", type, args });
+      });
+      ipchosts.on("pingRecived", () => { });
+      ipchosts.on("showMessageBox", (options) => {
+        return new Promise((resolve, reject) => {
+          connection.send("ipc", { command: "showMessageBox", options });
+          ipcmain.once("ipc-showMessageBox", (event, data) => {
+            resolve(data);
+          });
+        });
+      });
+      ipchosts.on("showOpenDialog", async () => { });
+      ipchosts.on("updateConfig", (newConfig) => {
+        return new Promise((resolve, reject) => {
+          connection.send("ipc", { query: "updateConfig", newConfig });
+          ipcmain.once("ipc-updateConfig", (event) => {
+            resolve(true);
+          })
+        });
+      });
+      ipchosts.initialise();
     }
-  }, false);
-
-
-  function getEvent(e: MessageEvent<any>): ChitIpcMainEvent {
-    return {
-      reply() {
-      },
-      sender: getSender(e),
-      returnValue: null
-    };
   }
-
-  function getSender(e: MessageEvent<any>): ChitIpcMainWebcontents {
-    return {
-      id: 1,
-      send(channel, ...args) {
-        port.postMessage({channel, args});
-      }
-    };
-  }
-
-
-  port.start();
-}, false);
-
-
-
+});
 function log(...args: any[]) {
   console.log("ConsoleFromWorker:", ...args);
 }

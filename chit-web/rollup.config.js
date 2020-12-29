@@ -1,6 +1,14 @@
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-//import cjs from "@rollup/plugin-commonjs";
+import {terser} from "rollup-plugin-terser";
+
+const plugins=(tsconfig)=>{
+  return [
+    nodeResolve(),
+    typescript({ tsconfig }),
+    //terser()
+  ];
+}
 
 export default [
   {
@@ -9,11 +17,7 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
-    plugins: [
-      nodeResolve(),
-      //cjs(),
-      typescript({ tsconfig: "browserSupport/tsconfig.json" }),
-    ],
+    plugins: plugins("browserSupport/tsconfig.json"),
   },
   {
     input: "browserSupport/src/browser.worker.ts",
@@ -21,10 +25,6 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
-    plugins: [
-      nodeResolve(),
-      //cjs(),
-      typescript({ tsconfig: "browserSupport/tsconfig.worker.json" }),
-    ],
+    plugins:plugins("browserSupport/tsconfig.worker.json"),
   },
 ];

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "## About this Software",
   "main": "dist/server.js",
-  "type": "module",
   "dependencies": {
     "chit-common": "file:../chit-common",
     "compression": "^1.7.4",
@@ -20,7 +19,6 @@
     "ws": "^7.4.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
     "@rollup/plugin-typescript": "^8.1.0",
     "@types/compression": "^1.7.0",
@@ -36,6 +34,7 @@
     "@types/ws": "^7.4.0",
     "express-pug-static": "^1.0.0",
     "rollup": "^2.35.1",
+    "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.0.3",
     "typescript": "^4.1.3"
   },

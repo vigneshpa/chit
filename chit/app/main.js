@@ -79,26 +79,27 @@ ipchosts.on("pingRecived", () => {
     if (splash)
         splash === null || splash === void 0 ? void 0 : splash.webContents.send("log", "Loading UI ");
 });
-ipchosts.on("updateConfig", (newConfig, cb) => {
-    fs_1.writeFile(newConfig.configPath, JSON.stringify(newConfig), async (err) => {
-        if (err) {
-            cb(err, false);
-            throw err;
-        }
-        ;
-        if (!newConfig.databaseFile.isCustom)
-            newConfig.databaseFile.location = path_1.join(electron_1.app.getPath("userData"), "./main.db");
-        if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
-            electron_1.dialog.showMessageBox({
-                message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
-                title: "Database file changed"
-            });
-            setTimeout(() => {
-                electron_1.app.quit();
-            }, 10000);
-        }
-        global.config = newConfig;
-        cb(null, true);
+ipchosts.on("updateConfig", (newConfig) => {
+    return new Promise((resoleve, rejects) => {
+        fs_1.writeFile(newConfig.configPath, JSON.stringify(newConfig), async (err) => {
+            if (err) {
+                rejects(err);
+            }
+            ;
+            if (!newConfig.databaseFile.isCustom)
+                newConfig.databaseFile.location = path_1.join(electron_1.app.getPath("userData"), "./main.db");
+            if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
+                electron_1.dialog.showMessageBox({
+                    message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+                    title: "Database file changed"
+                });
+                setTimeout(() => {
+                    electron_1.app.quit();
+                }, 10000);
+            }
+            global.config = newConfig;
+            resoleve(true);
+        });
     });
 });
 ipchosts.on("openForm", async (type, args) => {

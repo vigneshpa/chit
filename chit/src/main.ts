@@ -34,6 +34,7 @@ import { Dbmgmt } from "chit-common";
 import { Ipchost } from "chit-common";
 import { writeFile } from "fs";
 import Database from "./sqlite3";
+import { rejects } from "assert";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const chitDB = new Database();
@@ -84,26 +85,27 @@ ipchosts.on("openExternal", (url: string) => shell.openExternal(url));
 ipchosts.on("pingRecived", () => {
   if (splash) splash?.webContents.send("log", "Loading UI ");
 });
-ipchosts.on("updateConfig", (newConfig: Configuration, cb: (err: Error, done: boolean) => void) => {
-  writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
-    if (err) {
-      cb(err, false);
-      throw err;
-    };
-    if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
-    //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
-    if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
-      dialog.showMessageBox({
-        message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
-        title: "Database file changed"
-      });
-      setTimeout(() => {
-        app.quit();
-      }, 10000);
-    }
-    global.config = newConfig;
-    //await new Promise(r => setTimeout(r, 5000));
-    cb(null, true);
+ipchosts.on("updateConfig", (newConfig: Configuration) => {
+  return new Promise((resoleve, rejects) => {
+    writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
+      if (err) {
+        rejects(err);
+      };
+      if (!newConfig.databaseFile.isCustom) newConfig.databaseFile.location = join(app.getPath("userData"), "./main.db");
+      //console.log(global.config.databaseFile.location, newConfig.databaseFile.location);
+      if (global.config.databaseFile.location !== newConfig.databaseFile.location) {
+        dialog.showMessageBox({
+          message: "Looks like you have changed the database file. The app must restart to use the new database. The app will restart in 10 seconds",
+          title: "Database file changed"
+        });
+        setTimeout(() => {
+          app.quit();
+        }, 10000);
+      }
+      global.config = newConfig;
+      //await new Promise(r => setTimeout(r, 5000));
+      resoleve(true);
+    });
   });
 });
 ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {

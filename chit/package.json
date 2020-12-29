@@ -3,14 +3,13 @@
   "version": "0.1.0",
   "description": "Chit management program",
   "main": "app/main.js",
-  "type": "module",
   "scripts": {
     "start": "electron .",
     "watch": "cp ./dev.env ./app/.env && tsc -w",
     "build": "ts-node build.ts",
-    "pack": "npm run build && electron-builder --dir --publish never",
-    "dist": "npm run build && electron-builder --publish never",
-    "deploy": "npm run build && electron-builder build --win --publish always"
+    "pack": "electron-builder --dir --publish never",
+    "dist": "electron-builder --publish never",
+    "deploy": "electron-builder build --win --publish always"
   },
   "repository": {
     "type": "git",
@@ -48,9 +47,6 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
     },
-    "msi": {
-      "oneClick": false
-    },
     "linux": {
       "target": "AppImage"
     },
@@ -58,9 +54,7 @@
       "buildResources": "resources"
     },
     "files": [
-      "app/**/*",
-      "prod.env",
-      ".env"
+      "app/**/*"
     ],
     "npmRebuild": true
   }

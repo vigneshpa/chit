@@ -1,6 +1,5 @@
 import Dbmgmt from "./Dbmgmt";
-
-class Ipchosts {
+export default class Ipchosts {
     constructor(chitIpcMain: ChitIpcMain, dbmgmt: Dbmgmt, config: Configuration) {
         this.chitIpcMain = chitIpcMain;
         this.dbmgmt = dbmgmt;
@@ -16,8 +15,14 @@ class Ipchosts {
         "showMessageBox"?: (options: any) => Promise<any>;
         "showOpenDialog"?: (options: any) => Promise<any>;
         "openExternal"?: (url: string) => any;
-        "updateConfig"?: (newConfig: Configuration, callback: (err: Error, done: boolean) => void) => void;
+        "updateConfig"?: (newConfig: Configuration) => Promise<boolean>;
     }
+    public on(key: "openForm", listener: (type: string, args: { [key: string]: string }) => void): void;
+    public on(key: "pingRecived", listener: () => void): void;
+    public on(key: "showMessageBox", listener: (options: any) => Promise<any>): void;
+    public on(key: "showOpenDialog", listener: (options: any) => Promise<any>): void;
+    public on(key: "openExternal", listener: (url: string) => any): void;
+    public on(key: "updateConfig", listener: (newConfig: Configuration) => Promise<boolean>): void;
     public on(key: string, callback: (...args: any[]) => void): void {
         this.events[key] = callback;
     }
@@ -128,15 +133,14 @@ class Ipchosts {
             event.returnValue = this.config;
         });
 
-        this.chitIpcMain.on("update-config", (event, newConfig: Configuration) => {
+        this.chitIpcMain.on("update-config", async (event, newConfig: Configuration) => {
             console.log("Updating Configuration file ...");
-            this.events.updateConfig(newConfig, (err, done) => {
-                if (err) {
-                    event.sender.send("update-config", done);
-                    throw err;
-                };
+            let done: boolean = false;
+            try { done = await this.events.updateConfig(newConfig) } catch (e) {
                 event.sender.send("update-config", done);
-            });
+                throw e;
+            }
+            event.sender.send("update-config", done);
         });
         this.chitIpcMain.on("db-run-query", async (event, query: string, ...args) => {
             let result = await this.dbmgmt.runQuery(query, ...args);
@@ -144,5 +148,3 @@ class Ipchosts {
         });
     }
 }
-
-export default Ipchosts;

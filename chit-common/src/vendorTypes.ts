@@ -177,4 +177,3 @@ declare global {
     bookmarks?: string[];
   }
 }
-export {};

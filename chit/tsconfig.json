@@ -3,7 +3,7 @@
         "outDir": "app",
         "strict": false,
         "target": "ES2019",
-        "module":"ES6",
+        "module":"CommonJS",
         "lib": ["ES2019", "ES2020.bigint", "ES2020.string", "ES2020.symbol.wellknown", "ES2020.Promise", "DOM", "ES6"],
         "removeComments": false,
         "allowSyntheticDefaultImports": false,

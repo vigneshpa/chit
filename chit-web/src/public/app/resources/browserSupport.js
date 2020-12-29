@@ -1,18 +1,6 @@
 (function () {
     'use strict';
 
-    function msToHR(ms) {
-        const S = (ms / 1000);
-        const s = (S % 60).toFixed(3);
-        const m = Math.floor(S / 60) % 60;
-        const h = Math.floor(S / 3600) % 24;
-        const d = Math.floor(S / 86400);
-        return s + "s " + m + "m " + h + "h " + (d == 0 ? "" : d + "d ");
-    }
-    var time = {
-        msToHR
-    };
-
     let config = {
         isDevelopement: false,
         theme: "system",
@@ -31,17 +19,36 @@
     else {
         localStorage.setItem("config", JSON.stringify(config));
     }
+    function updateConfig(newConfig) {
+        localStorage.setItem("config", JSON.stringify(newConfig));
+    }
     var config$1 = config;
 
     alert("Browsers are not supported yet");
-    time.msToHR(3600000);
     if (!window.SharedWorker) {
         alert("Shared Workers are not supported in your browser\nSome functionalities may be missing.");
     }
     const mainWorker = new SharedWorker("/app/resources/browser.worker.js", { name: "mainWorker" });
     mainWorker.port.start();
+    mainWorker.port.postMessage({ query: "config", config: config$1, ipc: true });
     mainWorker.port.addEventListener("message", function (e) {
+        var _a, _b, _c, _d;
         console.log("Recived ", e.data, " from shared worker");
+        if (((_a = e.data) === null || _a === void 0 ? void 0 : _a.query) == "openExternal") {
+            window.open(e.data.url, "_blank");
+        }
+        else if (((_b = e.data) === null || _b === void 0 ? void 0 : _b.query) == "openForm") {
+            let searchParams = new URLSearchParams({ type: e.data.type, ...e.data.args });
+            window.open("forms.html?" + searchParams.toString(), "_blank");
+        }
+        else if (((_c = e.data) === null || _c === void 0 ? void 0 : _c.query) == "showMessageBox") {
+            let ret = { response: confirm(), checkboxChecked: false };
+            mainWorker.port.postMessage({ "showMessageBox": ret, ipc: true });
+        }
+        else if (((_d = e.data) === null || _d === void 0 ? void 0 : _d.query) == "updateConfig") {
+            updateConfig(e.data.newConfig);
+            mainWorker.port.postMessage({ query: "updateConfig", ipc: true });
+        }
     }, false);
     console.log("started shared worker");
     mainWorker.onerror = function (ev) {

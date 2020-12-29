@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "strict": false,
-        "target": "ES6",
+        "target": "ES2019",
         "rootDir": "src",
         "module": "ES6",
         "lib": [

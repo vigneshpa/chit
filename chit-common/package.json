@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "description": "TypeDefinitions, Dbmgmt and common files for chit",
   "main": "lib/chitCommon.js",
-  "types": "lib/types/chitCommon.d.ts",
-  "type": "module",
+  "types": "lib/chitCommon.d.ts",
+  "module": "lib/esm/chitCommon.js",
+  "typings": "lib/esm/chitCommon.d.ts",
   "files": [
     "lib/**/*"
   ],
   "scripts": {
-    "build": "rm ./lib -r && mkdir -p ./lib/sql && cp ./src/sql ./lib/ -r && tsc",
+    "build": "rm ./lib -r && mkdir -p ./lib/sql && cp ./src/sql ./lib/ -r && tsc && tsc -p tsconfig.esm.json",
     "dev": "cp ./src/sql ./lib/sql -r && tsc -w"
   },
   "repository": {

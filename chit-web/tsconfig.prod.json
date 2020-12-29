@@ -3,7 +3,7 @@
         "outDir": "./dist/",
         "strict": false,
         "target": "ES2020",
-        "module": "ES6",
+        "module": "CommonJS",
         "lib": [
             "ES2019",
             "ES2020.bigint",

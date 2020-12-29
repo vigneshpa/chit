@@ -1,9 +1,7 @@
-import { promises, unlinkSync } from "fs";
-import { readFile } from "fs";
+import { promises, unlinkSync, readFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
-
-class Dbmgmt {
+export default class Dbmgmt {
   db: ChitDatabase;
   dbFile: string;
   today: Date;
@@ -249,5 +247,3 @@ class Dbmgmt {
     }
   }
 }
-
-export default Dbmgmt;
