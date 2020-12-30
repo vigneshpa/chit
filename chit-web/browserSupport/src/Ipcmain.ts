@@ -1,5 +1,5 @@
 class Ipcmain {
-  private connections: { [id: number]: ChitIpcMainWebcontents };
+  private connections: { [id: number]: ChitIpcMainWebcontents & { port: MessagePort } };
   private ports: { [id: number]: MessagePort };
   public noOfPorts: number;
   private onceListeners: { [channel: string]: ((event: ChitIpcMainEvent, ...args: any[]) => void)[] };
@@ -12,25 +12,23 @@ class Ipcmain {
     this.onceListeners = {};
     this.listeners = {};
     this.noOfPorts = 0;
+    this.ports = {};
+    this.connections = {};
   };
 
   public addPort(port: MessagePort) {
-    let portId = this.noOfPorts;
+    const portId = this.noOfPorts;
+
     this.ports[portId] = port;
-    this.connections[portId] = {
-      id: portId,
-      send(channel: string, ...args: any[]) {
-        console.log("IPCMain: Sending ", channel, args, " to renderer ", portId);
-        port.postMessage({ channel, args });
-      }
-    };
-    let connection = this.connections[portId];
+    this.connections[portId] = new Connection(port, portId);
     this.noOfPorts++;
 
+    const connection = this.connections[portId];
+
     //Event handeling
-    port.addEventListener("message", (ev) => {
-      if (ev.data.channel) {
-        console.log("IPCMain: Recived message ", ev.data, " from renderer ", portId);
+    port.addEventListener("message", (ev)=>{
+      console.log("IPCMain: Recived message ", ev.data, " from renderer ", portId);
+      if (ev.data?.channel) {
         if (this.listeners[ev.data.channel]) this.listeners[ev.data.channel].forEach((listener) => listener(this.ipcmainevent(connection), ...ev.data?.args));
         if (this.onceListeners[ev.data.channel]) {
           this.onceListeners[ev.data.channel].forEach((listener) => listener(this.ipcmainevent(connection), ...ev.data?.args));
@@ -45,6 +43,7 @@ class Ipcmain {
   }
 
   on(channel: string, listener: (event: ChitIpcMainEvent, ...args: any[]) => void) {
+    console.log("IPCMain:Adding event listener to ", channel);
     if (!this.listeners[channel]) this.listeners[channel] = [];
     this.listeners[channel].push(listener);
     return this;
@@ -54,6 +53,18 @@ class Ipcmain {
     if (!this.onceListeners[channel]) this.onceListeners[channel] = [];
     this.onceListeners[channel].push(listener);
     return this;
+  }
+}
+class Connection {
+  port: MessagePort;
+  id: number;
+  constructor(port: MessagePort, id: number) {
+    this.port = port;
+    this.id = id;
+  }
+  send(channel: string, ...args: any[]) {
+    console.log("IPCMain: Sending ", channel, args, " to renderer ", this.id);
+    this.port.postMessage({ channel, args });
   }
 }
 export default Ipcmain;

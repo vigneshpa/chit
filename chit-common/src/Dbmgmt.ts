@@ -73,16 +73,17 @@ export default class Dbmgmt {
     switch (query) {
       case "checkPhone": {
         const phone: string = args[0];
-        let sql = await promisify(readFile)(join(__dirname, "./sql/checkPhone.sql"));
+        let sql = await getSQL("./sql/checkPhone.sql");
+        console.log(sql.toString());
         let result = await this.db.get(sql.toString(), { $phone: phone });
-        if (result.phone === phone) return true;
+        if (result?.phone === phone) return true;
         return false;
       }
       case "createUser": {
         const userName: string = args[0], phone: string = args[1], address: string = args[2];
         let result: createUserFields;
         let success: boolean;
-        let sql = await promisify(readFile)(join(__dirname, "./sql/createUser.sql"));
+        let sql = await getSQL("./sql/createUser.sql");
 
         this.db.exec("BEGIN TRANSACTION");
         try {
@@ -103,9 +104,9 @@ export default class Dbmgmt {
       //async checkBatch(batch: string, month: number, year: number) 
       case "checkBatch": {
         const batch: string = args[0], month: number = args[1], year: number = args[2];
-        let sql = await promisify(readFile)(join(__dirname, "./sql/checkBatch.sql"));
+        let sql = await getSQL("./sql/checkBatch.sql");
         let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
-        if (result.batch === batch) return true;
+        if (result?.batch === batch) return true;
         return false;
       }
       //async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }>
@@ -122,9 +123,9 @@ export default class Dbmgmt {
         }
         //console.log(await this.db.get("SELECT * FROM `groups` WHERE `gName` = '" + gName + "';"));
 
-        const createGroupSQL = await promisify(readFile)(join(__dirname, "./sql/createGroup.sql"));
-        const createChitSQL = await promisify(readFile)(join(__dirname, "./sql/createChit.sql"));
-        const createPaymentSQL = await promisify(readFile)(join(__dirname, "./sql/createChitPayment.sql"));
+        const createGroupSQL = await getSQL("./sql/createGroup.sql");
+        const createChitSQL = await getSQL("./sql/createChit.sql");
+        const createPaymentSQL = await getSQL("./sql/createChitPayment.sql");
 
         //Starting transaction
         this.db.exec("BEGIN TRANSACTION");
@@ -246,4 +247,9 @@ export default class Dbmgmt {
       case "analyseDB": { }
     }
   }
+}
+async function getSQL(file:string){
+  let sql = await promisify(readFile)(join(__dirname, file));
+  console.log("Got SQL:", sql.toString());
+  return sql;
 }

@@ -15,23 +15,17 @@ class Ipcrenderer {
     this.listeners = {};
 
     //Events handler
-    this.worker.port.onmessage = (ev) => {
-      if (ev.data.channel) {
+    this.port.addEventListener("message", (ev)=>{
+      if (ev.data?.channel) {
         console.log("IPCRenderer: Recived message ", ev.data, " from main");
         if (this.listeners[ev.data.channel]) this.listeners[ev.data.channel].forEach((listener) => listener(this.ipcrendererevent(), ...ev.data?.args));
         if (this.onceListeners[ev.data.channel]) {
           this.onceListeners[ev.data.channel].forEach((listener) => listener(this.ipcrendererevent(), ...ev.data?.args));
           this.onceListeners[ev.data.channel] = null;
         }
-      }
-    }
-
-    //Send Ipc Start Event
-    //this.port.postMessage("IPC_RENDERER_START_GET_ID"); //This is initiated by sending config.
-    this.port.addEventListener("message", (ev) => {
-      if (ev.data?.toIpcClass) {
+      } else if (ev.data?.toIpcClass) {
         this.id = ev.data.id;
-        if(this.id=0)alert("This tab holds the main process!\nDon't close this.");
+        if (this.id = 0) alert("This tab holds the main process!\nDon't close this.");
       }
     });
   };

@@ -34,7 +34,6 @@ import { Dbmgmt } from "chit-common";
 import { Ipchost } from "chit-common";
 import { writeFile } from "fs";
 import Database from "./sqlite3";
-import { rejects } from "assert";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const chitDB = new Database();
@@ -79,7 +78,7 @@ app.on("ready", async launchInfo => {
   await splash.loadFile(__dirname + "/resources/splash.html");
 });
 
-ipchosts.on("showMessageBox", (options: MessageBoxOptions) => dialog.showMessageBox(options));
+ipchosts.on("showMessageBox", (options) => dialog.showMessageBox(options));
 ipchosts.on("showOpenDialog", (options: OpenDialogOptions) => dialog.showOpenDialog(options));
 ipchosts.on("openExternal", (url: string) => shell.openExternal(url));
 ipchosts.on("pingRecived", () => {

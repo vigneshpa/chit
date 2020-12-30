@@ -12,21 +12,21 @@ export default class Ipchosts {
     private events: {
         "openForm"?: (type: string, args: { [key: string]: string }) => void;
         "pingRecived"?: () => void;
-        "showMessageBox"?: (options: any) => Promise<any>;
-        "showOpenDialog"?: (options: any) => Promise<any>;
+        "showMessageBox"?: (options: ChitMessageBoxOptions, sender:ChitIpcMainWebcontents) => Promise<any>;
+        "showOpenDialog"?: (options: ChitOpenDialogOptions, sender:ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>;
         "openExternal"?: (url: string) => any;
         "updateConfig"?: (newConfig: Configuration) => Promise<boolean>;
     }
     public on(key: "openForm", listener: (type: string, args: { [key: string]: string }) => void): void;
     public on(key: "pingRecived", listener: () => void): void;
-    public on(key: "showMessageBox", listener: (options: any) => Promise<any>): void;
-    public on(key: "showOpenDialog", listener: (options: any) => Promise<any>): void;
+    public on(key: "showMessageBox", listener: (options: ChitMessageBoxOptions, sender:ChitIpcMainWebcontents) => Promise<any>): void;
+    public on(key: "showOpenDialog", listener: (options: ChitOpenDialogOptions, sender:ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>): void;
     public on(key: "openExternal", listener: (url: string) => any): void;
     public on(key: "updateConfig", listener: (newConfig: Configuration) => Promise<boolean>): void;
     public on(key: string, callback: (...args: any[]) => void): void {
         this.events[key] = callback;
     }
-    async initialise(): Promise<void> {
+    initialise(): void {
         this.chitIpcMain.on("ping", event => {
             console.log("Recived ping from renderer");
             console.log("Sending pong to the renderer");
@@ -109,17 +109,17 @@ export default class Ipchosts {
 
 
         this.chitIpcMain.on("show-message-box", (event, options) => {
-            this.events.showMessageBox(options);
+            this.events.showMessageBox(options, event.sender);
         });
 
         this.chitIpcMain.on("show-dialog", async (event, type: ("open" | "messagebox"), options) => {
             let ret;
             switch (type) {
                 case "open":
-                    ret = await this.events.showOpenDialog(options);
+                    ret = await this.events.showOpenDialog(options, event.sender);
                     break;
                 case "messagebox":
-                    ret = await this.events.showMessageBox(options);
+                    ret = await this.events.showMessageBox(options, event.sender);
                     break;
             };
             event.sender.send("show-dialog", ret);

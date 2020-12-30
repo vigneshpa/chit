@@ -13,7 +13,7 @@ class App {
     //user to uuid map
     map: Map<string, string>;
     constructor() {
-        this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../chit/app/renderer');
+        this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../chit-renderer/app/renderer');
         this.sessionParser = sessionParser;
 
         //Creating app instance
@@ -31,6 +31,8 @@ class App {
 
         //mounting public
         this.app.use(express.static(path.join(__dirname, 'public')));
+
+        //mounting pug files
         if (process.env.NODE_ENV !== 'production') {
             const pugStatic = require("express-pug-static");
             this.app.use(pugStatic({
@@ -47,7 +49,8 @@ class App {
         this.app.use(this.sessionParser);
 
         //mounting vue project
-        this.app.use("/app", express.static(this.rendererPath));
+        if (process.env.NODE_ENV !== 'production')
+            this.app.use("/app", express.static(this.rendererPath));
 
 
         //adding router

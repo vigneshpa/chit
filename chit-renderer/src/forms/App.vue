@@ -27,7 +27,7 @@ export default Vue.extend({
   },
 });
 window.resizeWindowToCard = function () {
-  setTimeout(() => {
+  setTimeout(function(){
     let cont = document.getElementById("container");
     if(cont)window.resizeTo(
       550,

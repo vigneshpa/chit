@@ -15,6 +15,7 @@ if (!window.SharedWorker) {
 
 //Creating worker
 const mainWorker = new SharedWorker("/app/resources/browser.worker.js", { name: "mainWorker" });
+mainWorker.port.start();
 console.log("started shared worker");
 
 //Posting config
@@ -28,8 +29,8 @@ window.ipcrenderer.on("ipc", (event, data:{command:string, [key:string]:any})=>{
             window.open(data.url, "_blank");
             break;
         case "openForm":
-            let searchParams = new URLSearchParams({type:data.type, ...data.args});
-            window.open("forms.html?"+searchParams.toString(), "_blank");
+            let searchParams = new URLSearchParams({form:data.type, ...data.args});
+            window.open("forms.html?"+searchParams.toString(), "_blank", "width=600,height=400,");
             break;
         case "showMessageBox":
             let ret = {response:confirm(data.options.message), checkboxChecked:false};

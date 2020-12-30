@@ -1,3 +1,13 @@
 ./**/node_modules
 ./**/package.lock.json
+chit/app
+chit/dist
+chit/node_modules
+chit-common/node_modules
+chit-common/lib
+chit-renderer/app
+chit-renderer/node_modules
+chit-web/dist
+chit-wen/node_modules
 node_modules
+chit-web/src/prod.env

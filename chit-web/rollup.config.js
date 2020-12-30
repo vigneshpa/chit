@@ -1,14 +1,14 @@
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import {terser} from "rollup-plugin-terser";
+import { terser } from "rollup-plugin-terser";
 
-const plugins=(tsconfig)=>{
+const plugins = (tsconfig) => {
   return [
     nodeResolve(),
     typescript({ tsconfig }),
-    //terser()
+    terser()
   ];
-}
+};
 
 export default [
   {
@@ -25,6 +25,6 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
-    plugins:plugins("browserSupport/tsconfig.worker.json"),
-  },
+    plugins: plugins("browserSupport/tsconfig.worker.json"),
+  }
 ];
