@@ -3,6 +3,7 @@
 chit/app
 chit/dist
 chit/node_modules
+chit/electron-builder.yml
 chit-common/node_modules
 chit-common/lib
 chit-renderer/app
