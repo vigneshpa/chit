@@ -2,26 +2,40 @@ import * as express from "express";
 import * as path from "path";
 import * as logger from "morgan";
 import * as compression from "compression";
-
-import sessionParser from "./sessionParser";
-import router from "./routes";
 import { inspect } from "util";
+import * as expressws from "express-ws";
+import * as http from "http";
+
+const app = express();
+const server = http.createServer(app);
+const appWS = expressws(app, server).app;
+import router from "./routes";
+import sessionParser from "./sessionParser";
 class App {
     rendererPath: string;
-    app: express.Application;
+    app: expressws.Application;
+    server:http.Server;
     sessionParser: express.RequestHandler;
-    //user to uuid map
-    map: Map<string, string>;
     constructor() {
         this.rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../chit-renderer/app/renderer');
         this.sessionParser = sessionParser;
 
-        //Creating app instance
-        this.app = express();
+        //Adding app and server instance
+        this.app = appWS;
+        this.server = server;
 
         //Setting up Morgan
         this.app.use(logger('dev'));
 
+        //Reditecting to secure if it is in oproduction
+        this.app.use((req, res, next)=>{
+            if(req.headers['x-forwarded-proto'] === 'http'){
+                res.redirect(307, `https://${req.hostname+req.originalUrl}`);
+            }else next();
+        });
+
+        //Setting up websockets
+        expressws(this.app);
         //Setting up compression
         this.app.use(compression());
 
@@ -51,6 +65,7 @@ class App {
         //mounting vue project
         if (process.env.NODE_ENV !== 'production')
             this.app.use("/app", express.static(this.rendererPath));
+
 
 
         //adding router

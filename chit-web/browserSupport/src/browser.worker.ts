@@ -33,9 +33,11 @@ self.addEventListener("connect", (e) => {
   port.start();
   const connection = ipcmain.addPort(port);
   console.log(connection);
+  //Sending ws address
+  connection.send("ipc", {command:"console", data:[dbmgmt.socket.url, dbmgmt.socketAddress]})
 
   //If main process
-  if (connection.id == 0) {
+  if (connection.id === 0) {
 
     //Handeling Ipchost events
     ipchosts.on("openExternal", (url) => {
@@ -68,7 +70,7 @@ self.addEventListener("connect", (e) => {
   //On Config
   port.addEventListener("message", (ev) => {
     console.log("SharedWorker: Recived message ", ev.data);
-    if (ev.data?.command == "config") {
+    if (ev.data?.command === "config") {
 
       //Copy new config
       Object.keys(ev.data.config).forEach((key) => {

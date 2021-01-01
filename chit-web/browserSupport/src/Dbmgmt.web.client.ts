@@ -1,16 +1,15 @@
-import { Socket } from "dgram";
-
 class Dbmgmt {
   db: ChitDatabase;
   dbFile: string;
   today: Date;
   socket: WebSocket;
+  socketAddress:string;
   constructor(dbFile: string, chitDB?: ChitDatabase) { };
   connect(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      let socketAddress = "ws://"+location.host+"/api/dbmgmt";
-      console.log("Web socket address", socketAddress);
-      this.socket = new WebSocket(socketAddress);
+      this.socketAddress = (location.protocol === "http:")?"ws":"wss"+"://"+location.host+"/api/dbmgmt";
+      console.log("Web socket address", this.socketAddress);
+      this.socket = new WebSocket(this.socketAddress);
       this.socket.onopen = (e) => {
         resolve(true);
       };
@@ -41,7 +40,7 @@ class Dbmgmt {
       this.socket.send(JSON.stringify({ query, args, queryId }));
       this.socket.addEventListener("message", (ev) => {
         let data = JSON.parse(ev.data);
-        if (data.queryId == queryId) {
+        if (data.queryId === queryId) {
           resolve(data.reply);
         }
       });

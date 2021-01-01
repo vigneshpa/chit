@@ -6,7 +6,7 @@ const plugins = (tsconfig) => {
   return [
     nodeResolve(),
     typescript({ tsconfig }),
-    terser()
+    (process.env.NODE_ENV !== 'developement')?terser():null
   ];
 };
 

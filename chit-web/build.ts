@@ -1,6 +1,7 @@
 /**
  *  Chit Web build file.
  */
+import { readFile, writeFile } from "fs/promises";
 import bt from "../buildTools";
 const buildDir = "./dist";
 const build = async () => {
@@ -46,11 +47,22 @@ const build = async () => {
         // Copy config files
         bt.logi("Copying configuration files");
         await bt.copy('./src/prod.env', './dist/.env');
-        await bt.copy('./package.prod.json', './dist/package.json');
+
+        //Modifiying package.json for production
+        let pkg = JSON.parse((await readFile("./package.json")).toString());
+        pkg.main = "server.js";
+        delete pkg.devDependencies;
+        pkg.scripts = { start: "node server.js" };
+        pkg.dependencies["chit-common"] = "file:./chit-common";
+        await writeFile("./dist/package.json", JSON.stringify(pkg));
+        //await bt.copy('./package.prod.json', './dist/package.json');
 
         //Compiling TypeScript
         bt.logi("Building server TypeScript files");
         await bt.exec('tsc', ['--build', 'tsconfig.prod.json']);
+
+        //Create db directory
+        await bt.fs.ensureFile("./dist/db/placeholder");
 
         bt.end();
 

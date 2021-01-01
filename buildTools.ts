@@ -3,6 +3,7 @@ import * as cp from "child_process";
 import * as fs from "fs-extra";
 import * as chalk from "chalk";
 import tc from "./chit-common/src/time";
+import { join } from "path";
 
 const timestamps:{
   [key:string]:number
@@ -38,7 +39,7 @@ function exec(
     let execprs = cp.spawn(command,args, options);
     execprs.on("exit", (code, signal) => {
       let color = "dim";
-      if (code == 0) {
+      if (code === 0) {
         color = "green";
       } else {
         color = "redBright";
@@ -60,8 +61,16 @@ function exec(
 }
 async function clean(dir: string) {
   log(chalk.redBright(`Emptying ${dir} directory`));
+  let hasGit = await fs.pathExists(join(dir, ".git"));
+  if(hasGit){
+    log(chalk.dim("Found .git backing up it"));
+    await fs.move(join(dir, ".git"), "./tmp/.git");
+  }
   await fs.remove(dir);
   await fs.mkdirp(dir);
+  if(hasGit){
+    await fs.move("./tmp/.git", join(dir, ".git"));
+  }
 }
 function copy(src: string, dest: string, options?: fs.CopyOptions) {
   log(chalk.yellow(`Copying `)+chalk.white(src)+chalk.yellow(` to `)+chalk.white(`${dest}`));
@@ -75,4 +84,4 @@ function logi(text: string) {
 function log(...args: any[]) {
   console.log(...args);
 }
-export default { exec, clean, copy, log, logi, start, end};
+export default { exec, clean, copy, log, logi, start, end, fs};
