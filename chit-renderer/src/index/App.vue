@@ -53,7 +53,7 @@ v-app#1_app
       a(@click="openGithub")
         v-icon(size="20") mdi-github
         | vigneshpa/chit
-      a(@click="openGithubLicense", style="color: white") &#127279; {{ new Date().getFullYear() }} GPL3
+      a(@click="openGithubLicense", style="color: white")  &copy; {{ new Date().getFullYear() }} GPL3
 </template>
 
 <script lang="ts">
