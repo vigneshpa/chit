@@ -1,15 +1,16 @@
 import { promises, unlinkSync, readFile } from "fs";
 import { promisify } from "util";
 import { join } from "path";
+import ChitORM from "chitorm";
 export default class Dbmgmt {
-  db: ChitDatabase;
+  orm: ChitORM;
   dbFile: string;
   today: Date;
-  constructor(dbFile: string, chitDB?: ChitDatabase) {
-    this.db = chitDB;
+  constructor(dbFile: string, orm?: ChitORM) {
     this.dbFile = dbFile;
     console.log("Stroing data at ", this.dbFile);
     this.today = new Date();
+    this.orm = new ChitORM({ type: "sqlite", file: this.dbFile });
   }
 
   async connect() {
@@ -18,44 +19,17 @@ export default class Dbmgmt {
       exists = (await promises.stat(this.dbFile))?.isFile();
     } catch (e) {
       exists = false;
-      console.log("Unable to connect to the database file! It may not exists!");
-      console.log(e);
+      console.log("Error is thrown when checking existance od db", e);
     }
     if (!exists) return false;
     //If database file exists connecting to it.
-    await this.db.open(this.dbFile);
-    await this.db.run("PRAGMA foreign_keys=ON;");
+    await this.orm.connect();
+    await this.orm.run("PRAGMA foreign_keys=ON;");
     console.log("Connected to the database");
     return true;
   }
-  async createDB() {
-    //If database file does not exixts creating it and structuring it.
-    await this.db.open(this.dbFile);
-    await this.db.run("PRAGMA foreign_keys=ON;");
-    let sql = await promisify(readFile)(join(__dirname, "./sql/create.sql"));
-    console.log("Creating a new database");
-
-    //Starting transaction
-    this.db.exec("BEGIN TRANSACTION;");
-    try {
-      await this.db.runMultiple(sql.toString());
-    } catch (e) {
-
-      //Rolling back changes if any ERROR occoured
-      await this.db.exec("ROLLBACK TRANSACTION");
-      await this.db.close();
-
-      //Deleting the created database file
-      unlinkSync(this.dbFile);
-      console.log("Unable to create database file");
-      console.log(e);
-      process.kill(1);
-    }
-    this.db.exec("END TRANSACTION;");
-    console.log("Created new database");
-  }
   async closeDB() {
-    if (this.db.db) await this.db.close();
+    if (this.orm.connection) await this.orm.connection.close();
     console.log("Database connections closed");
   }
 
@@ -71,47 +45,40 @@ export default class Dbmgmt {
   async runQuery(query: string, ...args: any[]): Promise<any>;
   async runQuery(query: ("checkPhone" | "createUser" | "checkBatch" | "createGroup" | "listUsers" | "listGroups" | "userDetails" | "analyseDB" | string), ...args: any[]): Promise<any> {
     switch (query) {
+
       case "checkPhone": {
         const phone: string = args[0];
-        let sql = await getSQL("./sql/checkPhone.sql");
-        console.log(sql.toString());
-        let result = await this.db.get(sql.toString(), { $phone: phone });
+        //result = await this.db.get(sql.toString(), { $phone: phone });
+        let result = await this.orm.manager.user.findOne({ phone })
         if (result?.phone === phone) return true;
         return false;
       }
+
       case "createUser": {
-        const userName: string = args[0], phone: string = args[1], address: string = args[2];
+        const name: string = args[0], phone: string = args[1], address: string = args[2];
         let result: createUserFields;
         let success: boolean;
-        let sql = await getSQL("./sql/createUser.sql");
+        let user = new this.orm.User({ name, phone, address });
 
-        this.db.exec("BEGIN TRANSACTION");
-        try {
-          result = (await this.db.getMultiple(sql.toString(), [{ $name: userName, $phone: phone, $address: address }], [{ $phone: phone }]))[1];
-        } catch (err) {
-          this.db.exec("ROLLBACK TRANSACTION");
-          success = false;
-          if (err.errno === 19) {
-            console.log(err);
-          } else {
-            throw err;
-          }
-        }
-        this.db.exec("END TRANSACTION");
+        this.orm.connection.manager.transaction(async manager => {
+          result = await manager.save(user);
+        });
 
         return { result, success };
       }
+
       //async checkBatch(batch: string, month: number, year: number) 
       case "checkBatch": {
         const batch: string = args[0], month: number = args[1], year: number = args[2];
-        let sql = await getSQL("./sql/checkBatch.sql");
-        let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
+        //let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
+        let result = await this.orm.manager.group.findOne({ batch, month, year });
         if (result?.batch === batch) return true;
         return false;
       }
+
       //async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }>
       case "createGroup": {
-        const year: number = args[0], month: number = args[1], batch: number = args[2], members: { UID: number, no_of_chits: number }[] = args[3];
+        const year: number = args[0], month: number = args[1], batch: string = args[2], members: { UUID: string, noOfChits: number }[] = args[3];
         let result: GroupInfoExtended | null = null;
         let gName: string = `${year}-${month}-${batch}`;
         let total = 0;
@@ -121,21 +88,23 @@ export default class Dbmgmt {
         if (total !== 20) {
           throw new Error("Total number of chits is not equal to 20");
         }
-        //console.log(await this.db.get("SELECT * FROM `groups` WHERE `gName` = '" + gName + "';"));
 
-        const createGroupSQL = await getSQL("./sql/createGroup.sql");
-        const createChitSQL = await getSQL("./sql/createChit.sql");
-        const createPaymentSQL = await getSQL("./sql/createChitPayment.sql");
+        //Creating group Object
+        const group = new this.orm.Group({ name: gName, batch, month, year, chits: [] });
+        for (const member of members) {
+          const user = await this.orm.manager.user.findOne({ uuid: member.UUID });
+          group.chits.push(new this.orm.Chit({ user, group, noOfChits: member.noOfChits }));
+          for (let i = 1; i <= 20; i++) {
+            
+          }
+        }
 
         //Starting transaction
-        this.db.exec("BEGIN TRANSACTION");
-
+        this.orm.connection.manager.transaction(async manager => {
+          await manager.save(group);
+        });
         //ERROR handeling
         try {
-
-          //Creating Batch
-          let group: GroupInfo = (await this.db.getMultiple(createGroupSQL.toString(), [{ $name: gName, $batch: batch, $month: month, $year: year }], [{ $name: gName }]))[1];
-          let membersInfo: ChitInfo[] = [];
 
           //Adding members
           for (const member of members) {
@@ -248,7 +217,7 @@ export default class Dbmgmt {
     }
   }
 }
-async function getSQL(file:string){
+async function getSQL(file: string) {
   let sql = await promisify(readFile)(join(__dirname, file));
   console.log("Got SQL:", sql.toString());
   return sql;

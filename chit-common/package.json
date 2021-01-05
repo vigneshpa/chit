@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/vigneshpa/chit#readme",
   "devDependencies": {
-    "@types/node": "^14.14.16"
+    "@types/node": "^14.14.16",
+    "chitorm": "file:../chit-orm"
   },
   "dependencies": {}
 }
