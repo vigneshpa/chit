@@ -32,10 +32,10 @@ const path_1 = require("path");
 const chit_common_1 = require("chit-common");
 const chit_common_2 = require("chit-common");
 const fs_1 = require("fs");
-const sqlite3_1 = require("./sqlite3");
+const ChitORM_1 = require("../../chit-common/node_modules/chitorm/lib/ChitORM");
 const dbFile = ((_a = config_1.default.databaseFile) === null || _a === void 0 ? void 0 : _a.isCustom) ? config_1.default.databaseFile.location : path_1.join(electron_1.app.getPath("userData"), "/main.db");
-const chitDB = new sqlite3_1.default();
-const dbmgmt = new chit_common_1.Dbmgmt(dbFile, chitDB);
+const chitORM = new ChitORM_1.default({ type: "sqlite", file: dbFile });
+const dbmgmt = new chit_common_1.Dbmgmt(chitORM);
 const ipchosts = new chit_common_2.Ipchost(electron_1.ipcMain, dbmgmt, global.config);
 if (!config_1.default.databaseFile)
     config_1.default.databaseFile = {};
@@ -138,26 +138,7 @@ ipchosts.on("openForm", async (type, args) => {
 electron_1.ipcMain.on("splash-ready", async (event) => {
     console.log("Splash is ready");
     splash === null || splash === void 0 ? void 0 : splash.webContents.send("log", "Connecting to the database");
-    if (!(await dbmgmt.connect())) {
-        let res = await electron_1.dialog.showMessageBox(splash, config_1.default.databaseFile.isCustom ? {
-            message: `Looks like you have configured custom database file.\nChit cannot find a database file at\n${config_1.default.databaseFile.location}\nDo you wish to create a new one ?`,
-            type: "question",
-            buttons: ["Yes", "No"],
-            cancelId: 1
-        } : {
-            message: `Looks like you are running Chit for first time.\nData will be stored at\n${dbFile}`,
-            type: "info",
-            buttons: ["OK"],
-            cancelId: 0
-        });
-        if (res.response === 0) {
-            await dbmgmt.createDB();
-        }
-        else {
-            electron_1.app.quit();
-            return;
-        }
-    }
+    await dbmgmt.connect();
     splash === null || splash === void 0 ? void 0 : splash.webContents.send("log", "Initialising Inter Process Communication(IPC)");
     await ipchosts.initialise();
     splash === null || splash === void 0 ? void 0 : splash.webContents.send("log", "Loading main window");

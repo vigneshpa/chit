@@ -7,7 +7,7 @@ v-app#1_app
           span {{ currentTitle }}
           v-avatar.headding.grey--text(color="lighten", size="48")
             v-icon mdi-account-multiple-plus
-        v-window(v-model="step")
+        v-window(v-model="step" touchless)
           v-window-item(:value="1")
             v-card-text
               v-date-picker#month(
@@ -58,7 +58,7 @@ v-app#1_app
                   )
                   v-text-field(
                     prepend-icon="mdi-number",
-                    v-model="no_of_chits",
+                    v-model="noOfChits",
                     label="Number of Chits",
                     type="number",
                     :max="20 - totalChits",
@@ -90,7 +90,7 @@ v-app#1_app
                 v-card-actions
                   v-spacer
                   v-btn#add(
-                    :disabled="!memberModel || !no_of_chits || !(parseFloat(no_of_chits) > 0) || parseFloat(no_of_chits) > 20 - totalChits",
+                    :disabled="!memberModel || !noOfChits || !(parseFloat(noOfChits) > 0) || parseFloat(noOfChits) > 20 - totalChits",
                     @click="addMember",
                     color="primary"
                   )
@@ -106,7 +106,7 @@ v-app#1_app
                       @click="empty"
                     )
                       v-list-item-content(:title="member.info.phone + '\\n' + member.info.address") {{ member.info.name }}
-                      v-chip(v-text="member.no_of_chits")
+                      v-chip(v-text="member.noOfChits")
                       v-list-item-action(
                         @click="removeMember(member)",
                         v-if="!disableInputs"
@@ -144,7 +144,7 @@ v-app#1_app
                     @click="empty"
                   )
                     v-list-item-content(v-text="member.info.name" :title="member.info.phone + '\\n' + member.info.address")
-                    v-chip(v-text="member.no_of_chits")
+                    v-chip(v-text="member.noOfChits")
               br
               span Please check the details and click finish.
         v-divider
@@ -185,9 +185,9 @@ export default Vue.extend({
       batch: "",
       batchMessage: "",
       members: [] as members[],
-      memberModel: null as userInfo | null,
-      no_of_chits: null as string | null,
-      users: [] as userInfo[],
+      memberModel: null as UserD | null,
+      noOfChits: null as string | null,
+      users: [] as UserD[],
       loadedUsers: false as boolean,
       disableButtons: false as boolean,
       disableInputs: false as boolean,
@@ -202,7 +202,7 @@ export default Vue.extend({
     totalChits() {
       let total = 0;
       this.members.forEach((member) => {
-        total += member.no_of_chits;
+        total += member.noOfChits;
       });
       return total;
     },
@@ -256,7 +256,7 @@ export default Vue.extend({
       this.members.splice(this.members.indexOf(member), 1);
     },
     addMember() {
-      if (this.memberModel && this.no_of_chits) {
+      if (this.memberModel && this.noOfChits) {
         let removed = this.users.splice(
           this.users.indexOf(this.memberModel),
           1
@@ -267,10 +267,10 @@ export default Vue.extend({
         }
         this.members.push({
           info: removed[0],
-          no_of_chits: parseFloat(this.no_of_chits),
+          noOfChits: parseFloat(this.noOfChits),
         });
         this.memberModel = null;
-        this.no_of_chits = null;
+        this.noOfChits = null;
       }
     },
     next() {
@@ -305,7 +305,7 @@ export default Vue.extend({
       if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      window.ipcrenderer.once("get-users-data", (event, data: userInfo[]) => {
+      window.ipcrenderer.once("get-users-data", (event, data: UserD[]) => {
         this.users = data;
         console.log(data);
         this.disableInputs = false;
@@ -319,7 +319,7 @@ export default Vue.extend({
       this.disableInputs = true;
       window.ipcrenderer.once(
         "get-users-data",
-        (event, data: createUserFields[]) => {
+        (event, data: UserD[]) => {
           console.log(data);
           this.members.forEach((member) => {
             this.users.splice(this.users.indexOf(member.info), 1);
@@ -373,16 +373,16 @@ export default Vue.extend({
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      const finalMembers: createGroupFields["members"] = [];
+      const finalMembers: GroupD["members"] = [];
       this.members.forEach((member) => {
         finalMembers.push({
-          UID: member.info.UID,
-          no_of_chits: member.no_of_chits,
+          uuid: member.info.uuid,
+          noOfChits: member.noOfChits,
         });
       });
       window.ipcrenderer.once(
         "create-group",
-        (event, err: sqliteError, data: createGroupFields) => {
+        (event, err: sqliteError, data: GroupD) => {
           if (err) {
             window.ipcrenderer.send("show-message-box", {
               message: "Some error occoured during the creation of Group",
@@ -416,7 +416,7 @@ export default Vue.extend({
         batch: this.batch,
         year: this.year,
         members: finalMembers,
-      } as createGroupFields);
+      } as GroupD);
     },
   },
   components: {},
@@ -427,7 +427,7 @@ export default Vue.extend({
 });
 
 interface members {
-  info: userInfo;
-  no_of_chits: number;
+  info: UserD;
+  noOfChits: number;
 }
 </script>

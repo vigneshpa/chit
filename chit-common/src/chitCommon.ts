@@ -1,81 +1,40 @@
 import "./vendorTypes";
 declare global {
-    interface createUserFields {
-        UID?: number;
-        name: string;
-        phone: string;
-        address?: string;
+    interface ModelD{
+        uuid:string;
+        createdAt:Date;
+        updatedAt:Date;
     }
-    interface createGroupFields {
-        GID?: number;
-        name?: string;
-        month: number;
-        year: number;
-        batch: string;
-        members?: { UID: number; no_of_chits: number }[];
-        winners?: Array<number>;
+    interface UserD extends ModelD{
+        name:string;
+        phone:string;
+        address:string;
+        chits:ChitD[];
     }
-    interface userInfo {
-        UID: number;
-        name: string;
-        phone: string;
-        address: string;
+    interface ChitD extends ModelD{
+        user:UserD;
+        noOfChits:number;
+        group:GroupD;
+        payments:PaymentD[];
     }
-    interface userInfoExtended {
-        UID: number;
-        name: string;
-        phone: string;
-        address: string;
-        noOfActiveBatches: number;
-        totalNoChits: number;
-        withdrawedChits: number;
-        groups: number[];
-        chits: ChitInfo[];
-        oldChits: ChitInfo[];
-        unpaid: any[];
+    interface GroupD extends ModelD{
+        name:string;
+        batch:string;
+        month:number;
+        year:number;
+        chits:ChitD[];
+        /**
+         * THIS IS ONLY FOR CREATION OF GROUP
+         * array of members' uuid(s) and noOfChits
+         */
+        members?:{uuid:string;noOfChits:number;}[];
     }
-    interface GroupInfo {
-        GID: number;
-        name: string;
-        month: number;
-        year: number;
-        batch: string;
-        winners: number[];
-    }
-    interface GroupInfoExtended {
-        GID: number;
-        name: string;
-        month: number;
-        year: number;
-        batch: string;
-        members: ChitInfo[];
-    }
-    interface ChitInfo {
-        CID: number;
-        GID: number;
-        UID: number;
-        no_of_chits: number;
-        name: string;
-        month: number;
-        year: number;
-        batch: string;
-        payments: { month: number; to_be_paid: number; is_paid: boolean; }[];
-    }
-    interface ChitInfoRaw {
-        CID: number;
-        GID: number;
-        UID: number;
-        no_of_chits: number;
-        name: string;
-        month: number;
-        year: number;
-        batch: string;
-    }
-    interface Payments {
-        PID: number;
-        CID: number;
-        to_be_paid: number;
-        is_paid: number;
+    interface PaymentD extends ModelD{
+        ispaid:boolean;
+        chit:ChitD;
+        imonth:number;
+        toBePaid:number;
+        user:UserD;
     }
     interface sqliteError extends Error {
         errno?: number;

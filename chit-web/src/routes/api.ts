@@ -2,8 +2,8 @@ import { Router } from 'express';
 import * as multer from "multer";
 import { Dbmgmt } from "chit-common";
 import { join } from 'path';
-import Database from "../sqlite3";
-import { mkdir } from 'fs/promises';
+import Orm from "chitorm";
+import { type } from 'os';
 const upload = multer();
 const router = Router();
 
@@ -19,7 +19,6 @@ router.post("/login", upload.none(), function (req, res, next) {
       name: "admin"
     };
     res.type('json').status(200).send(JSON.stringify("LOGGED_IN"));
-    req.session.user.dbmgmt = new Dbmgmt(join(__dirname, "../db/" + req.session.user.name + ".db"), new Database());
   } else {
     res.type('json').status(401).send(JSON.stringify("LOGIN_FAILED"));
   }
@@ -50,14 +49,9 @@ router.ws("/dbmgmt", async (ws, req) => {
   }, 1000);
   const user = req.session.user.name;
   let connected: boolean = false;
-  const db = new Database();
+  const db = new Orm({type:"sqlite", file:"./db/"+user+".db"});
   const dbmgmt = new Dbmgmt("./db/" + user + ".db", db);
-  if (await dbmgmt.connect()) {
-    connected = true;
-  } else {
-    await dbmgmt.createDB();
-    connected = true;
-  }
+  if (await dbmgmt.connect())connected = true;
   ws.on("message", async data => {
     if (connected) {
       let request = JSON.parse(<string>data);

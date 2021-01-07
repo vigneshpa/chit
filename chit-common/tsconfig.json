@@ -17,7 +17,8 @@
     "allowSyntheticDefaultImports": false,
     "inlineSourceMap": false,
     "declaration": true,
-    "declarationDir": "lib"
+    "declarationDir": "lib",
+    "moduleResolution": "Node"
   },
   "include": [
     "src/**/*"

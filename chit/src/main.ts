@@ -33,11 +33,11 @@ import { join } from "path";
 import { Dbmgmt } from "chit-common";
 import { Ipchost } from "chit-common";
 import { writeFile } from "fs";
-import Database from "./sqlite3";
+import ChitORM from "../../chit-common/node_modules/chitorm/lib/ChitORM";
 
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
-const chitDB = new Database();
-const dbmgmt: Dbmgmt = new Dbmgmt(dbFile, chitDB);
+const chitORM = new ChitORM({type:"sqlite", file:dbFile});
+const dbmgmt: Dbmgmt = new Dbmgmt(chitORM);
 const ipchosts: Ipchost = new Ipchost(ipcMain, dbmgmt, global.config);
 if (!config.databaseFile) config.databaseFile = {};
 config.databaseFile.location = dbFile;
@@ -142,26 +142,7 @@ ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
 ipcMain.on("splash-ready", async event => {
   console.log("Splash is ready");
   splash?.webContents.send("log", "Connecting to the database");
-  if (!(await dbmgmt.connect())) {
-    let res = await dialog.showMessageBox(splash, config.databaseFile.isCustom ? {
-      message: `Looks like you have configured custom database file.\nChit cannot find a database file at\n${config.databaseFile.location}\nDo you wish to create a new one ?`,
-      type: "question",
-      buttons: ["Yes", "No"],
-      cancelId: 1
-    } : {
-        message:
-          `Looks like you are running Chit for first time.\nData will be stored at\n${dbFile}`,
-        type: "info",
-        buttons: ["OK"],
-        cancelId: 0
-      });
-    if (res.response === 0) {
-      await dbmgmt.createDB();
-    } else {
-      app.quit();
-      return;
-    }
-  }
+  await dbmgmt.connect()
   splash?.webContents.send("log", "Initialising Inter Process Communication(IPC)");
   await ipchosts.initialise();
   splash?.webContents.send("log", "Loading main window");

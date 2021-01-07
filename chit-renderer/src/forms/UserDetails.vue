@@ -27,21 +27,20 @@ v-app#1_app
 <script lang="ts">
 import Vue from "vue";
 const url = new URL(window.location.href);
-let uid = url.searchParams.get("UID");
-const UID = parseInt(uid ? uid : "");
+let uuid = url.searchParams.get("uuid");
 export default Vue.extend({
   data: () => {
     return {
-      details: {} as userInfoExtended,
+      details: {} as UserD,
     };
   },
   mounted() {
-    console.log("Getting " + UID + "'s user data");
+    console.log("Getting " + uuid + "'s user data");
     window.ipcrenderer.once("get-user-details", (event, data) => {
       this.details = data;
       window.document.title = this.details.name + "'s Profile";
     });
-    window.ipcrenderer.send("get-user-details", UID);
+    window.ipcrenderer.send("get-user-details", uuid);
   },
 });
 </script>

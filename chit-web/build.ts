@@ -1,7 +1,9 @@
 /**
  *  Chit Web build file.
  */
-import { readFile, writeFile } from "fs/promises";
+import { readFile as readFileP, writeFile as writeFileP } from "fs";
+import { promisify } from "util";
+const readFile = promisify(readFileP), writeFile = promisify(writeFileP);
 import bt from "../buildTools";
 const buildDir = "./dist";
 const build = async () => {
@@ -35,11 +37,11 @@ const build = async () => {
         bt.logi("Building pug static files");
         await bt.exec("pug", ["./src/static", "-o", "./dist/public"]);
 
-        //Building chit common liblraries
+        //Building chit common libraries
         bt.logi("Building common libraries");
         await bt.exec("npm", ["run", "build"], { cwd: "../chit-common" });
 
-        //copying chit common liblraries
+        //copying chit common libraries
         bt.logi("Copying Common libs");
         await bt.copy("../chit-common/lib", "./dist/chit-common/lib");
         await bt.copy("../chit-common/package.json", "./dist/chit-common/package.json");

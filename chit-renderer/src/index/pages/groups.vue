@@ -75,7 +75,7 @@ import Vue from "vue";
 export default Vue.extend({
   data() {
     return {
-      groups: [] as GroupInfo[],
+      groups: [] as GroupD[],
       loading: false as boolean,
       itemsPerPageArray: [4, 8, 12] as number[],
       search: "" as string,
@@ -116,7 +116,7 @@ export default Vue.extend({
     editGroup(GID: number) {},
   },
   mounted() {
-    window.ipcrenderer.once("get-groups-data", (event, data: GroupInfo[]) => {
+    window.ipcrenderer.once("get-groups-data", (event, data: GroupD[]) => {
       this.groups = data;
       this.loading = false;
     });

@@ -204,7 +204,7 @@ export default Vue.extend({
       this.skipValidation = true;
       window.ipcrenderer.once(
         "create-user",
-        (event, err: sqliteError, data: createUserFields) => {
+        (event, err: sqliteError, data: UserD) => {
           if (err) {
             window.ipcrenderer.send("show-message-box", {
               message: "Some error occoured during the creation of User",
@@ -237,7 +237,7 @@ export default Vue.extend({
         name: this.name,
         phone: this.phone,
         address: this.address,
-      } as createUserFields);
+      } as UserD);
     },
   },
   computed: {

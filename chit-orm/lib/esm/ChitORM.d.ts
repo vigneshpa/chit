@@ -3,6 +3,7 @@ import { Connection, Repository } from "typeorm";
 import User from "./entity/User";
 import Group from "./entity/Group";
 import Chit from "./entity/Chit";
+import Payment from "./entity/Payment";
 export interface ChitORMOptions {
     type: "sqlite" | "postgres";
     url?: string;
@@ -10,14 +11,16 @@ export interface ChitORMOptions {
 }
 export default class ChitORM {
     options: ChitORMOptions;
-    User: typeof User;
-    Group: typeof Group;
-    Chit: typeof Chit;
+    static User: typeof User;
+    static Group: typeof Group;
+    static Chit: typeof Chit;
+    static Payment: typeof Payment;
     connection: Connection;
     manager: {
         user: Repository<User>;
         group: Repository<Group>;
         chit: Repository<Chit>;
+        payment: Repository<Payment>;
     };
     constructor(options: {
         type: "postgres";

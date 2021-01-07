@@ -5,11 +5,9 @@ const typeorm_1 = require("typeorm");
 const User_1 = require("./entity/User");
 const Group_1 = require("./entity/Group");
 const Chit_1 = require("./entity/Chit");
+const Payment_1 = require("./entity/Payment");
 class ChitORM {
     constructor(options) {
-        this.User = User_1.default;
-        this.Group = Group_1.default;
-        this.Chit = Chit_1.default;
         this.options = options;
     }
     async connect() {
@@ -18,11 +16,14 @@ class ChitORM {
             "database": this.options.file,
             "synchronize": true,
             "logging": true,
-            "entities": [this.User, this.Group, this.Chit],
+            "entities": [User_1.default, Group_1.default, Chit_1.default, Payment_1.default],
         });
-        this.manager.user = this.connection.getRepository(User_1.default);
-        this.manager.chit = this.connection.getRepository(Chit_1.default);
-        this.manager.group = this.connection.getRepository(Group_1.default);
+        this.manager = {
+            user: this.connection.getRepository(User_1.default),
+            chit: this.connection.getRepository(Chit_1.default),
+            group: this.connection.getRepository(Group_1.default),
+            payment: this.connection.getRepository(Payment_1.default)
+        };
         return this.connection;
     }
     async run(SQL, ...parms) {
@@ -30,3 +31,7 @@ class ChitORM {
     }
 }
 exports.default = ChitORM;
+ChitORM.User = User_1.default;
+ChitORM.Group = Group_1.default;
+ChitORM.Chit = Chit_1.default;
+ChitORM.Payment = Payment_1.default;

@@ -1,13 +1,17 @@
+import ChitORM from "chitorm";
 class Dbmgmt {
-  db: ChitDatabase;
-  dbFile: string;
-  today: Date;
+  orm: ChitORM;
   socket: WebSocket;
-  socketAddress:string;
-  constructor(dbFile: string, chitDB?: ChitDatabase) { };
+  socketAddress: string;
+  dbFile:string;
+  today:Date;
+  constructor(dbFile: string, orm?: ChitORM) {
+    this.orm = orm;
+    this.dbFile = dbFile;
+  };
   connect(): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      this.socketAddress = (location.protocol === "http:")?"ws":"wss"+"://"+location.host+"/api/dbmgmt";
+      this.socketAddress = (location.protocol === "http:") ? "ws" : "wss" + "://" + location.host + "/api/dbmgmt";
       console.log("Web socket address", this.socketAddress);
       this.socket = new WebSocket(this.socketAddress);
       this.socket.onopen = (e) => {
@@ -21,7 +25,7 @@ class Dbmgmt {
   runQuery(query: "checkPhone", phone: string): Promise<boolean>;
   runQuery(query: "createUser", userName: string, phone: string, address?: string): Promise<{
     success: boolean;
-    result: createUserFields;
+    result: UserD;
   }>;
   runQuery(query: "checkBatch", batch: string, month: number, year: number): Promise<boolean>;
   runQuery(query: "createGroup", year: number, month: number, batch: string, members: {
@@ -29,11 +33,11 @@ class Dbmgmt {
     no_of_chits: number;
   }[]): Promise<{
     success: boolean;
-    result: createGroupFields;
+    result: GroupD;
   }>;
-  runQuery(query: "listUsers"): Promise<userInfo[]>;
-  runQuery(query: "listGroups"): Promise<GroupInfo[]>;
-  runQuery(query: "userDetails", UID: number): Promise<userInfoExtended>;
+  runQuery(query: "listUsers"): Promise<UserD[]>;
+  runQuery(query: "listGroups"): Promise<GroupD[]>;
+  runQuery(query: "userDetails", UID: string): Promise<UserD>;
   async runQuery(query: string, ...args: any[]): Promise<any> {
     return new Promise((resolve, reject) => {
       const queryId = Math.floor(Math.random() * (10 ** 10));

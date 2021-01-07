@@ -65,14 +65,14 @@ v-container(fluid)
                     ) {{ item[keys[key]] }}
                 v-expand-transition
                   v-overlay(v-if="hover", absolute, color="grey")
-                    v-btn(@click="editUser(item.UID)") View profile
+                    v-btn(@click="editUser(item.uuid)") View profile
 </template>
 <script lang="ts">
 import Vue from "vue";
 export default Vue.extend({
   data() {
     return {
-      users: [] as userInfo[],
+      users: [] as UserD[],
       loading: false as boolean,
       itemsPerPageArray: [4, 8, 12] as number[],
       search: "" as string,
@@ -109,12 +109,12 @@ export default Vue.extend({
     updateItemsPerPage(number: number) {
       this.itemsPerPage = number;
     },
-    editUser(UID: number) {
-      window.ipcrenderer.send("open-forms", "UserDetails", { UID: UID });
+    editUser(uuid: number) {
+      window.ipcrenderer.send("open-forms", "UserDetails", { uuid: uuid });
     },
   },
   mounted() {
-    window.ipcrenderer.once("get-users-data", (event, data: userInfo[]) => {
+    window.ipcrenderer.once("get-users-data", (event, data: UserD[]) => {
       this.users = data;
       this.loading = false;
     });

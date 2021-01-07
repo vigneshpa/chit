@@ -14,6 +14,14 @@ const build = async () => {
   bt.logi("Copying configuration files");
   await bt.copy("./prod.env", "./app/.env");
 
+  //Building common libraray
+  bt.logi("Building common libraries");
+  await bt.exec("npm", ["run", "build"], {cwd:"../chit-common"});
+
+  //building orm
+  bt.logi("Building ORM");
+  await bt.exec("npm", ["run", "build"], {cwd:"../chit-orm"})
+
   //Building TypeScript
   bt.logi("Compiling TypeScript");
   await bt.exec("tsc",["-p", "tsconfig.prod.json"]);

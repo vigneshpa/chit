@@ -10,12 +10,12 @@ export default class Ipchosts {
     private chitIpcMain: ChitIpcMain;
     private dbmgmt: Dbmgmt;
     private events: {
-        "openForm"?: (type: string, args: { [key: string]: string }) => void;
-        "pingRecived"?: () => void;
-        "showMessageBox"?: (options: ChitMessageBoxOptions, sender:ChitIpcMainWebcontents) => Promise<any>;
-        "showOpenDialog"?: (options: ChitOpenDialogOptions, sender:ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>;
-        "openExternal"?: (url: string) => any;
-        "updateConfig"?: (newConfig: Configuration) => Promise<boolean>;
+        openForm?: (type: string, args: { [key: string]: string }) => void;
+        pingRecived?: () => void;
+        showMessageBox?: (options: ChitMessageBoxOptions, sender:ChitIpcMainWebcontents) => Promise<any>;
+        showOpenDialog?: (options: ChitOpenDialogOptions, sender:ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>;
+        openExternal?: (url: string) => any;
+        updateConfig?: (newConfig: Configuration) => Promise<boolean>;
     }
     public on(key: "openForm", listener: (type: string, args: { [key: string]: string }) => void): void;
     public on(key: "pingRecived", listener: () => void): void;
@@ -23,7 +23,7 @@ export default class Ipchosts {
     public on(key: "showOpenDialog", listener: (options: ChitOpenDialogOptions, sender:ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>): void;
     public on(key: "openExternal", listener: (url: string) => any): void;
     public on(key: "updateConfig", listener: (newConfig: Configuration) => Promise<boolean>): void;
-    public on(key: string, callback: (...args: any[]) => void): void {
+    public on(key: ("openForm"|"pingRecived"|"showMessageBox"|"showOpenDialog"|"openExternal"|"updateConfig"), callback: ((type: string, args: { [key: string]: string; }) => void) & (() => void) & ((options: ChitMessageBoxOptions, sender: ChitIpcMainWebcontents) => Promise<any>) & ((options: ChitOpenDialogOptions, sender: ChitIpcMainWebcontents) => Promise<any>) & ((url: string) => any) & ((newConfig: Configuration) => Promise<any>)): void {
         this.events[key] = callback;
     }
     initialise(): void {
@@ -34,39 +34,39 @@ export default class Ipchosts {
             this.events.pingRecived();
         });
 
-        this.chitIpcMain.on("create-user", async (event, data: createUserFields) => {
+        this.chitIpcMain.on("create-user", async (event, data: UserD) => {
             let err: sqliteError;
-            let response: { result: any; success?: boolean; };
-            console.log("\nRecived Message From Renderer to create user\n", event.sender.id, data);
+            let response:UserD;
+            console.log("\nRecived Message From Renderer to create user", event.sender.id, data);
             try {
                 response = await this.dbmgmt.runQuery("createUser", data.name, data.phone, data.address);
             } catch (err1) {
                 err = err1;
             }
-            event.sender.send("create-user", err, response?.result);
+            event.sender.send("create-user", err, response);
         });
 
-        this.chitIpcMain.on("create-group", async (event, data: createGroupFields) => {
+        this.chitIpcMain.on("create-group", async (event, data: GroupD) => {
             let err: sqliteError;
-            let response: { result: any; success?: boolean; };
+            let response: GroupD;
             console.log("Recived message from Renderer to create group", event.sender.id, data);
             try {
                 response = await this.dbmgmt.runQuery("createGroup", data.year, data.month, data.batch, data.members);
             } catch (err1) {
                 err = err1;
             }
-            event.sender.send("create-group", err, response?.result);
+            event.sender.send("create-group", err, response);
         });
 
         this.chitIpcMain.on("get-users-data", async event => {
-            const result: userInfo[] = await this.dbmgmt.runQuery("listUsers");
+            const result: UserD[] = await this.dbmgmt.runQuery("listUsers");
             console.log("Sending users data to the renderer");
             event.sender.send("get-users-data", result);
         });
 
-        this.chitIpcMain.on("get-user-details", async (event, UID: number) => {
-            const result: userInfoExtended = await this.dbmgmt.runQuery("userDetails", UID);
-            console.log("Sending " + result.name + "'s data to the renderer");
+        this.chitIpcMain.on("get-user-details", async (event, uuid: string) => {
+            const result: UserD = await this.dbmgmt.runQuery("userDetails", uuid);
+            console.log("Sending " + result?.name + "'s data to the renderer");
             event.sender.send("get-user-details", result);
         });
 

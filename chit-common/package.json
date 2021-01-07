@@ -10,8 +10,8 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "rm ./lib -r && mkdir -p ./lib/sql && cp ./src/sql ./lib/ -r && tsc && tsc -p tsconfig.esm.json",
-    "dev": "cp ./src/sql ./lib/sql -r && tsc -w"
+    "build": "rm ./lib -r && mkdir -p ./lib/esm && tsc && tsc -p tsconfig.esm.json",
+    "dev": "tsc -w"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,9 @@
   },
   "homepage": "https://github.com/vigneshpa/chit#readme",
   "devDependencies": {
-    "@types/node": "^14.14.16",
-    "chitorm": "file:../chit-orm"
+    "@types/node": "^14.14.16"
   },
-  "dependencies": {}
+  "dependencies": {
+    "chitorm": "file:../chit-orm"
+  }
 }

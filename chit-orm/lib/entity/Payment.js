@@ -10,35 +10,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
-const Group_1 = require("./Group");
-const User_1 = require("./User");
+const Chit_1 = require("./Chit");
 const Model_1 = require("./Model");
-const Payment_1 = require("./Payment");
-let Chit = class Chit extends Model_1.default {
+let Payment = class Payment extends Model_1.default {
     constructor(base) {
         super();
         Object.assign(this, base);
     }
+    get toBePaid() {
+        return this.chit.noOfChits * 5000;
+    }
+    get user() {
+        return this.chit.user;
+    }
 };
 __decorate([
-    typeorm_1.ManyToOne(type => User_1.default, User => User.chits),
+    typeorm_1.ManyToOne(type => Chit_1.default, Chit => Chit.payments),
     typeorm_1.JoinColumn(),
-    __metadata("design:type", User_1.default)
-], Chit.prototype, "user", void 0);
-__decorate([
-    typeorm_1.ManyToOne(type => Group_1.default, Group => Group.chits),
-    __metadata("design:type", Group_1.default)
-], Chit.prototype, "group", void 0);
+    __metadata("design:type", Chit_1.default)
+], Payment.prototype, "chit", void 0);
 __decorate([
     typeorm_1.Column(),
     __metadata("design:type", Number)
-], Chit.prototype, "noOfChits", void 0);
+], Payment.prototype, "imonth", void 0);
 __decorate([
-    typeorm_1.OneToMany(type => Payment_1.default, Payment => Payment.chit, { cascade: true }),
-    __metadata("design:type", Array)
-], Chit.prototype, "payments", void 0);
-Chit = __decorate([
+    typeorm_1.Column(),
+    __metadata("design:type", Boolean)
+], Payment.prototype, "ispaid", void 0);
+Payment = __decorate([
     typeorm_1.Entity(),
     __metadata("design:paramtypes", [Object])
-], Chit);
-exports.default = Chit;
+], Payment);
+exports.default = Payment;

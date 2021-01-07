@@ -1,12 +1,16 @@
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
+import cjs from "@rollup/plugin-commonjs";
+import json from "@rollup/plugin-json";
 
 const plugins = (tsconfig) => {
   return [
     nodeResolve(),
     typescript({ tsconfig }),
-    (process.env.NODE_ENV !== 'developement')?terser():null
+    (process.env.NODE_ENV !== 'developement')?terser():null,
+    cjs(),
+    json()
   ];
 };
 

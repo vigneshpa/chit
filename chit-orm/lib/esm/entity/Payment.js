@@ -7,36 +7,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import Group from "./Group";
-import User from "./User";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import Chit from "./Chit";
 import Model from "./Model";
-import Payment from "./Payment";
-let Chit = class Chit extends Model {
+let Payment = class Payment extends Model {
     constructor(base) {
         super();
         Object.assign(this, base);
     }
+    get toBePaid() {
+        return this.chit.noOfChits * 5000;
+    }
+    get user() {
+        return this.chit.user;
+    }
 };
 __decorate([
-    ManyToOne(type => User, User => User.chits),
+    ManyToOne(type => Chit, Chit => Chit.payments),
     JoinColumn(),
-    __metadata("design:type", User)
-], Chit.prototype, "user", void 0);
-__decorate([
-    ManyToOne(type => Group, Group => Group.chits),
-    __metadata("design:type", Group)
-], Chit.prototype, "group", void 0);
+    __metadata("design:type", Chit)
+], Payment.prototype, "chit", void 0);
 __decorate([
     Column(),
     __metadata("design:type", Number)
-], Chit.prototype, "noOfChits", void 0);
+], Payment.prototype, "imonth", void 0);
 __decorate([
-    OneToMany(type => Payment, Payment => Payment.chit, { cascade: true }),
-    __metadata("design:type", Array)
-], Chit.prototype, "payments", void 0);
-Chit = __decorate([
+    Column(),
+    __metadata("design:type", Boolean)
+], Payment.prototype, "ispaid", void 0);
+Payment = __decorate([
     Entity(),
     __metadata("design:paramtypes", [Object])
-], Chit);
-export default Chit;
+], Payment);
+export default Payment;

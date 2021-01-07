@@ -24,4 +24,9 @@ export default class Payment extends Model {
         return this.chit.user;
     }
 
+    constructor(base?: Partial<Payment>) {
+        super();
+        Object.assign(this, base);
+    }
+
 }

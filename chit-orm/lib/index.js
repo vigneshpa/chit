@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ChitORM_1 = require("./ChitORM");
 let orm = new ChitORM_1.default({ type: "sqlite", file: "./main.db" });
 orm.connect().then(async (connection) => {
-    const user = new orm.User();
+    const user = new ChitORM_1.default.User();
     user.name = "Timber";
     user.phone = "wefwef";
     user.address = "Some addres here";

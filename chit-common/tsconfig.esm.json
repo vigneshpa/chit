@@ -17,7 +17,8 @@
     "allowSyntheticDefaultImports": false,
     "inlineSourceMap": false,
     "declaration": true,
-    "declarationDir": "lib/esm"
+    "declarationDir": "lib/esm",
+    "moduleResolution": "Node"
   },
   "include": [
     "src/**/*"

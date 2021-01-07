@@ -16,7 +16,7 @@ export default class Chit extends Model {
   @Column()
   noOfChits: number;
 
-  @OneToMany(type => Payment, Payment => Payment.chit)
+  @OneToMany(type => Payment, Payment => Payment.chit, {cascade:true})
   payments: Payment[];
 
   constructor(base?: Partial<Chit>) {
