@@ -176,8 +176,8 @@ export default Vue.extend({
           }
           this.phoneMessage = "";
           window.ipcrenderer.once(
-            "phone-exists",
-            (event, err: sqliteError, response: boolean) => {
+            "db-query-checkPhone",
+            (event, response) => {
               if (!response) {
                 fn(true);
               } else {
@@ -186,7 +186,7 @@ export default Vue.extend({
               }
             }
           );
-          window.ipcrenderer.send("phone-exists", this.phone);
+          window.ipcrenderer.send("db-query", {query:"checkPhone", phone:this.phone});
           break;
         case 3:
           if (!this.address) return fn(false);
@@ -203,17 +203,9 @@ export default Vue.extend({
       this.disableInputs = true;
       this.skipValidation = true;
       window.ipcrenderer.once(
-        "create-user",
-        (event, err: sqliteError, data: UserD) => {
-          if (err) {
-            window.ipcrenderer.send("show-message-box", {
-              message: "Some error occoured during the creation of User",
-              type: "error",
-              title: "Cannot create User!",
-              detail: err.toString(),
-            } as ChitMessageBoxOptions);
-            this.success = false;
-          } else if (data) {
+        "db-query-createUser",
+        (event, data) => {
+            if (data) {
             window.ipcrenderer.send("show-message-box", {
               message: "User created SUCCESSFULLY !",
               type: "info",
@@ -227,17 +219,17 @@ export default Vue.extend({
                 "Some error occoured during the creation of User\nTry checking phone number.",
               type: "error",
               title: "Cannot create User!",
-              detail: "err and detail variables are undefined",
+              detail: "detail variable is undefined or not truthly",
             } as ChitMessageBoxOptions);
             this.success = false;
           }
         }
       );
-      window.ipcrenderer.send("create-user", {
+      window.ipcrenderer.send("db-query", {query:"createUser", 
         name: this.name,
         phone: this.phone,
         address: this.address,
-      } as UserD);
+      });
     },
   },
   computed: {

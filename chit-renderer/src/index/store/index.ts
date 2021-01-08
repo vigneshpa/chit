@@ -12,7 +12,7 @@ const store = new Vuex.Store({
   mutations: {
     openForm(state, form: string) {
       state.appLoading = true;
-      window.ipcrenderer.send("open-forms", form);
+      window.ipcrenderer.send("open-forms", form, {});
     },
     async changeColorScheme(state, scheme:("system" | "dark" | "light")){
       state.config.theme = scheme;

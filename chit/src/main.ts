@@ -34,7 +34,6 @@ import { Dbmgmt } from "chit-common";
 import { Ipchost } from "chit-common";
 import { writeFile } from "fs";
 import ChitORM from "../../chit-common/node_modules/chitorm/lib/ChitORM";
-
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const chitORM = new ChitORM({type:"sqlite", file:dbFile});
 const dbmgmt: Dbmgmt = new Dbmgmt(chitORM);
@@ -79,12 +78,12 @@ app.on("ready", async launchInfo => {
 });
 
 ipchosts.on("showMessageBox", (options) => dialog.showMessageBox(options));
-ipchosts.on("showOpenDialog", (options: OpenDialogOptions) => dialog.showOpenDialog(options));
-ipchosts.on("openExternal", (url: string) => shell.openExternal(url));
+ipchosts.on("showOpenDialog", (options) => dialog.showOpenDialog(options));
+ipchosts.on("openExternal", (url) => shell.openExternal(url));
 ipchosts.on("pingRecived", () => {
   if (splash) splash?.webContents.send("log", "Loading UI ");
 });
-ipchosts.on("updateConfig", (newConfig: Configuration) => {
+ipchosts.on("updateConfig", (newConfig) => {
   return new Promise((resoleve, rejects) => {
     writeFile(newConfig.configPath, JSON.stringify(newConfig), async err => {
       if (err) {
@@ -107,7 +106,7 @@ ipchosts.on("updateConfig", (newConfig: Configuration) => {
     });
   });
 });
-ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
+ipchosts.on("openForm", async (type, args) => {
   if (!formsWindow) {
     console.log("Recived message from renderer to open ", type);
     formsWindow = new BrowserWindow({
@@ -139,7 +138,7 @@ ipchosts.on("openForm", async (type, args: { [key: string]: string }) => {
   }
 });
 
-ipcMain.on("splash-ready", async event => {
+ipcMain.on("splash-ready", async _event => {
   console.log("Splash is ready");
   splash?.webContents.send("log", "Connecting to the database");
   await dbmgmt.connect()

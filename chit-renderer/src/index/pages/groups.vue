@@ -116,12 +116,14 @@ export default Vue.extend({
     editGroup(GID: number) {},
   },
   mounted() {
-    window.ipcrenderer.once("get-groups-data", (event, data: GroupD[]) => {
+    window.ipcrenderer.once("db-query-listGroups", (event, data) => {
       this.groups = data;
       this.loading = false;
     });
     this.loading = true;
-    window.ipcrenderer.send("get-groups-data");
+    window.ipcrenderer.send("db-query", {
+      query:"listGroups"
+    });
   },
 });
 </script>

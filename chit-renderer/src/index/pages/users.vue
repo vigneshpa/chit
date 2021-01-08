@@ -109,17 +109,17 @@ export default Vue.extend({
     updateItemsPerPage(number: number) {
       this.itemsPerPage = number;
     },
-    editUser(uuid: number) {
+    editUser(uuid: string) {
       window.ipcrenderer.send("open-forms", "UserDetails", { uuid: uuid });
     },
   },
   mounted() {
-    window.ipcrenderer.once("get-users-data", (event, data: UserD[]) => {
+    window.ipcrenderer.once("db-query-listUsers", (event, data) => {
       this.users = data;
       this.loading = false;
     });
     this.loading = true;
-    window.ipcrenderer.send("get-users-data");
+    window.ipcrenderer.send("db-query", {query:"listUsers"});
   },
 });
 </script>

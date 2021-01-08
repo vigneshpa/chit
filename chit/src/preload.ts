@@ -1,6 +1,6 @@
 import { ipcRenderer } from "electron";
 interface preWindow extends Window {
-    ipcrenderer?: typeof ipcRenderer;
+    ipcrenderer?: ChitIpcRenderer;
     config?: Configuration;
 }
 const preWindow: preWindow = window;

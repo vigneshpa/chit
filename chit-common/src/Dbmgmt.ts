@@ -1,4 +1,11 @@
 import ChitORM from "chitorm";
+type argsD = { query: "checkPhone", phone: string }
+  | { query: "createUser", name: string, phone: string, address?: string }
+  |{ query: "checkBatch", batch: string, month: number, year: number }
+  |{ query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[] }
+  |{ query: "listGroups" }
+  |{ query: "listUsers" }
+  |{ query: "userDetails", uuid: string }
 export default class Dbmgmt {
   orm: ChitORM;
   today: Date;
@@ -17,22 +24,11 @@ export default class Dbmgmt {
     if (this.orm.connection) await this.orm.connection.close();
     console.log("Database connections closed");
   }
-
-
-
-  async runQuery(query: "checkPhone", phone: string): Promise<boolean>;
-  async runQuery(query: "createUser", userName: string, phone: string, address?: string): Promise<UserD>;
-  async runQuery(query: "checkBatch", batch: string, month: number, year: number): Promise<boolean>;
-  async runQuery(query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[]): Promise<GroupD>;
-  async runQuery(query: "listUsers"): Promise<UserD[]>;
-  async runQuery(query: "listGroups"): Promise<GroupD[]>;
-  async runQuery(query: "userDetails", uuid: string): Promise<UserD>;
-  async runQuery(query: string, ...args: any[]): Promise<any>;
-  async runQuery(query: ("checkPhone" | "createUser" | "checkBatch" | "createGroup" | "listUsers" | "listGroups" | "userDetails" | "analyseDB" | string), ...args: any[]): Promise<any> {
-    switch (query) {
+  async runQuery(args:argsD): Promise<any> {
+    switch (args.query) {
 
       case "checkPhone": {
-        const phone: string = args[0];
+        const phone: string = args.phone;
         //result = await this.db.get(sql.toString(), { $phone: phone });
         let result = await this.orm.manager.user.findOne({ phone })
         if (result?.phone === phone) return true;
@@ -40,7 +36,7 @@ export default class Dbmgmt {
       }
 
       case "createUser": {
-        const name: string = args[0], phone: string = args[1], address: string = args[2];
+        const name: string = args.name, phone: string = args.phone, address: string = args.address;
         let result: UserD;
         let user = new ChitORM.User({ name, phone, address });
 
@@ -53,7 +49,7 @@ export default class Dbmgmt {
 
       //async checkBatch(batch: string, month: number, year: number) 
       case "checkBatch": {
-        const batch: string = args[0], month: number = args[1], year: number = args[2];
+        const batch: string = args.batch, month: number = args.month, year: number = args.year;
         //let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
         let result = await this.orm.manager.group.findOne({ batch, month, year });
         if (result?.batch === batch) return true;
@@ -62,7 +58,7 @@ export default class Dbmgmt {
 
       //async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }>
       case "createGroup": {
-        const year: number = args[0], month: number = args[1], batch: string = args[2], members: { UUID: string, noOfChits: number }[] = args[3];
+        const year: number = args.year, month: number = args.month, batch: string = args.batch, members: { uuid: string, noOfChits: number }[] = args.members;
         let result: GroupD = null;
         let gName: string = `${year}-${month}-${batch}`;
         let total = 0;
@@ -76,7 +72,7 @@ export default class Dbmgmt {
         //Creating group Object
         const group = new ChitORM.Group({ name: gName, batch, month, year, chits: [] });
         for (const member of members) {
-          const user = await this.orm.manager.user.findOne({ uuid: member.UUID });
+          const user = await this.orm.manager.user.findOne({ uuid: member.uuid });
           const chit = new ChitORM.Chit({ user, group, noOfChits: member.noOfChits, payments: [] });
           for (let i = 1; i <= 20; i++) {
             chit.payments.push(new ChitORM.Payment({ chit, ispaid: false, imonth: i }));
@@ -104,12 +100,10 @@ export default class Dbmgmt {
       }
       //async userDetails(UID: number): Promise<userInfoExtended>
       case "userDetails": {
-        const uuid: string = args[0];
+        const uuid: string = args.uuid;
         let userDetails = await this.orm.manager.user.findOne({ uuid });
         return userDetails;
       }
-      //async analyseDB()
-      case "analyseDB": { }
     }
   }
 }

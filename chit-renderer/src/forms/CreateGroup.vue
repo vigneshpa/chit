@@ -305,21 +305,21 @@ export default Vue.extend({
       if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      window.ipcrenderer.once("get-users-data", (event, data: UserD[]) => {
-        this.users = data;
-        console.log(data);
+      window.ipcrenderer.once("db-query-listUsers", (event, ret)=>{
+        this.users = ret;
+        console.log(ret);
         this.disableInputs = false;
         this.loading = false;
         this.loadedUsers = true;
-      });
-      window.ipcrenderer.send("get-users-data");
+        });
+      window.ipcrenderer.send("db-query", {query:"listUsers"});
     },
     reloadUsers() {
       this.loading = true;
       this.disableInputs = true;
       window.ipcrenderer.once(
-        "get-users-data",
-        (event, data: UserD[]) => {
+        "db-query-listUsers",
+        (event, data) => {
           console.log(data);
           this.members.forEach((member) => {
             this.users.splice(this.users.indexOf(member.info), 1);
@@ -328,7 +328,7 @@ export default Vue.extend({
           this.loading = false;
         }
       );
-      window.ipcrenderer.send("get-users-data");
+      window.ipcrenderer.send("db-query", {query:"listUsers"});
     },
     validate(fn: (success: boolean) => void) {
       if (this.step > 3) return fn(true);
@@ -341,8 +341,8 @@ export default Vue.extend({
           if (!this.batch) return fn(false);
           this.batchMessage = "";
           window.ipcrenderer.once(
-            "batch-exists",
-            (event, err: sqliteError, response: boolean) => {
+            "db-query-checkBatch",
+            (event,response) => {
               if (!response) {
                 fn(true);
               } else {
@@ -351,11 +351,12 @@ export default Vue.extend({
               }
             }
           );
-          window.ipcrenderer.send(
-            "batch-exists",
-            this.batch,
-            this.month,
-            this.year
+          window.ipcrenderer.send("db-query", {
+            query:"checkBatch",
+            batch:this.batch,
+            month:this.month,
+            year:this.year
+          }
           );
           break;
         case 3:
@@ -380,18 +381,9 @@ export default Vue.extend({
           noOfChits: member.noOfChits,
         });
       });
-      window.ipcrenderer.once(
-        "create-group",
-        (event, err: sqliteError, data: GroupD) => {
-          if (err) {
-            window.ipcrenderer.send("show-message-box", {
-              message: "Some error occoured during the creation of Group",
-              type: "error",
-              title: "Cannot create Group!",
-              detail: err.toString(),
-            } as ChitMessageBoxOptions);
-            this.success = false;
-          } else if (data) {
+      window.ipcrenderer.once("db-query-createGroup",
+        (event, data) => {
+          if (data) {
             window.ipcrenderer.send("show-message-box", {
               message: "Group created SUCCESSFULLY !",
               type: "info",
@@ -405,18 +397,18 @@ export default Vue.extend({
                 "Some error occoured during the creation of Group\nTry checking batch name.",
               type: "error",
               title: "Cannot create Group!",
-              detail: "err and detail variables are undefined or not truthly",
+              detail: "detail variable is undefined or not truthly",
             } as ChitMessageBoxOptions);
             this.success = false;
           }
         }
       );
-      window.ipcrenderer.send("create-group", {
+      window.ipcrenderer.send("db-query", {query:"createGroup", 
         month: this.month,
         batch: this.batch,
         year: this.year,
         members: finalMembers,
-      } as GroupD);
+      });
     },
   },
   components: {},

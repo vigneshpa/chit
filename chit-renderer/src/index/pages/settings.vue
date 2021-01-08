@@ -65,7 +65,7 @@ v-container#settings(fluid)
 <script lang="ts">
 import Vue from "vue";
 export default Vue.extend({
-  data: function () {
+  data: function() {
     return {
       darkModeFollowSystem: (window.store.state.darkmode ===
         "system") as boolean,
@@ -127,13 +127,10 @@ export default Vue.extend({
           resolve: (value: ChitOpenDialogReturnValue) => void,
           reject: (reason: Error) => void
         ) => {
-          window.ipcrenderer.once(
-            "show-dialog",
-            (event, value: ChitOpenDialogReturnValue) => {
-              resolve(value);
-            }
-          );
-          window.ipcrenderer.send("show-dialog", "open", options);
+          window.ipcrenderer.once("show-open-dialog", (event, value) => {
+            resolve(value);
+          });
+          window.ipcrenderer.send("show-open-dialog", options);
         }
       );
       if (!ret.canceled) {

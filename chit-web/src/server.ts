@@ -1,5 +1,4 @@
 import debug from "debug";
-import * as http from "http";
 import * as dotenv from "dotenv";
 debug("test:server");
 

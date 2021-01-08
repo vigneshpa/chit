@@ -27,7 +27,7 @@ v-app#1_app
 <script lang="ts">
 import Vue from "vue";
 const url = new URL(window.location.href);
-let uuid = url.searchParams.get("uuid");
+const uuid = <string>url.searchParams.get("uuid");
 export default Vue.extend({
   data: () => {
     return {
@@ -36,11 +36,11 @@ export default Vue.extend({
   },
   mounted() {
     console.log("Getting " + uuid + "'s user data");
-    window.ipcrenderer.once("get-user-details", (event, data) => {
+    window.ipcrenderer.once("db-query-userDetails", (event, data) => {
       this.details = data;
       window.document.title = this.details.name + "'s Profile";
     });
-    window.ipcrenderer.send("get-user-details", uuid);
+    window.ipcrenderer.send("db-query", {query:"userDetails", uuid});
   },
 });
 </script>
