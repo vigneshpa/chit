@@ -1,4 +1,4 @@
-import { ChitIpcM, ChitIpcR, ChitIpcMWebcontents } from "./vendorTypes";
+import { ChitIpcM, ChitIpcR, ChitIpcMWebcontents, ChitIpcREvent, ChitIpcMEvent } from "./vendorTypes";
 declare global {
 
 
@@ -71,24 +71,32 @@ declare global {
         "get-config": [];
         "update-config": [newConfig: Configuration];
         "db-query": Parameters<Dbmgmt["runQuery"]>;
+
+        "ipc": [data: { command: string, [key: string]: any }];
+        "ipc-showMessageBox":[data:{ command: "showMessageBox", data:any }];
+        "ipc-updateConfig":[data:{ command: "updateConfig" }];
     }
     interface ipcRendererChannels {
         "pong": [];
         "show-open-dialog": [ret: ChitOpenDialogReturnValue];
         "get-config": [config: Configuration];
         "update-config": [done: boolean];
-        "db-query": [ret:Await<ReturnType<Dbmgmt["runQuery"]>>];
-        "db-query-checkPhone":[ret:boolean];
-        "db-query-createUser":[ret:UserD];
-        "db-query-checkBatch":[ret:boolean];
-        "db-query-createGroup":[ret:GroupD];
-        "db-query-listGroups":[ret:GroupD[]];
-        "db-query-listUsers":[ret:UserD[]];
-        "db-query-userDetails":[ret:UserD];
+        "db-query": [ret: Await<ReturnType<Dbmgmt["runQuery"]>>];
+        "db-query-checkPhone": [ret: boolean];
+        "db-query-createUser": [ret: UserD];
+        "db-query-checkBatch": [ret: boolean];
+        "db-query-createGroup": [ret: GroupD];
+        "db-query-listGroups": [ret: GroupD[]];
+        "db-query-listUsers": [ret: UserD[]];
+        "db-query-userDetails": [ret: UserD];
+
+        "ipc": [data: { command: string, [key: string]: any }];
     }
     type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
     type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
     type ChitIpcMainWebcontents = ChitIpcMWebcontents<ipcRendererChannels>;
+    type ChitIpcRendererEvent = ChitIpcREvent<ipcRendererChannels, ipcMainChannels>;
+    type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
 }
 import Dbmgmt from "./Dbmgmt";
 import time from "./time";

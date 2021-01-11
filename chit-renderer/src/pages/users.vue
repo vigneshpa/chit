@@ -1,5 +1,7 @@
 <template lang="pug">
 v-container(fluid)
+  v-dialog(v-model="userDetails.visible")
+    user-details(:uuid="userDetails.uuid")
   v-data-iterator(
     :items="users",
     :search="search",
@@ -65,10 +67,11 @@ v-container(fluid)
                     ) {{ item[keys[key]] }}
                 v-expand-transition
                   v-overlay(v-if="hover", absolute, color="grey")
-                    v-btn(@click="editUser(item.uuid)") View profile
+                    v-btn(@click="userDetails.uuid = item.uuid; userDetails.visible=true") View profile
 </template>
 <script lang="ts">
 import Vue from "vue";
+import UserDetails from "@/components/UserDetails.vue";
 export default Vue.extend({
   data() {
     return {
@@ -89,7 +92,14 @@ export default Vue.extend({
         Address: "address",
       } as { [key: string]: string },
       items: [],
+      userDetails: {
+        visible:false as boolean,
+        uuid: "" as string
+      },
     };
+  },
+  components: {
+    "user-details": UserDetails,
   },
   computed: {
     numberOfPages(): number {
@@ -119,7 +129,7 @@ export default Vue.extend({
       this.loading = false;
     });
     this.loading = true;
-    window.ipcrenderer.send("db-query", {query:"listUsers"});
+    window.ipcrenderer.send("db-query", { query: "listUsers" });
   },
 });
 </script>

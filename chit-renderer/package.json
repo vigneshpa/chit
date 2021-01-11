@@ -14,8 +14,8 @@
     "lodash": "^4.17.20",
     "node-forge": "^0.10.0",
     "vue": "^2.6.12",
-    "vuetify": "^2.3.22",
-    "vuex": "^3.6.0"
+    "vue-router": "^3.4.9",
+    "vuetify": "^2.3.22"
   },
   "devDependencies": {
     "@mdi/font": "^5.8.55",

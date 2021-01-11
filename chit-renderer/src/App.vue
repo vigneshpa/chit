@@ -19,7 +19,7 @@ v-app#1_app
     clipped-left,
     color="blue",
     dark,
-    v-bind:loading="this.$store.state.appLoading"
+    v-bind:loading="this.appLoading"
   )
     v-app-bar-nav-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ pageTitle }}
@@ -33,7 +33,7 @@ v-app#1_app
         v-list-item(
           v-for="item in addList",
           v-bind:key="item.key",
-          @click="item.onClick"
+          @click="openForm(item.form)"
         )
           v-list-item-action(v-if="item.icon")
             v-icon {{ item.icon }}
@@ -42,18 +42,18 @@ v-app#1_app
 
   v-main
     dashboard(v-if="this.page === 'dashboard'")
-    settings(v-else-if="this.page === 'settings'")
+    settings(v-else-if="this.page === 'settings'" :config = "config")
     users(v-else-if="this.page === 'users'")
     groups(v-else-if="this.page === 'groups'")
 
   v-footer(app, dense)
-    span {{ $store.state.config.databaseFile.location }}
+    span {{ config.databaseFile.location }}
     v-spacer
     span
       a(@click="openGithub")
         v-icon(size="20") mdi-github
         | vigneshpa/chit
-      a(@click="openGithubLicense", style="color: white")  &copy; {{ new Date().getFullYear() }} GPL3
+      a(@click="openGithubLicense")  &copy; {{ new Date().getFullYear() }} GPL3
 </template>
 
 <script lang="ts">
@@ -69,22 +69,19 @@ export default Vue.extend({
   },
   data: () => ({
     drawer: null as boolean | null,
-    page: "dashboard" as "dashboard" | "settings",
+    page: "dashboard" as string,
+    config: window.config as Configuration,
     addList: [
       {
         title: "Add User",
         key: 1,
-        onClick: () => {
-          window.store.commit("openForm", "addUser");
-        },
+        form: "addUser",
         icon: "mdi-account-plus",
       },
       {
         title: "Add Group",
         key: 2,
-        onClick: () => {
-          window.store.commit("openForm", "addGroup");
-        },
+        form: "addGroup",
         icon: "mdi-account-multiple-plus",
       },
     ],
@@ -114,6 +111,7 @@ export default Vue.extend({
         icon: "mdi-cog",
       },
     ],
+    appLoading: false,
   }),
   computed: {
     pageTitle(): string {
@@ -123,6 +121,11 @@ export default Vue.extend({
         }
       }
       return "Chit Management System";
+    },
+  },
+  watch: {
+    page() {
+      window.document.title = this.pageTitle
     },
   },
   methods: {
@@ -136,8 +139,11 @@ export default Vue.extend({
         "https://github.com/vigneshpa/chit/blob/master/LICENSE.md"
       );
     },
+    openForm(form: string) {
+      this.appLoading = true;
+      window.ipcrenderer.send("open-forms", form, {});
+    },
   },
-  created() {},
   components: {
     dashboard,
     settings,
@@ -145,6 +151,11 @@ export default Vue.extend({
     groups,
   },
 });
+window.ipcrenderer.on("pong", function(event) {
+  console.log("Got pong from the renderer");
+});
+window.ipcrenderer.send("ping");
+console.log("Sent ping to the renderer.");
 </script>
 <style>
 html {

@@ -1,6 +1,6 @@
 import Dbmgmt from "./Dbmgmt";
 export default class Ipchosts {
-    constructor(chitIpcMain: ChitIpcMain, dbmgmt: Dbmgmt, config: Configuration) {
+    public constructor(chitIpcMain: ChitIpcMain, dbmgmt: Dbmgmt, config: Configuration) {
         this.chitIpcMain = chitIpcMain;
         this.dbmgmt = dbmgmt;
         this.events = {};
@@ -26,7 +26,7 @@ export default class Ipchosts {
     public on(key: keyof Ipchosts["events"], callback: (...args: any[]) => any): void {
         this.events[key] = callback;
     }
-    initialise(): void {
+    public initialise(): void {
         this.chitIpcMain.on("ping", event => {
             console.log("Recived ping from renderer");
             console.log("Sending pong to the renderer");

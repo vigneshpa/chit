@@ -5,14 +5,14 @@ v-container#settings(fluid)
     v-divider
     v-tabs(:vertical="$vuetify.breakpoint.mdAndUp")
       v-tab
-        v-icon(left) mdi-palette
         | Theme
+        v-icon(right) mdi-palette
       v-tab
-        v-icon(left) mdi-database-lock
         | Data
+        v-icon(right) mdi-database-lock
       v-tab
-        v-icon(left) mdi-update
         | Updates
+        v-icon(right) mdi-update
       v-tab-item
         v-card(flat)
           v-card-title
@@ -67,59 +67,89 @@ import Vue from "vue";
 export default Vue.extend({
   data: function() {
     return {
-      darkModeFollowSystem: (window.store.state.darkmode ===
-        "system") as boolean,
+      darkModeFollowSystem: (this.config.theme === "system") as boolean,
       customColorScheme:
-        window.store.state.darkmode === "system"
+        this.config.theme === "system"
           ? null
-          : (window.store.state.darkmode as "dark" | "light" | null),
-      dbFileUseAppLocation: !window.config.databaseFile.isCustom,
-      dbFileLocation: window.config.databaseFile.location,
-      updateAutomaticCheck: window.config.updates.autoCheck,
-      updateAutomaticDownload: window.config.updates.autoDownload,
+          : (this.config.theme as "dark" | "light" | null),
+      dbFileUseAppLocation: !this.config.databaseFile.isCustom,
+      dbFileLocation: this.config.databaseFile.location,
+      updateAutomaticCheck: this.config.updates.autoCheck,
+      updateAutomaticDownload: this.config.updates.autoDownload,
     };
   },
   watch: {
     darkModeFollowSystem() {
       if (this.darkModeFollowSystem) {
         this.customColorScheme = null;
-        window.store.commit("changeColorScheme", "system");
       } else if (!this.customColorScheme)
         this.customColorScheme = window.vuetify.framework.theme.dark
           ? "dark"
           : "light";
     },
-    customColorScheme() {
-      if (this.customColorScheme)
-        window.store.commit("changeColorScheme", this.customColorScheme);
+    async customColorScheme() {
+      if (this.customColorScheme) {
+        this.config.theme = this.customColorScheme;
+      } else {
+        this.config.theme = "system";
+      }
+      await this.updateConfig();
+      let isDark: boolean =
+        this.config.theme === "system"
+          ? window.matchMedia("(prefers-color-scheme: dark)").matches
+          : this.config.theme === "dark";
+      window.vuetify.framework.theme.dark = isDark;
+      document.documentElement.setAttribute(
+        "data-theme",
+        isDark ? "dark" : "light"
+      );
     },
     dbFileUseAppLocation() {
-      window.store.state.config.databaseFile.isCustom = !this
-        .dbFileUseAppLocation;
-      window.store.commit("updateConfig");
+      this.config.databaseFile.isCustom = !this.dbFileUseAppLocation;
+      this.updateConfig();
     },
     dbFileLocation() {
-      window.store.state.config.databaseFile.location = this.dbFileLocation;
-      window.store.commit("updateConfig");
+      this.config.databaseFile.location = this.dbFileLocation;
+      this.updateConfig();
     },
     updateAutomaticCheck() {
-      window.store.state.config.updates.autoCheck = this.updateAutomaticCheck;
-      window.store.commit("updateConfig");
+      this.config.updates.autoCheck = this.updateAutomaticCheck;
+      this.updateConfig();
     },
     updateAutomaticDownload() {
-      window.store.state.config.updates.autoDownload = this.updateAutomaticDownload;
-      window.store.commit("updateConfig");
+      this.config.updates.autoDownload = this.updateAutomaticDownload;
+      this.updateConfig();
     },
   },
   methods: {
+    updateConfig() {
+      return new Promise(
+        (
+          resolve: (value: boolean) => void,
+          reject: (reason: boolean) => void
+        ) => {
+          window.ipcrenderer.once("update-config", function(
+            ev,
+            response: boolean
+          ) {
+            if (response) {
+              resolve(true);
+            } else {
+              reject(false);
+            }
+          });
+          window.ipcrenderer.send("update-config", this.config);
+        }
+      );
+    },
     async chooseDBfile(ev: Event) {
-      window.store.state.config.databaseFile.isCustom = true;
+      this.config.databaseFile.isCustom = true;
       let options: ChitOpenDialogOptions = {
         properties: ["promptToCreate", "openFile"],
         title: "Choose a database file",
         message:
           "Choose a database file. If the file doesn't esists it will be created",
-        defaultPath: window.store.state.config.databaseFile.location,
+        defaultPath: this.config.databaseFile.location,
         filters: [{ name: "SQLite Database", extensions: ["db"] }],
       };
       let ret = await new Promise(
@@ -138,5 +168,6 @@ export default Vue.extend({
       }
     },
   },
+  props: ["config"],
 });
 </script>

@@ -18,7 +18,8 @@
     "inlineSourceMap": false,
     "declaration": true,
     "declarationDir": "lib/esm",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "sourceMap": true
   },
   "include": [
     "src/**/*"

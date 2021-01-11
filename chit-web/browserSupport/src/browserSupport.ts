@@ -1,5 +1,4 @@
-import config from "./config";
-import { updateConfig } from "./config";
+import { default as config, updateConfig } from "./config";
 import Ipcrenderer from "./Ipcrenderer";
 declare global {
     interface Window {
@@ -14,7 +13,7 @@ fetch("/api/login").then((response) => response.text().then((restxt) => {
     if (!(response.status !== 401 && restxt === "LOGGED_IN")) {
         alert("You are not signed in!\nPlease Sign in");
         location.href = "/login.html";
-    }else if(response.status !== 200){
+    } else if (response.status !== 200) {
         alert("Nerwork Error!\nPlease check your internet connection.");
         location.reload();
     }
@@ -30,7 +29,7 @@ mainWorker.port.postMessage({ command: "config", config });
 
 //Creating ipcrenderer
 window.ipcrenderer = new Ipcrenderer(mainWorker);
-window.ipcrenderer.on("ipc", (event, data: { command: string, [key: string]: any }) => {
+window.ipcrenderer.on("ipc", (event, data) => {
     switch (data.command) {
         case "openExternal":
             window.open(data.url, "_blank");

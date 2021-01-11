@@ -1,4 +1,4 @@
-import "chit-common";
+import {} from "chit-common";
 let config: Configuration = {
   isDevelopement: false,
   theme: "system",

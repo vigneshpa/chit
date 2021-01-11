@@ -1,1 +1,0 @@
-{"configPath":"../dev.config.json","databaseFile":{"location":"/home/vignesh/.config/chit/main.db"},"isDevelopement":true,"theme":"system","updates":{"autoCheck":true,"autoDownload":false},"vueApp":"./renderer"}

@@ -24,11 +24,11 @@ const config: Configuration = {
   "vueApp": "/app"
 };
 const ipcmain = new Ipcmain();
-const dbmgmt = new Dbmgmt("any");
+const dbmgmt = new Dbmgmt();
 dbmgmt.connect();
 const ipchosts = new Ipchost(ipcmain, dbmgmt, config);
 
-self.addEventListener("connect", (e) => {
+self.addEventListener("connect", e => {
   const port = e.ports[0];
   port.start();
   const connection = ipcmain.addPort(port);

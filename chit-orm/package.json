@@ -4,8 +4,10 @@
    "description": "Orm module for chit",
    "main": "./lib/ChitORM.js",
    "module": "./lib/esm/ChitORM.js",
+   "sideEffects":false,
    "scripts": {
       "build": "rm ./lib -r && mkdir -p ./lib/esm && tsc && tsc -p tsconfig.esm.json",
+      "compile":"tsc && tsc -p tsconfig.esm.json",
       "dev": "ts-node src/index.ts"
    },
    "author": "vigneshpa",

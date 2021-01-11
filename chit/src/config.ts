@@ -5,11 +5,11 @@ import { join } from "path";
 dotenv.config({
     path: join(__dirname, "./.env")
 });
-console.log(
-    "//----------------------- printing environment variables ------------------------------------------//",
-    process.env,
-    "//----------------------- end  of  environment variables ------------------------------------------//"
-);
+// console.log(
+//     "//----------------------- printing environment variables ------------------------------------------//",
+//     process.env,
+//     "//----------------------- end  of  environment variables ------------------------------------------//"
+// );
 //Default config
 global.config = {
     "configPath":null,

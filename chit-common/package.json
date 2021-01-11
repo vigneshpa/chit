@@ -5,12 +5,14 @@
   "main": "lib/chitCommon.js",
   "types": "lib/chitCommon.d.ts",
   "module": "lib/esm/chitCommon.js",
+  "sideEffects":false,
   "typings": "lib/esm/chitCommon.d.ts",
   "files": [
     "lib/**/*"
   ],
   "scripts": {
     "build": "rm ./lib -r && mkdir -p ./lib/esm && tsc && tsc -p tsconfig.esm.json",
+    "compile": "tsc && tsc -p tsconfig.esm.json",
     "dev": "tsc -w"
   },
   "repository": {

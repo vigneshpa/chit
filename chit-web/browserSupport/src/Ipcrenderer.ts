@@ -15,7 +15,7 @@ class Ipcrenderer {
     this.listeners = {};
 
     //Events handler
-    this.port.addEventListener("message", (ev)=>{
+    this.port.addEventListener("message", (ev) => {
       if (ev.data?.channel) {
         console.log("IPCRenderer: Recived message ", ev.data, " from main");
         if (this.listeners[ev.data.channel]) this.listeners[ev.data.channel].forEach((listener) => listener(this.ipcrendererevent(), ...ev.data?.args));
@@ -43,6 +43,11 @@ class Ipcrenderer {
   }
 
   send(channel: string, ...args: any[]) {
+    console.log("Posting message ", channel, ":", args, " to the worker")
+    this.port.postMessage({ channel, args });
+  };
+
+  sendSync(channel: string, ...args: any[]) {
     console.log("Posting message ", channel, ":", args, " to the worker")
     this.port.postMessage({ channel, args });
   };

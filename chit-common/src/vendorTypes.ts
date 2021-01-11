@@ -61,12 +61,12 @@ export interface ChitIpcMWebcontents<RCM> {
   send: SendFunction<RCM,void>;
   id: number;
 }
-interface ChitIpcMEvent<RCM> {
+export interface ChitIpcMEvent<RCM> {
   sender: ChitIpcMWebcontents<RCM>;
   reply: Function;
   returnValue?: any;
 }
-interface ChitIpcREvent<RCM, MCM> {
+export interface ChitIpcREvent<RCM, MCM> {
   sender: ChitIpcR<RCM, MCM>;
   senderId: number;
 }

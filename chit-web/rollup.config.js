@@ -6,12 +6,17 @@ import json from "@rollup/plugin-json";
 
 const plugins = (tsconfig) => {
   return [
-    nodeResolve(),
     typescript({ tsconfig }),
-    (process.env.NODE_ENV !== 'developement')?terser():null,
+    nodeResolve(),
     cjs(),
-    json()
+    json(),
+    process.env.NODE_ENV !== "developement" ? terser() : null,
   ];
+};
+
+const external = ["ChitORM"];
+const paths = {
+  ChitORM: "./Chitorm.js",
 };
 
 export default [
@@ -21,6 +26,8 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
+    paths,
+    external,
     plugins: plugins("browserSupport/tsconfig.json"),
   },
   {
@@ -29,6 +36,8 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
+    external,
+    paths,
     plugins: plugins("browserSupport/tsconfig.worker.json"),
-  }
+  },
 ];
