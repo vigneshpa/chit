@@ -30,7 +30,7 @@ router.use(function auth(req, res, next) {
   res.status(401).render("error", { code: 401, title: "Forbidden!", message: "You are not allowed here." });
 });
 
-router.get("/login", (req, res, next)=>res.send("LOGGED_IN"));
+router.get("/login", (req, res, next) => res.send("LOGGED_IN"));
 
 router.get("/logout", function (req, res, next) {
   req.session.destroy((err) => {
@@ -42,16 +42,18 @@ router.get("/logout", function (req, res, next) {
 
 
 router.ws("/dbmgmt", async (ws, req) => {
-  const pingInt = setInterval(()=>{
-    ws.ping();
-  }, 1000);
+  const pingInt = setInterval(() => {
+    try {
+      ws.ping();
+    } catch (e) { console.log(e); }
+  }, 5000);
   const user = req.session.user.name;
   let connected: boolean = false;
-  const db = new Orm({type:"sqlite", file:"./db/"+user+".db"});
+  const db = new Orm({ type: "sqlite", file: "./db/" + user + ".db" });
   const dbmgmt = new Dbmgmt(db);
-  if (await dbmgmt.connect())connected = true;
+  if (await dbmgmt.connect()) connected = true;
   ws.on("message", async data => {
-    if(typeof data !== "string")return ws.close();
+    if (typeof data !== "string") return;
     if (connected) {
       let args = JSON.parse(data);
       let response = await dbmgmt.runQuery(args);

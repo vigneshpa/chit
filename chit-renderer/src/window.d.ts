@@ -8,7 +8,6 @@ declare global {
         vuetify:Vuetify;
         config:Configuration;
         openExternal:(url:string)=>Void;
-        resizeWindowToCard:()=>Void;
     }
     interface State {
         darkmode: any;

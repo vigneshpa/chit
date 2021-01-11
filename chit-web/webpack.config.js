@@ -7,7 +7,7 @@ module.exports = {
   },
   output: {
     filename:"[name].js",
-    path: join(__dirname, "./distw"),
+    path: join(__dirname, "src/public/app/resources/"),
   },
   module: {
     rules: [

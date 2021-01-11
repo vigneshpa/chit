@@ -18,7 +18,6 @@ export default class Dbmgmt {
       this.socket = new WebSocket(this.socketAddress);
       this.socket.onopen = e => resolve(true);
       this.socket.onerror = e => console.log(e);
-      this.socket.onclose = e => this.connect();
     });
   }
   async closeDB() {
@@ -27,6 +26,7 @@ export default class Dbmgmt {
   async runQuery(args: argsD): Promise<any> {
     return new Promise((resolve, reject) => {
       const queryId = Math.floor(Math.random() * (10 ** 10));
+      args.queryId = queryId;
       this.socket.send(JSON.stringify(args));
       this.socket.addEventListener("message", (ev) => {
         let data = JSON.parse(ev.data);

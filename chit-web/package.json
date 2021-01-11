@@ -4,10 +4,12 @@
   "description": "## About this Software",
   "main": "dist/server.js",
   "dependencies": {
+    "@types/cors": "^2.8.9",
     "chit-common": "file:../chit-common",
     "chitorm": "file:../chit-orm",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "debug": "^4.3.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -38,13 +40,12 @@
     "@types/uuid": "^8.3.0",
     "@types/ws": "^7.4.0",
     "express-pug-static": "^1.0.0",
-    "rollup": "^2.35.1",
+    "http-proxy-middleware": "^1.0.6",
+    "rollup": "^2.36.1",
     "rollup-plugin-terser": "^7.0.2",
-    "ts-loader": "^8.0.14",
+    "ts-node-dev": "^1.1.1",
     "tslib": "^2.0.3",
-    "typescript": "^4.1.3",
-    "webpack": "^5.12.3",
-    "webpack-cli": "^4.3.1"
+    "typescript": "^4.1.3"
   },
   "scripts": {
     "start": "cd dist && node server.js",

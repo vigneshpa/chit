@@ -11,6 +11,13 @@
 body{
   background-color: var(--background-color);
 }
+*{
+  scrollbar-color:var(--scroll-thumb-color) var(--scroll-track-color);
+  scrollbar-track-color: var(--scroll-track-color);
+  scrollbar-highlight-color: var(--scroll-thumb-color);
+  scrollbar-base-color: var(--scroll-thumb-color);
+  scrollbar-width: thin;
+}
 html{
   background-color: var(--background-color);
 }

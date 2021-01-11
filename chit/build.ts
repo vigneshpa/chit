@@ -14,22 +14,22 @@ const build = async () => {
   bt.logi("Copying configuration files");
   await bt.copy("./prod.env", "./app/.env");
 
-  //Building common libraray
-  bt.logi("Building common libraries");
-  await bt.exec("npm", ["run", "build"], {cwd:"../chit-common"});
-
   //building orm
   bt.logi("Building ORM");
-  await bt.exec("npm", ["run", "build"], {cwd:"../chit-orm"})
+  await bt.exec("npm", ["run", "compile"], { cwd: "../chit-orm" })
+
+  //Building common libraray
+  bt.logi("Building common libraries");
+  await bt.exec("npm", ["run", "compile"], { cwd: "../chit-common" });
 
   //Building TypeScript
   bt.logi("Compiling TypeScript");
-  await bt.exec("tsc",["-p", "tsconfig.prod.json"]);
+  await bt.exec("tsc", ["-p", "tsconfig.prod.json"]);
 
   //Building Frontend
-  if(!process.argv.includes("--skip-renderer")){
-  bt.logi("Building vue framework");
-  await bt.exec("npx",["vue-cli-service", "build"],  {cwd:"../chit-renderer"});
+  if (!process.argv.includes("--skip-renderer")) {
+    bt.logi("Building vue framework");
+    await bt.exec("npx", ["vue-cli-service", "build"], { cwd: "../chit-renderer" });
   }
 
   //Copying app files

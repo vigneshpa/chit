@@ -1,5 +1,7 @@
 <template lang="pug">
 v-app#1_app
+  v-dialog(v-model="form.visible")
+    chit-form(:type="form.type")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
       v-list-item(
@@ -62,7 +64,8 @@ import dashboard from "./pages/dashboard.vue";
 import settings from "./pages/settings.vue";
 import users from "./pages/users.vue";
 import groups from "./pages/groups.vue";
-
+import chitForm from "@/components/chit-form.vue";
+type FormType = "addUser"|"addGroup";
 export default Vue.extend({
   props: {
     source: String,
@@ -112,6 +115,10 @@ export default Vue.extend({
       },
     ],
     appLoading: false,
+    form:{
+      type:"" as FormType,
+      visible:false,
+    }
   }),
   computed: {
     pageTitle(): string {
@@ -139,9 +146,9 @@ export default Vue.extend({
         "https://github.com/vigneshpa/chit/blob/master/LICENSE.md"
       );
     },
-    openForm(form: string) {
-      this.appLoading = true;
-      window.ipcrenderer.send("open-forms", form, {});
+    openForm(form: FormType) {
+      this.form.type = form;
+      this.form.visible = true;
     },
   },
   components: {
@@ -149,6 +156,7 @@ export default Vue.extend({
     settings,
     users,
     groups,
+    "chit-form":chitForm,
   },
 });
 window.ipcrenderer.on("pong", function(event) {

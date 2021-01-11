@@ -15,9 +15,6 @@ const plugins = (tsconfig) => {
 };
 
 const external = ["ChitORM"];
-const paths = {
-  ChitORM: "./Chitorm.js",
-};
 
 export default [
   {
@@ -26,7 +23,6 @@ export default [
       dir: "src/public/app/resources/",
       format: "iife",
     },
-    paths,
     external,
     plugins: plugins("browserSupport/tsconfig.json"),
   },
@@ -37,7 +33,6 @@ export default [
       format: "iife",
     },
     external,
-    paths,
     plugins: plugins("browserSupport/tsconfig.worker.json"),
   },
 ];

@@ -1,97 +1,94 @@
 <template lang="pug">
-v-app#1_app
-  v-main
-    v-container#container
-      v-card#card.mx-auto(max-width="500")
-        v-card-title.title.font-weight-regular.justify-space-between
-          span {{ currentTitle }}
-          v-avatar.headding.grey--text(color="lighten", size="48")
-            v-icon mdi-account-plus
-        v-window(v-model="step")
-          v-window-item(:value="1")
-            v-card-text
-              v-text-field#name(
-                label="User Name",
-                prepend-icon="mdi-account",
-                v-model="name",
-                required,
-                :loading="loading",
-                :readonly="disableInputs",
-                v-on:keyup.enter="next"
-              )
-              span.caption.grey--text.text--darken-1 This will be the name of the new user.</span>
-          v-window-item(:value="2")
-            v-card-text
-              v-text-field#phone(
-                label="Phone",
-                prepend-icon="mdi-phone",
-                required,
-                v-model="phone",
-                v-on:keyup.enter="next",
-                :loading="loading",
-                :readonly="disableInputs",
-                :error-messages="phoneMessage",
-                v-on:input="phoneChange"
-              )
-              span.caption.grey--text.text--darken-1 Please enter the phone number of the user. This must be unique for every user.
-          v-window-item(:value="3")
-            v-card-text
-              v-textarea#address(
-                label="Address",
-                prepend-icon="mdi-home",
-                outlined,
-                v-model="address",
-                no-resize,
-                :loading="loading",
-                :readonly="disableInputs",
-                rows="4"
-              )
-              span.caption.grey--text.text--darken-1 Please enter the Address of the user.
-          v-window-item(:value="4")
-            v-card-text
-              span The details of the new user are:
-              br
-              br
-              table
-                tbody
-                  tr
-                    td
-                      v-icon mdi-account
-                    td {{ name }}
-                  tr
-                    td
-                      v-icon mdi-phone
-                    td {{ phone }}
-                  tr
-                    td
-                      v-icon mdi-home
-                    td {{ address }}
-              br
-              span Please check the details and click finish.
-        v-divider
-        v-card-actions
-          v-btn(
-            :disabled="step === 1 || disableButtons",
-            text,
-            @click="step--"
-          ) Back
-          v-spacer
-          v-btn#next(
-            v-if="step !== 4",
-            color="primary",
-            @click="stepForward",
-            :disabled="disableButtons"
-          ) Next
-          v-btn(
-            v-if="step === 4",
-            :color="submited ? 'success' : 'primary'",
-            key="next",
-            @click="submit",
-            :disabled="submited && !success"
-          )
-            v-icon(v-if="!submited") mdi-account-check
-            v-icon(v-if="submited && success") mdi-checkbox-marked-circle-outline
-            | Finish
+v-card#card.mx-auto(max-width="500")
+  v-card-title.title.font-weight-regular.justify-space-between
+    span {{ currentTitle }}
+    v-avatar.headding.grey--text(color="lighten", size="48")
+      v-icon mdi-account-plus
+  v-window(v-model="step")
+    v-window-item(:value="1")
+      v-card-text
+        v-text-field#name(
+          label="User Name",
+          prepend-icon="mdi-account",
+          v-model="name",
+          required,
+          :loading="loading",
+          :readonly="disableInputs",
+          v-on:keyup.enter="next"
+        )
+        span.caption.grey--text.text--darken-1 This will be the name of the new user.</span>
+    v-window-item(:value="2")
+      v-card-text
+        v-text-field#phone(
+          label="Phone",
+          prepend-icon="mdi-phone",
+          required,
+          v-model="phone",
+          v-on:keyup.enter="next",
+          :loading="loading",
+          :readonly="disableInputs",
+          :error-messages="phoneMessage",
+          v-on:input="phoneChange"
+        )
+        span.caption.grey--text.text--darken-1 Please enter the phone number of the user. This must be unique for every user.
+    v-window-item(:value="3")
+      v-card-text
+        v-textarea#address(
+          label="Address",
+          prepend-icon="mdi-home",
+          outlined,
+          v-model="address",
+          no-resize,
+          :loading="loading",
+          :readonly="disableInputs",
+          rows="4"
+        )
+        span.caption.grey--text.text--darken-1 Please enter the Address of the user.
+    v-window-item(:value="4")
+      v-card-text
+        span The details of the new user are:
+        br
+        br
+        table
+          tbody
+            tr
+              td
+                v-icon mdi-account
+              td {{ name }}
+            tr
+              td
+                v-icon mdi-phone
+              td {{ phone }}
+            tr
+              td
+                v-icon mdi-home
+              td {{ address }}
+        br
+        span Please check the details and click finish.
+  v-divider
+  v-card-actions
+    v-btn(
+      :disabled="step === 1 || disableButtons",
+      text,
+      @click="step--"
+    ) Back
+    v-spacer
+    v-btn#next(
+      v-if="step !== 4",
+      color="primary",
+      @click="stepForward",
+      :disabled="disableButtons"
+    ) Next
+    v-btn(
+      v-if="step === 4",
+      :color="submited ? 'success' : 'primary'",
+      key="next",
+      @click="submit",
+      :disabled="submited && !success"
+    )
+      v-icon(v-if="!submited") mdi-account-check
+      v-icon(v-if="submited && success") mdi-checkbox-marked-circle-outline
+      | Finish
 </template>
 
 <script lang="ts">
@@ -116,9 +113,6 @@ export default Vue.extend({
     return addUserData;
   },
   watch: {
-    step: () => {
-      window.resizeWindowToCard();
-    },
   },
   methods: {
     next() {
@@ -196,7 +190,6 @@ export default Vue.extend({
     },
     submit() {
       if (this.submited) {
-        window.close();
         return;
       }
       this.submited = true;
