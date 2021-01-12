@@ -2,14 +2,15 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "author": "Vignesh",
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "watch": "vue-cli-service build --watch"
+  },
   "files": [
     "app"
   ],
-  "scripts": {
-    "watch": "vue-cli-service build --watch",
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
-  },
   "dependencies": {
     "node-forge": "^0.10.0",
     "sass": "^1.32.4",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@mdi/font": "^5.8.55",
     "@types/node": "^14.14.20",
+    "@vue/cli-plugin-router": "^4.5.10",
     "@vue/cli-plugin-typescript": "^4.5.10",
     "@vue/cli-plugin-vuex": "^4.5.9",
     "@vue/cli-service": "^4.5.10",
@@ -47,6 +49,5 @@
       "node 12"
     ]
   },
-  "author": "Vignesh",
   "license": "GPL-3.0"
 }
