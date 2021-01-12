@@ -47,6 +47,7 @@ v-app#1_app
     settings(v-else-if="this.page === 'settings'" :config = "config")
     users(v-else-if="this.page === 'users'")
     groups(v-else-if="this.page === 'groups'")
+    router-view
 
   v-footer(app, dense)
     span {{ config.databaseFile.location }}

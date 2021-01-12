@@ -99,8 +99,10 @@ declare global {
     type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
 }
 import Dbmgmt from "./Dbmgmt";
-import time from "./time";
-import Ipchost from "./Ipchost";
-export { time };
 export { Dbmgmt };
+import time from "./time";
+export { time };
+import Ipchost from "./Ipchost";
 export { Ipchost };
+import ChitORM from "./ChitORM";
+export {ChitORM}

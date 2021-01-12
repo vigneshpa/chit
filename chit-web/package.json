@@ -6,7 +6,6 @@
   "dependencies": {
     "@types/cors": "^2.8.9",
     "chit-common": "file:../chit-common",
-    "chitorm": "file:../chit-orm",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",

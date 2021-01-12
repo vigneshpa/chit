@@ -14,10 +14,6 @@ const build = async () => {
   bt.logi("Copying configuration files");
   await bt.copy("./prod.env", "./app/.env");
 
-  //building orm
-  bt.logi("Building ORM");
-  await bt.exec("npm", ["run", "compile"], { cwd: "../chit-orm" })
-
   //Building common libraray
   bt.logi("Building common libraries");
   await bt.exec("npm", ["run", "compile"], { cwd: "../chit-common" });

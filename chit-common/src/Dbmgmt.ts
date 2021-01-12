@@ -1,4 +1,4 @@
-import ChitORM from "chitorm";
+import ChitORM from "./ChitORM";
 type argsD = { query: "checkPhone", phone: string }
   | { query: "createUser", name: string, phone: string, address?: string }
   |{ query: "checkBatch", batch: string, month: number, year: number }

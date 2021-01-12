@@ -5,7 +5,7 @@
   "main": "lib/chitCommon.js",
   "types": "lib/chitCommon.d.ts",
   "module": "lib/esm/chitCommon.js",
-  "sideEffects":false,
+  "sideEffects": false,
   "typings": "lib/esm/chitCommon.d.ts",
   "files": [
     "lib/**/*"
@@ -33,6 +33,7 @@
     "@types/node": "^14.14.16"
   },
   "dependencies": {
-    "chitorm": "file:../chit-orm"
+    "typeorm": "^0.2.29",
+    "uuid": "^8.3.2"
   }
 }

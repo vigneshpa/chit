@@ -1,25 +1,27 @@
 {
   "compilerOptions": {
     "outDir": "lib/esm",
-    //"outFile":"lib/chitCommon.js",
     "strict": false,
     "target": "ES2019",
     "module": "ES6",
     "lib": [
-      "ES2019",
+      "ES2020",
       "ES2020.bigint",
       "ES2020.string",
       "ES2020.symbol.wellknown",
       "ES2020.Promise",
+      "ES2019",
       "ES6"
     ],
-    "removeComments": true,
     "allowSyntheticDefaultImports": false,
+    "moduleResolution": "Node",
+    "removeComments": true,
     "inlineSourceMap": false,
     "declaration": true,
     "declarationDir": "lib/esm",
-    "moduleResolution": "Node",
-    "sourceMap": true
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": [
     "src/**/*"

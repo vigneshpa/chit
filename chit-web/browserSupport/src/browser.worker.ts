@@ -1,5 +1,4 @@
 import { Ipchost } from "chit-common";
-import { mainModule } from "process";
 import Dbmgmt from "./Dbmgmt.web.client";
 import Ipcmain from "./Ipcmain";
 log("Shared worker started");
@@ -28,7 +27,8 @@ main();
 async function main(){
   const ipcmain = new Ipcmain();
   const dbmgmt = new Dbmgmt();
-  await dbmgmt.connect();
+  dbmgmt.connect();
+  console.log("Connected to the database");
   const ipchosts = new Ipchost(ipcmain, dbmgmt, config);
 
   self.addEventListener("connect", e => {

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as multer from "multer";
 import { Dbmgmt } from "chit-common";
-import Orm from "chitorm";
+import {ChitORM } from "chit-common";
 const upload = multer();
 const router = Router();
 
@@ -49,7 +49,7 @@ router.ws("/dbmgmt", async (ws, req) => {
   }, 5000);
   const user = req.session.user.name;
   let connected: boolean = false;
-  const db = new Orm({ type: "sqlite", file: "./db/" + user + ".db" });
+  const db = new ChitORM({ type: "sqlite", file: "./db/" + user + ".db" });
   const dbmgmt = new Dbmgmt(db);
   if (await dbmgmt.connect()) connected = true;
   ws.on("message", async data => {

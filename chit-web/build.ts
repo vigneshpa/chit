@@ -15,10 +15,6 @@ const build = async () => {
         bt.logi("Cleaning current build");
         await bt.clean(buildDir);
 
-        //Building ORM
-        bt.logi("Compiling ORM");
-        bt.exec('npm', ['run', 'compile'], {cwd:"../chit-orm"});
-
         //Building renderer
         bt.log("Building renderer");
         if (!process.argv.includes("--skip-renderer"))
