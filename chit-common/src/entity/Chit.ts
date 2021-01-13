@@ -8,16 +8,16 @@ export default class Chit extends Model {
 
   @ManyToOne(type => User, User => User.chits)
   @JoinColumn()
-  user: User;
+  readonly user: User;
 
   @ManyToOne(type => Group, Group => Group.chits)
-  group: Group;
+  readonly group: Group;
 
   @Column()
-  noOfChits: number;
+  readonly noOfChits: number;
 
   @OneToMany(type => Payment, Payment => Payment.chit, {cascade:true})
-  payments: Payment[];
+  readonly payments: Payment[];
 
   constructor(base?: Partial<Chit>) {
     super();

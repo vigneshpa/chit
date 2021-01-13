@@ -26,6 +26,9 @@ declare global {
         month: number;
         year: number;
         chits: ChitD[];
+        winners:{
+            [imonth:number]:string[];
+        }
         /**
          * THIS IS ONLY FOR CREATION OF GROUP
          * array of members' uuid(s) and noOfChits

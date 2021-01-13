@@ -1,7 +1,7 @@
 <template lang="pug">
 v-app#1_app
   v-dialog(v-model="form.visible" max-width="500" scrollable)
-    chit-form(:type="form.type")
+    chit-form(v-if="form.visible" :type="form.type")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
       router-link(
@@ -47,7 +47,7 @@ v-app#1_app
             v-list-item-title {{ item.title }}
 
   v-main
-    v-expand-transition
+    transition(name="fade")
       router-view
 
   v-footer(app, dense)

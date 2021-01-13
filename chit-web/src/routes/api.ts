@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as multer from "multer";
 import { Dbmgmt } from "chit-common";
-import {ChitORM } from "chit-common";
+import { ChitORM } from "chit-common";
 const upload = multer();
 const router = Router();
 
@@ -38,8 +38,27 @@ router.get("/logout", function (req, res, next) {
     res.type('json').status(200).send(JSON.stringify("LOGGED_OUT"));
   });
 });
-
-
+let isPostgress = (process.env.DATABASE_URL) ? true : false;
+const pgdb = new ChitORM({ type: "postgres", url: process.env.DATABASE_URL });
+const pgdbmgmt = new Dbmgmt(pgdb);
+let pgconnected = false;
+let connectedUsers = 0;
+async function pgconnect() {
+  if (!pgconnected) {
+    await pgdbmgmt.connect();
+    pgconnected = true;
+  }
+  connectedUsers++;
+  return;
+}
+async function pgclose() {
+  if (pgconnected && connectedUsers <= 1) {
+    await pgdbmgmt.closeDB();
+    pgconnected = false;
+  }
+  connectedUsers--;
+  return;
+}
 
 router.ws("/dbmgmt", async (ws, req) => {
   const pingInt = setInterval(() => {
@@ -48,22 +67,26 @@ router.ws("/dbmgmt", async (ws, req) => {
     } catch (e) { console.log(e); }
   }, 5000);
   const user = req.session.user.name;
-  let connected: boolean = false;
-  const db = new ChitORM({ type: "sqlite", file: "./db/" + user + ".db" });
-  const dbmgmt = new Dbmgmt(db);
-  if (await dbmgmt.connect()) connected = true;
+  let db: ChitORM;
+  let dbmgmt: Dbmgmt;
+  if (isPostgress) {
+    db = pgdb;
+    dbmgmt = pgdbmgmt;
+    await pgconnect();
+  } else {
+    db = new ChitORM({ type: "sqlite", file: "./db/" + user + ".db" });
+    dbmgmt = new Dbmgmt(db);
+  }
   ws.on("message", async data => {
     if (typeof data !== "string") return;
-    if (connected) {
-      let args = JSON.parse(data);
-      let response = await dbmgmt.runQuery(args);
-      ws.send(JSON.stringify({ queryId: args.queryId, reply: response }));
-    }
+    let args = JSON.parse(data);
+    let response = await dbmgmt.runQuery(args);
+    ws.send(JSON.stringify({ queryId: args.queryId, reply: response }));
   });
   ws.on("close", async code => {
-    await dbmgmt.closeDB();
-    connected = false;
     clearInterval(pingInt);
+    await dbmgmt.closeDB();
+    if(isPostgress)pgclose();
   });
 });
 

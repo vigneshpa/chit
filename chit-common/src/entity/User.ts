@@ -9,13 +9,13 @@ export default class User extends Model {
     name: string;
 
     @Column()
-    phone: string;
+    readonly phone: string;
 
     @Column()
     address: string;
 
     @OneToMany(type => Chit, Chit => Chit.user)
-    chits: Chit[];
+    readonly chits: Chit[];
 
     constructor(base?: Partial<User>) {
         super();

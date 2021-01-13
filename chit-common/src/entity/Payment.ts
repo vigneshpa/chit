@@ -8,10 +8,10 @@ export default class Payment extends Model {
 
     @ManyToOne(type => Chit, Chit => Chit.payments)
     @JoinColumn()
-    chit: Chit;
+    readonly chit: Chit;
 
     @Column()
-    imonth: number;
+    readonly imonth: number;
 
     @Column()
     ispaid: boolean;

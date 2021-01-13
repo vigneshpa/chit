@@ -1,13 +1,15 @@
 import "reflect-metadata";
-import { Connection, createConnection, EntityManager, Repository } from "typeorm";
+import { Connection, ConnectionOptions, createConnection, EntityManager, Repository } from "typeorm";
 import User from "./entity/User";
 import Group from "./entity/Group";
 import Chit from "./entity/Chit";
 import Payment from "./entity/Payment";
-export interface ChitORMOptions {
-  type: "sqlite" | "postgres";
-  url?: string;
-  file?: string;
+export type ChitORMOptions = {
+  type: "sqlite";
+  file: string;
+} | {
+  type: "postgres";
+  url: string;
 }
 export default class ChitORM {
   options: ChitORMOptions;
@@ -23,18 +25,16 @@ export default class ChitORM {
     payment: Repository<Payment>;
   };
 
-
-  constructor(options: { type: "postgres", url: string });
-  constructor(options: { type: "sqlite", file: string });
-  constructor(options: { type: "sqlite" | "postgres" }) {
+  constructor(options: ChitORMOptions) {
     this.options = options;
   }
   public async connect() {
     this.connection = await createConnection({
       "type": this.options.type,
-      "database": this.options.file,
+      "database": this.options.type == "sqlite" ? this.options.file : null,
       "synchronize": true,
       "logging": true,
+      "url": this.options.type == "postgres" ? this.options.url : null,
       "entities": [User, Group, Chit, Payment],
     });
     this.manager = {

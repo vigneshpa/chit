@@ -1,22 +1,25 @@
 import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert, Unique } from "typeorm";
 import { v4 as uuid } from "uuid";
 
+interface internalModel {
+    uuid: string;
+}
 export default abstract class Model {
     @PrimaryGeneratedColumn()
-    id: number
+    private id: number;
 
     @Column({ type: 'uuid', unique: true })
-    uuid: string;
+    readonly uuid: string;
 
     @CreateDateColumn()
-    createdAt: Date
+    readonly createdAt: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date
+    readonly updatedAt: Date;
 
     @BeforeInsert()
-    createUuid() {
-        this.uuid = uuid()
+    private createUuid() {
+        (this.uuid as Model["uuid"]) = uuid();
     }
 
     toJSON() {
