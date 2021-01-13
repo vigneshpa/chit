@@ -1,29 +1,31 @@
 <template lang="pug">
 v-app#1_app
-  v-dialog(v-model="form.visible")
+  v-dialog(v-model="form.visible" max-width="500" scrollable)
     chit-form(:type="form.type")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
       router-link(
-          v-for="item in drawerList",
-          v-bind:key="item.key",
-          :to="'./'+item.page"
+          v-for="item, index in this.$router.options.routes",
+          v-bind:key="index",
+          :to="item.path",
+          v-slot="{ href, navigate, isActive}"
           )
         v-list-item(
-          @click="drawer = null",
-          active-class="router-link-exact-active"
+          :active="isActive",
+          :href="href",
+          @click="navigate;drawer = null"
         )
-          v-list-item-action(v-if="item.icon")
-            v-icon {{ item.icon }}
+          v-list-item-action(v-if="item.meta.icon")
+            v-icon {{ item.meta.icon }}
           v-list-item-content
-            v-list-item-title {{ item.title }}
+            v-list-item-title {{ item.name }}
 
   v-app-bar(
     app,
     clipped-left,
     color="blue",
     dark,
-    v-bind:loading="this.appLoading"
+    :loading="this.appLoading"
   )
     v-app-bar-nav-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ pageTitle }}
@@ -45,11 +47,8 @@ v-app#1_app
             v-list-item-title {{ item.title }}
 
   v-main
-    dashboard(v-if="this.page === 'dashboard'")
-    settings(v-else-if="this.page === 'settings'" :config = "config")
-    users(v-else-if="this.page === 'users'")
-    groups(v-else-if="this.page === 'groups'")
-    router-view
+    v-expand-transition
+      router-view
 
   v-footer(app, dense)
     span {{ config.databaseFile.location }}
@@ -63,11 +62,6 @@ v-app#1_app
 
 <script lang="ts">
 import Vue from "vue";
-import dashboard from "./pages/dashboard.vue";
-import settings from "./pages/settings.vue";
-import users from "./pages/users.vue";
-import groups from "./pages/groups.vue";
-import chitForm from "@/components/chit-form.vue";
 type FormType = "addUser" | "addGroup";
 export default Vue.extend({
   props: {
@@ -90,32 +84,6 @@ export default Vue.extend({
         icon: "mdi-account-multiple-plus",
       },
     ],
-    drawerList: [
-      {
-        title: "Dashboard",
-        name: "dashboard",
-        key: 1,
-        icon: "mdi-view-dashboard",
-      },
-      {
-        title: "Users",
-        name: "users",
-        key: 3,
-        icon: "mdi-account-multiple",
-      },
-      {
-        title: "Groups",
-        name: "groups",
-        key: 4,
-        icon: "mdi-account-group",
-      },
-      {
-        title: "Settings",
-        name: "settings",
-        key: 2,
-        icon: "mdi-cog",
-      },
-    ],
     appLoading: false,
     form: {
       type: "" as FormType,
@@ -123,10 +91,15 @@ export default Vue.extend({
     },
   }),
   computed: {
+    pageTitle() {
+      if(this.$route?.name)return this.$route.name;
+      return "Chit Management System";
+    },
   },
   watch: {
-    page() {
-    },
+    pageTitle(){
+      window.document.title = this.pageTitle;
+    }
   },
   methods: {
     openGithub(ev: Event) {
@@ -145,11 +118,7 @@ export default Vue.extend({
     },
   },
   components: {
-    dashboard,
-    settings,
-    users,
-    groups,
-    "chit-form": chitForm,
+    "chit-form":()=> import("@/components/chit-form.vue"),
   },
 });
 window.ipcrenderer.on("pong", function(event) {

@@ -40,34 +40,30 @@ v-container(fluid)
       v-row
         v-col(
           v-for="item in props.items",
-          :key="item.UID",
+          :key="item.uuid",
           cols="12",
           sm="6",
           md="4",
           lg="3"
         )
-          v-hover
-            template(v-slot:default="{ hover }")
-              v-card
-                v-card-title.subheading.font-weight-bold
-                  span {{ item.name }}
-                  v-spacer
-                  v-icon mdi-account-details
-                v-divider
-                v-list(dense)
-                  v-list-item(
-                    v-for="(key, index) in filteredKeys",
-                    :key="index"
-                  )
-                    v-list-item-content(
-                      :class="{ 'blue--text': sortBy === key }"
-                    ) {{ key }}:
-                    v-list-item-content.align-end(
-                      :class="{ 'blue--text': sortBy === key }"
-                    ) {{ item[keys[key]] }}
-                v-expand-transition
-                  v-overlay(v-if="hover", absolute, color="grey")
-                    v-btn(@click="userDetails.uuid = item.uuid; userDetails.visible=true") View profile
+          v-card
+            v-card-title.subheading.font-weight-bold
+              span {{ item.name }}
+              v-spacer
+              v-btn(text @click="userDetails.uuid = item.uuid; userDetails.visible=true")
+                v-icon mdi-account-details
+            v-divider
+            v-list(dense)
+              v-list-item(
+                v-for="(key, index) in filteredKeys",
+                :key="index"
+              )
+                v-list-item-content(
+                  :class="{ 'blue--text': sortBy === key }"
+                ) {{ key }}:
+                v-list-item-content.align-end(
+                  :class="{ 'blue--text': sortBy === key }"
+                ) {{ item[keys[key]] }}
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -84,10 +80,10 @@ export default Vue.extend({
       page: 1 as number,
       itemsPerPage: 4 as number,
       sortBy: "name" as string,
-      keysNames: ["Name", "UID", "Phone", "Address"] as string[],
+      keysNames: ["Name", "Phone", "Address"] as string[],
       keys: {
         Name: "name",
-        UID: "UID",
+        UUID: "uuid",
         Phone: "phone",
         Address: "address",
       } as { [key: string]: string },
