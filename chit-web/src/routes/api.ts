@@ -16,9 +16,9 @@ router.post("/login", upload.none(), function (req, res, next) {
       loggedIn: true,
       name: "admin"
     };
-    res.type('json').status(200).json("LOGGED_IN");
+    res.status(200).json("LOGGED_IN");
   } else {
-    res.type('json').status(401).json("LOGIN_FAILED");
+    res.status(401).json("LOGIN_FAILED");
   }
 
 });

@@ -20,7 +20,7 @@ export default class Group extends Model {
   @OneToMany(type => Chit, Chit => Chit.group, { cascade: true })
   chits: Chit[];
 
-  @Column()
+  @Column("json")
   winners:{[imonth:number]:string[]};
 
   constructor(base?: Partial<Group>) {

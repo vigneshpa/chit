@@ -17,8 +17,8 @@ export default class ChitORM {
   static Group: typeof Group = Group;
   static Chit: typeof Chit = Chit;
   static Payment: typeof Payment = Payment;
-  connection: Connection;
-  manager: {
+  public readonly connection: Connection;
+  public readonly repo: {
     user: Repository<User>;
     group: Repository<Group>;
     chit: Repository<Chit>;
@@ -29,15 +29,15 @@ export default class ChitORM {
     this.options = options;
   }
   public async connect() {
-    this.connection = await createConnection({
-      "type": this.options.type,
-      "database": this.options.type == "sqlite" ? this.options.file : null,
-      "synchronize": true,
-      "logging": true,
-      "url": this.options.type == "postgres" ? this.options.url : null,
-      "entities": [User, Group, Chit, Payment],
+    (this.connection as ChitORM["connection"]) = await createConnection({
+      type: this.options.type,
+      database: this.options.type == "sqlite" ? this.options.file : null,
+      synchronize: true,
+      logging: true,
+      url: this.options.type == "postgres" ? this.options.url : null,
+      entities: [User, Group, Chit, Payment],
     });
-    this.manager = {
+    (this.repo as ChitORM["repo"]) = {
       user: this.connection.getRepository(User),
       chit: this.connection.getRepository(Chit),
       group: this.connection.getRepository(Group),

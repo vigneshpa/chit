@@ -1,4 +1,5 @@
 import ChitORM from "./ChitORM";
+import { RangeOf2 } from "./vendorTypes";
 type argsD = { query: "checkPhone", phone: string }
   | { query: "createUser", name: string, phone: string, address?: string }
   |{ query: "checkBatch", batch: string, month: number, year: number }
@@ -7,30 +8,31 @@ type argsD = { query: "checkPhone", phone: string }
   |{ query: "listUsers" }
   |{ query: "userDetails", uuid: string }
 export default class Dbmgmt {
-  orm: ChitORM;
-  today: Date;
+  public readonly orm: ChitORM;
+  private today: Date;
   constructor(orm?: ChitORM) {
     this.today = new Date();
     this.orm = orm;
   }
 
-  async connect() {
+  public async connect() {
     await this.orm.connect();
-    await this.orm.run("PRAGMA foreign_keys=ON;");
+    if(this.orm.options.type === "sqlite")await this.orm.run("PRAGMA foreign_keys=ON;");
     console.log("Connected to the database");
     return true;
   }
-  async closeDB() {
+  public async closeDB() {
     if (this.orm.connection) await this.orm.connection.close();
     console.log("Database connections closed");
   }
-  async runQuery(args:argsD): Promise<any> {
+  public async runQuery(args:argsD): Promise<any> {
+    console.log("DBMGMT: Recived message to run query", args);
     switch (args.query) {
 
       case "checkPhone": {
         const phone: string = args.phone;
         //result = await this.db.get(sql.toString(), { $phone: phone });
-        let result = await this.orm.manager.user.findOne({ phone })
+        let result = await this.orm.repo.user.findOne({ phone })
         if (result?.phone === phone) return true;
         return false;
       }
@@ -51,7 +53,7 @@ export default class Dbmgmt {
       case "checkBatch": {
         const batch: string = args.batch, month: number = args.month, year: number = args.year;
         //let result = await this.db.get(sql.toString(), { $batch: batch, $month: month, $year: year });
-        let result = await this.orm.manager.group.findOne({ batch, month, year });
+        let result = await this.orm.repo.group.findOne({ batch, month, year });
         if (result?.batch === batch) return true;
         return false;
       }
@@ -72,10 +74,10 @@ export default class Dbmgmt {
         //Creating group Object
         const group = new ChitORM.Group({ name: gName, batch, month, year, chits: [] });
         for (const member of members) {
-          const user = await this.orm.manager.user.findOne({ uuid: member.uuid });
+          const user = await this.orm.repo.user.findOne({ uuid: member.uuid });
           const chit = new ChitORM.Chit({ user, group, noOfChits: member.noOfChits, payments: [] });
           for (let i = 1; i <= 20; i++) {
-            chit.payments.push(new ChitORM.Payment({ chit, ispaid: false, imonth: i }));
+            chit.payments.push(new ChitORM.Payment({ chit, ispaid: false, imonth: i as RangeOf2<1, 20> }));
           }
           group.chits.push(chit);
         }
@@ -90,18 +92,18 @@ export default class Dbmgmt {
       }
       //async listUsers(): Promise<userInfo[]>
       case "listUsers": {
-        return await this.orm.manager.user.find();
+        return await this.orm.repo.user.find();
       }
       //async listGroups(): Promise<GroupInfo[]>
       case "listGroups": {
         let result: GroupD[];
-        result = await this.orm.manager.group.find();
+        result = await this.orm.repo.group.find();
         return result;
       }
       //async userDetails(UID: number): Promise<userInfoExtended>
       case "userDetails": {
         const uuid: string = args.uuid;
-        let userDetails = await this.orm.manager.user.findOne({ uuid });
+        let userDetails = await this.orm.repo.user.findOne({ uuid });
         return userDetails;
       }
     }

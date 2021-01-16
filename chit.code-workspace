@@ -1,7 +1,7 @@
 {
 	"folders": [
 		{
-			"path": "."
+			"path": ".","name": "chit"
 		}
 	],
 	"settings": {
@@ -9,15 +9,124 @@
 		"vetur.format.defaultFormatter.pug": "prettier",
 		"vetur.format.defaultFormatter.css": "prettier",
 		"vetur.format.defaultFormatter.html": "prettier",
-		"sqltools.connections": [
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			// Electron build tasks
 			{
-				"previewLimit": 50,
-				"driver": "SQLite",
-				"name": "vignesh",
-				"group": "viki",
-				"database": "${workspaceFolder:chit}/chit-web/src/main.db"
+				"type": "npm",
+				"script": "start",
+				"path": "chit/",
+				"group": "none",
+				"label": "ELECTRON: Start",
+				"detail": "ts-node build.ts"
+			},
+			{
+				"type": "shell",
+				"options": {
+					"cwd": "chit/"
+				},
+				"command": [
+					"ts-node",
+					"build.ts",
+					"--skip-renderer"
+				],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"label": "ELECTRON: Build",
+				"detail": "ts-node build.ts"
+			},
+			{
+				"type": "shell",
+				"options": {
+					"cwd": "chit/"
+				},
+				"command": [
+					"ts-node",
+					"build.ts",
+					"--skip-renderer"
+				],
+				"group": "build",
+				"label": "ELECTRON: Build without renderer",
+				"detail": "ts-node build.ts --skip-renderer"
+			},
+			// Web Tasks
+			{
+				"type": "npm",
+				"script": "dev",
+				"path": "chit-web/",
+				"problemMatcher": [],
+				"label": "WEB:Start dev server",
+				"detail": "cd src && ts-node-dev -P ./../tsconfig.json server.ts"
+			},
+			{
+				"type": "npm",
+				"script": "build",
+				"path": "chit-web/",
+				"problemMatcher": [],
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"label": "WEB: Build",
+				"detail": "ts-node build.ts"
+			},
+			// Common tasks
+			{
+				"type": "npm",
+				"script": "build",
+				"path": "chit-common/",
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"problemMatcher": [],
+				"label": "COMMON: Build library"
+			},
+			{
+				"type": "npm",
+				"script": "dev",
+				"path": "chit-common/",
+				"problemMatcher": [],
+				"label": "COMMON: Watch library",
+				"runOptions": {"runOn": "folderOpen"},
+				"detail": "tsc -w & tsc -p tsconfig.esm.json -w"
+			},
+			{
+				"type": "npm",
+				"script": "compile",
+				"path": "chit-common/",
+				"group": {
+					"kind": "build",
+					"isDefault": true
+				},
+				"problemMatcher": [],
+				"label": "npm: compile - chit-common",
+				"detail": "tsc && tsc -p tsconfig.esm.json"
+			},
+			// Renderer tasks
+			{
+				"type": "npm",
+				"script": "build",
+				"path": "chit-renderer/",
+				"group": "build",
+				"problemMatcher": [],
+				"label": "RENDERER: Build",
+				"detail": "vue-cli-service build"
+			},
+			{
+				"type": "npm",
+				"script": "watch",
+				"path": "chit-renderer/",
+				"group": "build",
+				"problemMatcher": [],
+				"label": "RENDERER: Watch",
+				"runOptions": {"runOn": "folderOpen"},
+				"detail": "vue-cli-service build"
 			}
-		],
-		"sqltools.useNodeRuntime": true
-	}
+		]
+	},
 }

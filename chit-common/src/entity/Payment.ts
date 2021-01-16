@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { RangeOf2 } from "../vendorTypes";
 import Chit from "./Chit";
 import Model from "./Model";
 import User from "./User";
@@ -11,7 +12,7 @@ export default class Payment extends Model {
     readonly chit: Chit;
 
     @Column()
-    readonly imonth: number;
+    readonly imonth: RangeOf2<1, 20>;
 
     @Column()
     ispaid: boolean;
