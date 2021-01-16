@@ -12,15 +12,15 @@ dotenv.config({
 // );
 //Default config
 global.config = {
-    "configPath":null,
-    "databaseFile":null,
-    "isDevelopement":false,
-    "theme":"system",
-    "updates":{
-        "autoCheck":true,
-        "autoDownload":false
+    "configPath": null,
+    "databaseFile": null,
+    "isDevelopement": false,
+    "theme": "system",
+    "updates": {
+        "autoCheck": true,
+        "autoDownload": false
     },
-    "vueApp":"./renderer"
+    "vueApp": "chit-electron/renderer"
 };
 
 
@@ -41,6 +41,8 @@ try {
     global.config = JSON.parse((readFileSync(configPath)).toString());
 }
 global.config.isDevelopement = isDevelopement;
+if (isDevelopement)
+    global.config.vueApp = "./chit-renderer/app/renderer";
 global.config.configPath = configPath;
 console.log(global.config);
 

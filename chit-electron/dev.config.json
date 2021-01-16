@@ -1,1 +1,14 @@
-{"isDevelopement":true,"theme":"system","updates":{"autoCheck":true,"autoDownload":false},"configPath":"./dev.config.json","databaseFile":{"location":"/home/vignesh/Desktop/main.db","isCustom":true},"vueApp":"./renderer"}
+{
+    "isDevelopement": true,
+    "theme": "system",
+    "updates": {
+        "autoCheck": true,
+        "autoDownload": false
+    },
+    "configPath": "./dev.config.json",
+    "databaseFile": {
+        "location": "/home/vignesh/Desktop/main.db",
+        "isCustom": true
+    },
+    "vueApp": "./../chit-common/app/renderer"
+}

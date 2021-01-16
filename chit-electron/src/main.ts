@@ -74,7 +74,7 @@ app.on("ready", async launchInfo => {
   splash.on("closed", () => {
     splash = null;
   });
-  await splash.loadFile((process.env.RENDERER_PATH?process.env.RENDERER_PATH:__dirname) + "/resources/splash.html");
+  await splash.loadFile(join(__dirname,"resources/splash.html"));
 });
 
 ipchosts.on("showMessageBox", (options) => dialog.showMessageBox(options));
@@ -105,34 +105,6 @@ ipchosts.on("updateConfig", (newConfig) => {
       resoleve(true);
     });
   });
-});
-ipchosts.on("openForm", async (type, args) => {
-  if (!formsWindow) {
-    console.log("Recived message from renderer to open ", type);
-    formsWindow = new BrowserWindow({
-      height: 400,
-      width: 550,
-      webPreferences: {
-        nodeIntegration: false,
-        preload: join(__dirname, "./preload.js")
-      },
-      resizable: true,
-      minimizable: false,
-      darkTheme: darkmode,
-      backgroundColor: darkmode ? "#000000" : "#ffffff"
-    });
-    formsWindow.setMenu(null);
-    formsWindow.on("closed", function () {
-      formsWindow = null;
-    });
-    await formsWindow.loadFile(join(process.env.RENDERER_PATH?process.env.RENDERER_PATH:__dirname, config.vueApp, "/forms.html"), { query: { "form": type, ...args } });
-    if (config.isDevelopement) {
-      formsWindow.webContents.openDevTools();
-    }
-  } else {
-    console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
-    formsWindow.focus();
-  }
 });
 
 ipcMain.on("splash-ready", async _event => {
@@ -195,12 +167,8 @@ async function loadMain() {
       }, 2000);
     });
     splash?.webContents.send("log", "Executing vue.js framework");
-    if (config.isDevelopement) {
-      await mainWindow.loadURL("http://localhost:8080");
-      mainWindow.webContents.openDevTools();
-    } else {
-      await mainWindow.loadFile(join(__dirname, config.vueApp, "/index.html"));
-    }
+    await mainWindow.loadFile(join(__dirname, config.vueApp, "/index.html"));
+    if (config.isDevelopement) mainWindow.webContents.openDevTools();
   } else {
     mainWindow.focus();
   }

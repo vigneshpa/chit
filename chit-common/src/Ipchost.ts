@@ -10,14 +10,12 @@ export default class Ipchosts {
     private chitIpcMain: ChitIpcMain;
     private dbmgmt: Dbmgmt;
     private events: {
-        openForm?: (type: string, args: Record<string, string>) => void;
         pingRecived?: () => void;
         showMessageBox?: (options: ChitMessageBoxOptions, sender: ChitIpcMainWebcontents) => Promise<any>;
         showOpenDialog?: (options: ChitOpenDialogOptions, sender: ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>;
         openExternal?: (url: string) => any;
         updateConfig?: (newConfig: Configuration) => Promise<boolean>;
     }
-    public on(key: "openForm", listener: (type: string, args: Record<string, string>) => void): void;
     public on(key: "pingRecived", listener: () => void): void;
     public on(key: "showMessageBox", listener: (options: ChitMessageBoxOptions, sender: ChitIpcMainWebcontents) => Promise<any>): void;
     public on(key: "showOpenDialog", listener: (options: ChitOpenDialogOptions, sender: ChitIpcMainWebcontents) => Promise<ChitOpenDialogReturnValue>): void;
@@ -32,10 +30,6 @@ export default class Ipchosts {
             console.log("Sending pong to the renderer");
             event.sender.send("pong");
             this.events?.pingRecived();
-        });
-
-        this.chitIpcMain.on("open-forms", (_event, type, args) => {
-            this.events.openForm(type, args);
         });
 
 
