@@ -17,7 +17,7 @@
 			{
 				"type": "npm",
 				"script": "start",
-				"path": "chit/",
+				"path": "chit-electron/",
 				"group": "none",
 				"label": "ELECTRON: Start",
 				"detail": "ts-node build.ts"
@@ -25,7 +25,7 @@
 			{
 				"type": "shell",
 				"options": {
-					"cwd": "chit/"
+					"cwd": "chit-electron/"
 				},
 				"command": [
 					"ts-node",
@@ -42,7 +42,7 @@
 			{
 				"type": "shell",
 				"options": {
-					"cwd": "chit/"
+					"cwd": "chit-electron/"
 				},
 				"command": [
 					"ts-node",
