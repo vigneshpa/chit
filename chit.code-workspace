@@ -1,7 +1,8 @@
 {
 	"folders": [
 		{
-			"path": ".","name": "chit"
+			"path": ".",
+			"name": "chit"
 		}
 	],
 	"settings": {
@@ -13,7 +14,6 @@
 	"tasks": {
 		"version": "2.0.0",
 		"tasks": [
-			// Electron build tasks
 			{
 				"type": "npm",
 				"script": "start",
@@ -32,10 +32,7 @@
 					"build.ts",
 					"--skip-renderer"
 				],
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
+				"group": "build",
 				"label": "ELECTRON: Build",
 				"detail": "ts-node build.ts"
 			},
@@ -53,7 +50,6 @@
 				"label": "ELECTRON: Build without renderer",
 				"detail": "ts-node build.ts --skip-renderer"
 			},
-			// Web Tasks
 			{
 				"type": "npm",
 				"script": "dev",
@@ -67,22 +63,15 @@
 				"script": "build",
 				"path": "chit-web/",
 				"problemMatcher": [],
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
+				"group": "build",
 				"label": "WEB: Build",
 				"detail": "ts-node build.ts"
 			},
-			// Common tasks
 			{
 				"type": "npm",
 				"script": "build",
 				"path": "chit-common/",
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
+				"group": "build",
 				"problemMatcher": [],
 				"label": "COMMON: Build library"
 			},
@@ -92,22 +81,20 @@
 				"path": "chit-common/",
 				"problemMatcher": [],
 				"label": "COMMON: Watch library",
-				"runOptions": {"runOn": "folderOpen"},
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
 				"detail": "tsc -w & tsc -p tsconfig.esm.json -w"
 			},
 			{
 				"type": "npm",
 				"script": "compile",
 				"path": "chit-common/",
-				"group": {
-					"kind": "build",
-					"isDefault": true
-				},
+				"group": "build",
 				"problemMatcher": [],
 				"label": "npm: compile - chit-common",
 				"detail": "tsc && tsc -p tsconfig.esm.json"
 			},
-			// Renderer tasks
 			{
 				"type": "npm",
 				"script": "build",
@@ -124,7 +111,9 @@
 				"group": "build",
 				"problemMatcher": [],
 				"label": "RENDERER: Watch",
-				"runOptions": {"runOn": "folderOpen"},
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
 				"detail": "vue-cli-service build"
 			}
 		]

@@ -74,7 +74,7 @@ app.on("ready", async launchInfo => {
   splash.on("closed", () => {
     splash = null;
   });
-  await splash.loadFile(__dirname + "/resources/splash.html");
+  await splash.loadFile((process.env.RENDERER_PATH?process.env.RENDERER_PATH:__dirname) + "/resources/splash.html");
 });
 
 ipchosts.on("showMessageBox", (options) => dialog.showMessageBox(options));
@@ -125,12 +125,9 @@ ipchosts.on("openForm", async (type, args) => {
     formsWindow.on("closed", function () {
       formsWindow = null;
     });
+    await formsWindow.loadFile(join(process.env.RENDERER_PATH?process.env.RENDERER_PATH:__dirname, config.vueApp, "/forms.html"), { query: { "form": type, ...args } });
     if (config.isDevelopement) {
-      let searchParams = new URLSearchParams({ "form": type, ...args });
-      await formsWindow.loadURL("http://localhost:8080/forms.html?" + searchParams.toString());
       formsWindow.webContents.openDevTools();
-    } else {
-      await formsWindow.loadFile(join(__dirname, config.vueApp, "/forms.html"), { query: { "form": type, ...args } });
     }
   } else {
     console.log("Recived message from renderer to open ", type, "But it already exists.Focusing that.");
