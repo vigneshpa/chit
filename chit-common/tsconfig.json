@@ -18,7 +18,7 @@
     "moduleResolution": "Node",
     "declaration": true,
     "declarationDir": "lib",
-    "removeComments": true,
+    "removeComments": false,
     "allowSyntheticDefaultImports": false,
     "inlineSourceMap": false,
     "sourceMap": true,

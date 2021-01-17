@@ -78,6 +78,14 @@ declare global {
         "ipc": [data: { command: string, [key: string]: any }];
         "ipc-showMessageBox":[data:{ command: "showMessageBox", data:any }];
         "ipc-updateConfig":[data:{ command: "updateConfig" }];
+        "ipci-methods":[{
+            methodID:number;
+            args:Record<string, any>;
+        }];
+        "ipci-methods-ret":[{
+            methodID:number;
+            ret:any;
+        }];
     }
     interface ipcRendererChannels {
         "pong": [];
@@ -94,6 +102,14 @@ declare global {
         "db-query-userDetails": [ret: UserD];
 
         "ipc": [data: { command: string, [key: string]: any }];
+        "ipci-methods":[{
+            methodID:number;
+            args:Record<string, any>;
+        }];
+        "ipci-methods-ret":[{
+            methodID:number;
+            ret:any;
+        }];
     }
     type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
     type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
@@ -108,4 +124,6 @@ export { time };
 import Ipchost from "./Ipchost";
 export { Ipchost };
 import ChitORM from "./ChitORM";
-export {ChitORM}
+export {ChitORM};
+import { IpciMain, IpciRenderer, IpciWebcontents} from "./ipci";
+export {IpciMain, IpciRenderer, IpciWebcontents};

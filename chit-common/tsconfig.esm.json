@@ -15,7 +15,7 @@
     ],
     "allowSyntheticDefaultImports": false,
     "moduleResolution": "Node",
-    "removeComments": true,
+    "removeComments": false,
     "inlineSourceMap": false,
     "declaration": true,
     "declarationDir": "lib/esm",

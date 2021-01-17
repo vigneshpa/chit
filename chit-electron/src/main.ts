@@ -34,16 +34,17 @@ import { Dbmgmt } from "chit-common";
 import { Ipchost } from "chit-common";
 import { writeFile } from "fs";
 import { ChitORM } from "chit-common";
+import { IpciMain } from "chit-common";
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const chitORM = new ChitORM({ type: "sqlite", file: dbFile });
 const dbmgmt: Dbmgmt = new Dbmgmt(chitORM);
-const ipchosts: Ipchost = new Ipchost(ipcMain, dbmgmt, global.config);
+const ipciMain = new IpciMain(ipcMain);
+const ipchosts: Ipchost = new Ipchost(ipciMain, dbmgmt, global.config);
 if (!config.databaseFile) config.databaseFile = {};
 config.databaseFile.location = dbFile;
 
 let splash: BrowserWindow;
 let mainWindow: BrowserWindow;
-let formsWindow: BrowserWindow;
 let darkmode: boolean;
 
 if (config.theme === "system") {
@@ -74,7 +75,7 @@ app.on("ready", async launchInfo => {
   splash.on("closed", () => {
     splash = null;
   });
-  await splash.loadFile(join(__dirname,"resources/splash.html"));
+  await splash.loadFile(join(__dirname, "resources/splash.html"));
 });
 
 ipchosts.on("showMessageBox", (options) => dialog.showMessageBox(options));
