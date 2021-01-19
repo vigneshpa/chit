@@ -25,14 +25,5 @@ export default [
     },
     external,
     plugins: plugins("browserSupport/tsconfig.json"),
-  },
-  {
-    input: "browserSupport/src/browser.worker.ts",
-    output: {
-      dir: "src/public/app/resources/",
-      format: "iife",
-    },
-    external,
-    plugins: plugins("browserSupport/tsconfig.worker.json"),
-  },
+  }
 ];

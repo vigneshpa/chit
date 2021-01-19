@@ -9,7 +9,7 @@ type argsD = { query: "checkPhone", phone: string }
   |{ query: "userDetails", uuid: string }
 export default class Dbmgmt {
   public readonly orm: ChitORM;
-  private today: Date;
+  today: Date;
   constructor(orm?: ChitORM) {
     this.today = new Date();
     this.orm = orm;

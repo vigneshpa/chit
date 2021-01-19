@@ -297,33 +297,28 @@ export default Vue.extend({
         this.loading = false;
       });
     },
-    getUsers() {
+    async getUsers() {
       if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      window.ipcrenderer.once("db-query-listUsers", (event, ret) => {
-        this.users = ret;
-        console.log(ret);
-        this.disableInputs = false;
-        this.loading = false;
-        this.loadedUsers = true;
+      this.users = await window.ipcirenderer.call("db-query", {
+        query: "listUsers",
       });
-      window.ipcrenderer.send("db-query", { query: "listUsers" });
+      this.disableInputs = false;
+      this.loading = false;
+      this.loadedUsers = true;
     },
-    reloadUsers() {
+    async reloadUsers() {
       this.loading = true;
       this.disableInputs = true;
-      window.ipcrenderer.once("db-query-listUsers", (event, data) => {
-        console.log(data);
-        this.members.forEach((member) => {
-          this.users.splice(this.users.indexOf(member.info), 1);
-        });
-        this.disableInputs = false;
-        this.loading = false;
+
+      this.users = await window.ipcirenderer.call("db-query", {
+        query: "listUsers",
       });
-      window.ipcrenderer.send("db-query", { query: "listUsers" });
+      this.loading = false;
+      this.disableInputs = false;
     },
-    validate(fn: (success: boolean) => void) {
+    async validate(fn: (success: boolean) => void) {
       if (this.step > 3) return fn(true);
       switch (this.step) {
         case 1:
@@ -333,20 +328,19 @@ export default Vue.extend({
         case 2:
           if (!this.batch) return fn(false);
           this.batchMessage = "";
-          window.ipcrenderer.once("db-query-checkBatch", (event, response) => {
-            if (!response) {
-              fn(true);
-            } else {
-              this.batchMessage = "Batch Already exists";
-              fn(false);
-            }
-          });
-          window.ipcrenderer.send("db-query", {
-            query: "checkBatch",
-            batch: this.batch,
-            month: this.month,
-            year: this.year,
-          });
+          if (
+            !(await window.ipcirenderer.call("db-query", {
+              query: "checkBatch",
+              batch: this.batch,
+              month: this.month,
+              year: this.year,
+            }))
+          ) {
+            fn(true);
+          } else {
+            this.batchMessage = "Batch Already exists";
+            fn(false);
+          }
           break;
         case 3:
           if (!this.members) return fn(false);
@@ -355,7 +349,7 @@ export default Vue.extend({
           break;
       }
     },
-    submit() {
+    async submit() {
       if (this.submited) {
         return;
       }
@@ -369,33 +363,31 @@ export default Vue.extend({
           noOfChits: member.noOfChits,
         });
       });
-      window.ipcrenderer.once("db-query-createGroup", (event, data) => {
-        if (data) {
-          window.ipcrenderer.send("show-message-box", {
-            message: "Group created SUCCESSFULLY !",
-            type: "info",
-            title: "Created New Group!",
-            detail: data.toString(),
-          } as ChitMessageBoxOptions);
-          this.success = true;
-        } else {
-          window.ipcrenderer.send("show-message-box", {
-            message:
-              "Some error occoured during the creation of Group\nTry checking batch name.",
-            type: "error",
-            title: "Cannot create Group!",
-            detail: "detail variable is undefined or not truthly",
-          } as ChitMessageBoxOptions);
-          this.success = false;
-        }
-      });
-      window.ipcrenderer.send("db-query", {
+      const data = await this.window.ipcirenderer.call("db-query", {
         query: "createGroup",
         month: this.month,
         batch: this.batch,
         year: this.year,
         members: finalMembers,
       });
+      if (data) {
+        window.ipcirenderer.call("show-message-box", {
+          message: "Group created SUCCESSFULLY !",
+          type: "info",
+          title: "Created New Group!",
+          detail: data.toString(),
+        } as ChitMessageBoxOptions);
+        this.success = true;
+      } else {
+        window.ipcirenderer.call("show-message-box", {
+          message:
+            "Some error occoured during the creation of Group\nTry checking batch name.",
+          type: "error",
+          title: "Cannot create Group!",
+          detail: "detail variable is undefined or not truthly",
+        } as ChitMessageBoxOptions);
+        this.success = false;
+      }
     },
   },
   components: {},

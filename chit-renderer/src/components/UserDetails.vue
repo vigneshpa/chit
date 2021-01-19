@@ -44,12 +44,9 @@ export default Vue.extend({
   },
   props: ["uuid"],
   methods:{
-    fetchdata(){
+    async fetchdata(){
       console.log("Getting " + this.uuid + "'s user data");
-      window.ipcrenderer.once("db-query-userDetails", (event, data) => {
-        this.details = data;
-      });
-      window.ipcrenderer.send("db-query", {
+      this.details = await window.ipcirenderer.call("db-query", {
         query: "userDetails",
         uuid: this.uuid,
       });

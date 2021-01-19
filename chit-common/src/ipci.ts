@@ -1,5 +1,5 @@
 export class IpciMain {
-    private ipc: ChitIpcMain;
+    private ipc?: ChitIpcMain;
     constructor(ipcMain: ChitIpcMain) {
         this.ipc = ipcMain;
     }
@@ -16,8 +16,8 @@ export class IpciMain {
     }
 }
 export class IpciWebcontents {
-    private ipcWebContents: ChitIpcMainWebcontents;
-    private ipcMain: ChitIpcMain;
+    private ipcWebContents?: ChitIpcMainWebcontents;
+    private ipcMain?: ChitIpcMain;
     public id: number;
     constructor(ipcWebContents: ChitIpcMainWebcontents, ipcMain:ChitIpcMain) {
         this.ipcWebContents = ipcWebContents;
@@ -47,7 +47,7 @@ export class IpciWebcontents {
     }
 }
 export class IpciRenderer {
-    private ipc: ChitIpcRenderer;
+    private ipc?: ChitIpcRenderer;
     constructor(ipcRenderer: ChitIpcRenderer) {
         this.ipc = ipcRenderer;
     }

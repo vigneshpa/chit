@@ -115,15 +115,12 @@ export default Vue.extend({
     },
     editGroup(GID: number) {},
   },
-  mounted() {
-    window.ipcrenderer.once("db-query-listGroups", (event, data) => {
-      this.groups = data;
-      this.loading = false;
-    });
+  async mounted() {
     this.loading = true;
-    window.ipcrenderer.send("db-query", {
+    this.groups = await window.ipcirenderer.call("db-query", {
       query:"listGroups"
     });
+    this.loading = false;
   },
 });
 </script>

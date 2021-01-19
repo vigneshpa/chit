@@ -1,9 +1,11 @@
 import Vuetify from "vuetify/lib";
 import "chit-common";
+import { IpciRenderer } from "chit-common";
 
 declare global {
     interface Window {
-        ipcrenderer: ChitIpcRenderer;
+        ipcirenderer: IpciRenderer;
+        ipcrenderer:ChitIpcRenderer;
         app: Vue;
         vuetify:Vuetify;
         config:Configuration;

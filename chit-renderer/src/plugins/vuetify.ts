@@ -31,7 +31,7 @@ document.documentElement.setAttribute("data-theme", darktheme?"dark":"light");
 window.vuetify = vuetify;
 
 window.openExternal = function (url) {
-    window.ipcrenderer.send("open-external", url);
+    window.ipcirenderer.call("open-external", {url});
 };
 
 export default vuetify;

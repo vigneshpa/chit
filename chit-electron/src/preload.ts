@@ -1,11 +1,12 @@
 import { IpciRenderer } from "chit-common";
+import { ipcRenderer } from "electron";
 
 interface preWindow extends Window {
-    ipcrenderer?: IpciRenderer;
+    ipcirenderer?: IpciRenderer;
     config?: Configuration;
 }
 const preWindow: preWindow = window;
-preWindow.ipcrenderer = require("electron").ipcRenderer;
-preWindow.ipcrenderer.call("get-config").then((value=>{preWindow.config=value}));
+preWindow.ipcirenderer = new IpciRenderer(ipcRenderer);
+preWindow.ipcirenderer.call("get-config").then(value=>{preWindow.config=value});
 
-console.log("Loaded 'ipcrenderer' and 'config' into the window");
+console.log("Loading 'ipcrenderer' and 'config' into the window");

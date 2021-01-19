@@ -69,7 +69,7 @@ export default Vue.extend({
   },
   data: () => ({
     drawer: null as boolean | null,
-    config: window.config as Configuration,
+    config: window.config,
     addList: [
       {
         title: "Add User",
@@ -121,10 +121,8 @@ export default Vue.extend({
     "chit-form":()=> import("@/components/chit-form.vue"),
   },
 });
-window.ipcrenderer.on("pong", function(event) {
-  console.log("Got pong from the renderer");
-});
-window.ipcrenderer.send("ping");
+
+window.ipcirenderer.call("ping").then(e=>console.log("Got pong from the renderer"));
 console.log("Sent ping to the renderer.");
 </script>
 <style>

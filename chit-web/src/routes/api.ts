@@ -60,7 +60,7 @@ async function pgclose() {
   return;
 }
 
-router.ws("/dbmgmt", async (ws, req) => {
+router.ws("/dbmgmt", async function (ws, req) {
   const pingInt = setInterval(() => {
     try {
       ws.ping();

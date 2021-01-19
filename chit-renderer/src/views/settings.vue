@@ -122,25 +122,8 @@ export default Vue.extend({
     },
   },
   methods: {
-    updateConfig() {
-      return new Promise(
-        (
-          resolve: (value: boolean) => void,
-          reject: (reason: boolean) => void
-        ) => {
-          window.ipcrenderer.once("update-config", function(
-            ev,
-            response: boolean
-          ) {
-            if (response) {
-              resolve(true);
-            } else {
-              reject(false);
-            }
-          });
-          window.ipcrenderer.send("update-config", this.config);
-        }
-      );
+    async updateConfig() {
+      return window.ipcirenderer.call("update-config", {newConfig:this.config});
     },
     async chooseDBfile(ev: Event) {
       this.config.databaseFile.isCustom = true;
@@ -152,17 +135,7 @@ export default Vue.extend({
         defaultPath: this.config.databaseFile.location,
         filters: [{ name: "SQLite Database", extensions: ["db"] }],
       };
-      let ret = await new Promise(
-        (
-          resolve: (value: ChitOpenDialogReturnValue) => void,
-          reject: (reason: Error) => void
-        ) => {
-          window.ipcrenderer.once("show-open-dialog", (event, value) => {
-            resolve(value);
-          });
-          window.ipcrenderer.send("show-open-dialog", options);
-        }
-      );
+      const ret = await window.ipcirenderer.call("show-open-dialog", options);
       if (!ret.canceled) {
         this.dbFileLocation = ret.filePaths.join("");
       }

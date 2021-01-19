@@ -115,17 +115,11 @@ export default Vue.extend({
     updateItemsPerPage(number: number) {
       this.itemsPerPage = number;
     },
-    editUser(uuid: string) {
-      window.ipcrenderer.send("open-forms", "UserDetails", { uuid: uuid });
-    },
   },
-  mounted() {
-    window.ipcrenderer.once("db-query-listUsers", (event, data) => {
-      this.users = data;
-      this.loading = false;
-    });
+  async mounted() {
     this.loading = true;
-    window.ipcrenderer.send("db-query", { query: "listUsers" });
+    this.users = await window.ipcirenderer.call("db-query", { query: "listUsers" });
+    this.loading = false;
   },
 });
 </script>

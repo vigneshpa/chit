@@ -1,4 +1,4 @@
-import {} from "chit-common";
+import { } from "chit-common";
 let config: Configuration = {
   isDevelopement: false,
   theme: "system",
@@ -13,10 +13,15 @@ let config: Configuration = {
 let ls = localStorage.getItem('config');
 if (ls) {
   config = JSON.parse(ls);
-}else{
+} else {
   localStorage.setItem("config", JSON.stringify(config));
 }
-export function updateConfig(newConfig:Configuration){
-  localStorage.setItem("config", JSON.stringify(newConfig));
+export function updateConfig(newConfig: Configuration) {
+  try {
+    localStorage.setItem("config", JSON.stringify(newConfig));
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 export default config;
