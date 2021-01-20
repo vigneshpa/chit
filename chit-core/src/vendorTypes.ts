@@ -1,4 +1,6 @@
 declare global {
+  type Await<T> = T extends PromiseLike<infer U> ? U : T;
+  type RangeOf2<From extends number, To extends number> = Exclude<RangeOf<To>, RangeOf<From>> | From;
   interface ChitMessageBoxOptions {
     type?: string;
     buttons?: string[];
@@ -44,7 +46,32 @@ declare global {
      */
     bookmarks?: string[];
   }
-  type Await<T> = T extends PromiseLike<infer U> ? U : T;
+  //IPC channel definitions
+  interface ipcMainChannels {
+    "ipci-methods": [{
+      methodID: number;
+      args: Record<string, any>;
+    }];
+    "ipci-methods-ret": [{
+      methodID: number;
+      ret: any;
+    }];
+  }
+  interface ipcRendererChannels {
+    "ipci-methods": [{
+      methodID: number;
+      args: Record<string, any>;
+    }];
+    "ipci-methods-ret": [{
+      methodID: number;
+      ret: any;
+    }];
+  }
+  type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
+  type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
+  type ChitIpcMainWebcontents = ChitIpcMWebcontents<ipcRendererChannels>;
+  type ChitIpcRendererEvent = ChitIpcREvent<ipcRendererChannels, ipcMainChannels>;
+  type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
 }
 
 
@@ -52,8 +79,8 @@ declare global {
 export interface ChitIpcR<RCM, MCM> {
   once: ListenerFunctionRegisterer<RCM, ChitIpcR<RCM, MCM>, ChitIpcREvent<RCM, MCM>>;
   on: ListenerFunctionRegisterer<RCM, ChitIpcR<RCM, MCM>, ChitIpcREvent<RCM, MCM>>;
-  send: SendFunction<MCM,void>;
-  sendSync:SendFunction<MCM, any>;
+  send: SendFunction<MCM, void>;
+  sendSync: SendFunction<MCM, any>;
   id?: number;
 }
 export interface ChitIpcM<MCM, RCM> {
@@ -61,7 +88,7 @@ export interface ChitIpcM<MCM, RCM> {
   once: ListenerFunctionRegisterer<MCM, ChitIpcM<MCM, RCM>, ChitIpcMEvent<RCM>>;
 }
 export interface ChitIpcMWebcontents<RCM> {
-  send: SendFunction<RCM,void>;
+  send: SendFunction<RCM, void>;
   id: number;
 }
 export interface ChitIpcMEvent<RCM> {
@@ -77,22 +104,22 @@ type SendFunction<
   ChannelMap extends Record<string, any>,
   Sup
   > = IntersectMethodSignatures<{
-      [C in keyof ChannelMap]: (
-          channel: C,
-          ...args: ChannelMap[C]
-      ) => Sup
+    [C in keyof ChannelMap]: (
+      channel: C,
+      ...args: ChannelMap[C]
+    ) => Sup
   }>;
 type ListenerFunctionRegisterer<
   ChannelMap extends Record<string, any>,
   Sup,
   SupEvent
   > = IntersectMethodSignatures<{
-      [C in keyof ChannelMap]: (
-          channel: C,
-          listener: ChannelMap[C] extends void ?
-              (event: SupEvent) => void :
-              (event: SupEvent, ...args: ChannelMap[C]) => void
-      ) => Sup
+    [C in keyof ChannelMap]: (
+      channel: C,
+      listener: ChannelMap[C] extends void ?
+        (event: SupEvent) => void :
+        (event: SupEvent, ...args: ChannelMap[C]) => void
+    ) => Sup
   }>;
 type UnionToIntersection<U> = (
   U extends any ? (k: U) => void : never
@@ -110,17 +137,15 @@ type BuildPowersOf2LengthArrays<N extends number, R extends never[][]> =
 
 type ConcatLargestUntilDone<N extends number, R extends never[][], B extends never[]> =
   B["length"] extends N ? B : [...R[0], ...B][N] extends never
-    ? ConcatLargestUntilDone<N, R extends [R[0], ...infer U] ? U extends never[][] ? U : never : never, B>
-    : ConcatLargestUntilDone<N, R extends [R[0], ...infer U] ? U extends never[][] ? U : never : never, [...R[0], ...B]>;
+  ? ConcatLargestUntilDone<N, R extends [R[0], ...infer U] ? U extends never[][] ? U : never : never, B>
+  : ConcatLargestUntilDone<N, R extends [R[0], ...infer U] ? U extends never[][] ? U : never : never, [...R[0], ...B]>;
 
 type Replace<R extends any[], T> = { [K in keyof R]: T }
 
 type TupleOf<T, N extends number> = number extends N ? T[] : {
-  [K in N]: 
+  [K in N]:
   BuildPowersOf2LengthArrays<K, [[never]]> extends infer U ? U extends never[][]
   ? Replace<ConcatLargestUntilDone<K, U, []>, T> : never : never;
 }[N]
 
 type RangeOf<N extends number> = Partial<TupleOf<unknown, N>>["length"];
-
-export type RangeOf2<From extends number, To extends number> = Exclude<RangeOf<To>, RangeOf<From>> | From;

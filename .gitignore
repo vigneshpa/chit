@@ -3,10 +3,12 @@
 chit-elecrtron/app/**/*
 chit-elecrtron/dist/**/*
 chit-electron/electron-builder.yml
-chit-common/lib/**/*
+chit-core/lib/**/*
 chit-renderer/app/**/*
 chit-web/dist/**/*
 chit-web/src/prod.env
 chit-electron/app/**/*
 chit-electron/dist/**/*
 node_modules
+chit-web(Old)
+chit-electron(Old)

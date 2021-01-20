@@ -3,7 +3,7 @@ import { RangeOf2 } from "../vendorTypes";
 import Model from "./Model";
 
 @Entity()
-export default class extends Model{
+export default class Winner extends Model{
 
     @Column("number")
     imonth:RangeOf2<1, 20>;

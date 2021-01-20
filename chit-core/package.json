@@ -1,12 +1,12 @@
 {
-  "name": "chit-common",
-  "version": "0.1.0",
-  "description": "TypeDefinitions, Dbmgmt and common files for chit",
-  "main": "lib/chitCommon.js",
-  "types": "lib/chitCommon.d.ts",
-  "module": "lib/esm/chitCommon.js",
+  "name": "chitCore",
+  "version": "0.1.1",
+  "description": "Platform agonostic core module for chit",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "module": "lib/esm/index.js",
   "sideEffects": false,
-  "typings": "lib/esm/chitCommon.d.ts",
+  "typings": "lib/esm/index.d.ts",
   "files": [
     "lib/**/*"
   ],
@@ -21,9 +21,10 @@
   },
   "keywords": [
     "chit",
-    "types"
+    "types",
+    "core"
   ],
-  "author": "vigneshpa",
+  "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/vigneshpa/chit/issues"
