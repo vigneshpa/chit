@@ -22,7 +22,7 @@ export default class Dbmgmt {
     return true;
   }
   public async closeDB() {
-    if (this.orm.connection) await this.orm.connection.close();
+    if (this.orm.connection.isConnected) await this.orm.connection.close();
     console.log("Database connections closed");
   }
   public async runQuery(args:argsD): Promise<any> {
