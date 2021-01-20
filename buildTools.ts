@@ -2,7 +2,6 @@
 import * as cp from "child_process";
 import * as fs from "fs-extra";
 import * as chalk from "chalk";
-import tc from "./chit-common/src/time";
 import { join } from "path";
 
 const timestamps:{
@@ -10,17 +9,12 @@ const timestamps:{
 } = {};
 
 function start(){
-  timestamps.start = Date.now();
+  console.time("Completed building in ");
   log("Starting Build Process");
 }
 
 function end(){
-  timestamps.end = Date.now();
-  let buildTime;
-  if(timestamps.start && timestamps.end){
-    buildTime = tc.msToHR(timestamps.end-timestamps.start);
-  }
-  log("Completed building"+(buildTime?" in "+buildTime:"") + ".");
+  console.time("Completed building in ");
 }
 
 function exec(

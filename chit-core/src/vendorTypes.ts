@@ -46,6 +46,41 @@ declare global {
      */
     bookmarks?: string[];
   }
+
+  type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
+  type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
+  type ChitIpcMainWebcontents = ChitIpcMWebcontents<ipcRendererChannels>;
+  type ChitIpcRendererEvent = ChitIpcREvent<ipcRendererChannels, ipcMainChannels>;
+  type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
+
+  // UNION TO INTERSECTION
+  type UnionToIntersection<U> = (
+    U extends any ? (k: U) => void : never
+  ) extends ((k: infer I) => void) ? I : never;
+
+  type IntersectMethodSignatures<S> = UnionToIntersection<S[keyof S]>;
+
+
+  // IPCI OBJECTS
+  interface IpciM<MMM extends IpciMap, RMM extends IpciMap> {
+    init: (handlers?: IpciM<MMM, RMM>["handlers"]) => void;
+    handlers: mainHandlers<MMM, RMM>;
+  }
+  interface IpciR<RMM extends IpciMap, MMM extends IpciMap> {
+    init: (handlers?: IpciR<RMM, MMM>["handlers"]) => void;
+    handlers: rendererHandlers<RMM, MMM>;
+  
+    call: rendererCall<MMM>;
+  }
+  interface IpciWC<MMM extends IpciMap, RMM extends IpciMap> {
+    init: (handlers?: IpciWC<MMM, RMM>["handlers"]) => void;
+    handlers: mainHandlers<MMM, RMM>;
+  
+    call: mainCall<RMM>;
+  }
+
+}
+
   //IPC channel definitions
   interface ipcMainChannels {
     "ipci-methods": [{
@@ -67,36 +102,52 @@ declare global {
       ret: any;
     }];
   }
-  type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
-  type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
-  type ChitIpcMainWebcontents = ChitIpcMWebcontents<ipcRendererChannels>;
-  type ChitIpcRendererEvent = ChitIpcREvent<ipcRendererChannels, ipcMainChannels>;
-  type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
+
+
+// TYPE DEFINITIONS FOR IPC IMPROVED
+type IpciMap = Record<string, (...args:any[]) => any>;
+
+type mainHandlers<MMM extends IpciMap, RMM extends IpciMap> = {
+  [K in keyof MMM]: (sender: IpciWC<MMM, RMM>, ...args: Parameters<MMM[K]>) => Promise<ReturnType<MMM[K]>>;
 }
+
+type mainCall<RMM extends IpciMap> = IntersectMethodSignatures<{
+  [K in keyof RMM]: (method: K, ...args: Parameters<RMM[K]>) => Promise<ReturnType<RMM[K]>>;
+}>
+
+type rendererHandlers<RMM extends IpciMap, MMM extends IpciMap> = {
+  [K in keyof RMM]: (sender: IpciR<RMM, MMM>, ...args: Parameters<RMM[K]>) => Promise<ReturnType<RMM[K]>>;
+}
+
+type rendererCall<MMM extends IpciMap> = IntersectMethodSignatures<{
+  [K in keyof MMM]: (method: K, ...args: Parameters<MMM[K]>) => Promise<ReturnType<MMM[K]>>;
+}>
+
+
 
 
 // TYPE DEFINITIONS FOR IPC
-export interface ChitIpcR<RCM, MCM> {
+interface ChitIpcR<RCM, MCM> {
   once: ListenerFunctionRegisterer<RCM, ChitIpcR<RCM, MCM>, ChitIpcREvent<RCM, MCM>>;
   on: ListenerFunctionRegisterer<RCM, ChitIpcR<RCM, MCM>, ChitIpcREvent<RCM, MCM>>;
   send: SendFunction<MCM, void>;
   sendSync: SendFunction<MCM, any>;
   id?: number;
 }
-export interface ChitIpcM<MCM, RCM> {
+interface ChitIpcM<MCM, RCM> {
   on: ListenerFunctionRegisterer<MCM, ChitIpcM<MCM, RCM>, ChitIpcMEvent<RCM>>;
   once: ListenerFunctionRegisterer<MCM, ChitIpcM<MCM, RCM>, ChitIpcMEvent<RCM>>;
 }
-export interface ChitIpcMWebcontents<RCM> {
+interface ChitIpcMWebcontents<RCM> {
   send: SendFunction<RCM, void>;
   id: number;
 }
-export interface ChitIpcMEvent<RCM> {
+interface ChitIpcMEvent<RCM> {
   sender: ChitIpcMWebcontents<RCM>;
   reply: Function;
   returnValue?: any;
 }
-export interface ChitIpcREvent<RCM, MCM> {
+interface ChitIpcREvent<RCM, MCM> {
   sender: ChitIpcR<RCM, MCM>;
   senderId: number;
 }
@@ -121,11 +172,6 @@ type ListenerFunctionRegisterer<
         (event: SupEvent, ...args: ChannelMap[C]) => void
     ) => Sup
   }>;
-type UnionToIntersection<U> = (
-  U extends any ? (k: U) => void : never
-) extends ((k: infer I) => void) ? I : never;
-
-type IntersectMethodSignatures<S> = UnionToIntersection<S[keyof S]>;
 
 
 
@@ -149,3 +195,4 @@ type TupleOf<T, N extends number> = number extends N ? T[] : {
 }[N]
 
 type RangeOf<N extends number> = Partial<TupleOf<unknown, N>>["length"];
+export { };

@@ -1,5 +1,4 @@
 import { Column, Entity } from "typeorm";
-import { RangeOf2 } from "../vendorTypes";
 import Model from "./Model";
 
 @Entity()

@@ -41,25 +41,14 @@ declare global {
         user: UserD;
     }
 
-    interface IpciMain {
-        init: (handlers?: IpciMain["handlers"]) => any;
-        handlers: { [method: string]: (sender: IpciWebcontents, args: Record<string, any>) => Promise<any> };
-        bindHandler: (method: string, handler: (sender: IpciWebcontents, args: Record<string, any>) => Promise<any>) => void;
-    }
-    interface IpciRenderer {
-        init: (handlers?: IpciRenderer["handlers"]) => any;
-        handlers: { [method: string]: (sender: IpciRenderer, args: Record<string, any>) => Promise<any> };
-        bindHandler: (method: string, handler: (sender: IpciRenderer, args: Record<string, any>) => Promise<any>) => void;
+    type mainMethodMap = {
+        dbQuery: (args: DbmgmtQueryArgs) => DbmgmtQueryArgs["ret"];
+    } & Partial<PlatformFunctions>;
+    type rendererMethodMap = {}
 
-        call: (method: string, args: Record<string, any>) => Promise<any>;
-    }
-    interface IpciWebcontents {
-        init: (handlers?: IpciWebcontents["handlers"]) => any;
-        handlers: { [method: string]: (sender: IpciWebcontents, args: Record<string, any>) => Promise<any> };
-        bindHandler: (method: string, handler: (sender: IpciWebcontents, args: Record<string, any>) => Promise<any>) => void;
-
-        call: (method: string, args: Record<string, any>) => Promise<any>;
-    }
+    type IpciMain = IpciM<mainMethodMap, rendererMethodMap>;
+    type IpciRenderer = IpciR<rendererMethodMap, mainMethodMap>;
+    type IpciWebcontents = IpciWC<mainMethodMap, rendererMethodMap>;
 
     interface Configuration {
         isDevelopement: boolean;

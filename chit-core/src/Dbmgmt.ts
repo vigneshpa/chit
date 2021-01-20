@@ -12,13 +12,13 @@ declare global {
         type: "sqlite";
         database: string;
     };
-    type DbmgmtQueryArgs = { query: "checkPhone", phone: string }
-        | { query: "createUser", name: string, phone: string, address?: string }
-        | { query: "checkBatch", batch: string, month: number, year: number }
-        | { query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[] }
-        | { query: "listGroups" }
-        | { query: "listUsers" }
-        | { query: "userDetails", uuid: string };
+    type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?:boolean }
+        | { query: "createUser", name: string, phone: string, address?: string, ret?:UserD }
+        | { query: "checkBatch", batch: string, month: number, year: number, ret?:boolean}
+        | { query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[] , ret?:GroupD}
+        | { query: "listGroups", ret?:GroupD[] }
+        | { query: "listUsers", ret?:UserD[] }
+        | { query: "userDetails", uuid: string, ret?:UserD };
 }
 interface ORMRepos {
     user: Repository<User>;
@@ -55,7 +55,7 @@ export default class Dbmgmt {
         console.log("Database connection closed")
     }
     private repos: ORMRepos;
-    public async runQuery(args: DbmgmtQueryArgs): Promise<any> {
+    public async runQuery(args: DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
         console.log("DBMGMT: Recived message to run query", args);
         switch (args.query) {
 

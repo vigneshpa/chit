@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { RangeOf2 } from "../vendorTypes";
 import Chit from "./Chit";
 import Model from "./Model";
 import User from "./User";
