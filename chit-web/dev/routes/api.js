@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const multer = require("multer");
-const chitCore_1 = require("chitCore");
+const chitcore_1 = require("chitcore");
 const upload = multer();
 const router = express_1.Router();
 router.post("/login", upload.none(), function (req, res, next) {
@@ -39,7 +39,7 @@ router.get("/logout", function (req, res, next) {
     });
 });
 let isPostgress = (process.env.DATABASE_URL) ? true : false;
-const pgdbmgmt = new chitCore_1.Dbmgmt({ type: "postgres", url: process.env.DATABASE_URL });
+const pgdbmgmt = new chitcore_1.Dbmgmt({ type: "postgres", url: process.env.DATABASE_URL });
 let pgconnected = false;
 let connectedUsers = 0;
 async function pgconnect() {
@@ -74,7 +74,7 @@ router.ws("/dbmgmt", async function (ws, req) {
         await pgconnect();
     }
     else {
-        dbmgmt = new chitCore_1.Dbmgmt({ type: "sqlite", database: "./db/" + user + ".db" });
+        dbmgmt = new chitcore_1.Dbmgmt({ type: "sqlite", database: "./db/" + user + ".db" });
     }
     ws.on("message", async (data) => {
         if (typeof data !== "string")

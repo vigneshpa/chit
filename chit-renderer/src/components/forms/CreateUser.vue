@@ -169,7 +169,7 @@ export default Vue.extend({
             return fn(false);
           }
           this.phoneMessage = "";
-          if (!await window.ipcirenderer.callMethod("db-query", {query:"checkPhone", phone:this.phone})) {
+          if (!await window.ipcirenderer.callMethod("dbQuery", {query:"checkPhone", phone:this.phone})) {
                 fn(true);
               } else {
                 this.phoneMessage = "Number Already exists";
@@ -189,13 +189,13 @@ export default Vue.extend({
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      const data = window.ipcirenderer.callMethod("db-query", {query:"createUser", 
+      const data = window.ipcirenderer.callMethod("dbQuery", {query:"createUser", 
         name: this.name,
         phone: this.phone,
         address: this.address,
       });
       if (data) {
-            window.ipcirenderer.callMethod("show-message-box", {
+            window.ipcirenderer.callMethod("showMessageBox", {
               message: "User created SUCCESSFULLY !",
               type: "info",
               title: "Created New User!",
@@ -203,7 +203,7 @@ export default Vue.extend({
             } as ChitMessageBoxOptions);
             this.success = true;
           } else {
-            window.ipcirenderer.callMethod("show-message-box", {
+            window.ipcirenderer.callMethod("showMessageBox", {
               message:
                 "Some error occoured during the creation of User\nTry checking phone number.",
               type: "error",

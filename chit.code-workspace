@@ -9,6 +9,9 @@
 		"vetur.format.defaultFormatter.pug": "prettier",
 		"vetur.format.defaultFormatter.css": "prettier",
 		"vetur.format.defaultFormatter.html": "prettier",
+		"files.exclude": {
+			"**/node_modules": true
+		},
 	},
 	"tasks": {
 		"version": "2.0.0",

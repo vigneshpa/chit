@@ -46,7 +46,7 @@ export default Vue.extend({
   methods:{
     async fetchdata(){
       console.log("Getting " + this.uuid + "'s user data");
-      this.details = await window.ipcirenderer.callMethod("db-query", {
+      this.details = <UserD>await window.ipcirenderer.callMethod("dbQuery", {
         query: "userDetails",
         uuid: this.uuid,
       });

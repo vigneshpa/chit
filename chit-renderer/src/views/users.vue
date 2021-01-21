@@ -118,7 +118,7 @@ export default Vue.extend({
   },
   async mounted() {
     this.loading = true;
-    this.users = await window.ipcirenderer.callMethod("db-query", { query: "listUsers" });
+    this.users = <UserD[]>await window.ipcirenderer.callMethod("dbQuery", { query: "listUsers" });
     this.loading = false;
   },
 });

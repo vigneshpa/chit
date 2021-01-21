@@ -117,7 +117,7 @@ export default Vue.extend({
   },
   async mounted() {
     this.loading = true;
-    this.groups = await window.ipcirenderer.callMethod("db-query", {
+    this.groups = <GroupD[]>await window.ipcirenderer.callMethod("dbQuery", {
       query:"listGroups"
     });
     this.loading = false;

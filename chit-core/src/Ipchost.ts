@@ -4,8 +4,8 @@ declare global {
     type PlatformFunctions = {
         updateConfig: (newConfig: Configuration) => void;
         ping: () => void;
-        showMessageBox: (options: ChitMessageBoxOptions, sender: IpciWebcontents) => number;
-        showOpenDialog: (options: ChitOpenDialogOptions, sender: IpciWebcontents) => ChitOpenDialogReturnValue;
+        showMessageBox: (options: ChitMessageBoxOptions) => number;
+        showOpenDialog: (options: ChitOpenDialogOptions) => ChitOpenDialogReturnValue;
         openExternal: (url: string) => void;
     }
     type pfPromisified = { [K in keyof PlatformFunctions]: (...p: Parameters<PlatformFunctions[K]>) => Promise<ReturnType<PlatformFunctions[K]>> }
