@@ -39,12 +39,12 @@ const build = async () => {
 
         //Building chit common libraries
         bt.logi("Building common libraries");
-        await bt.exec("npm", ["run", "compile"], { cwd: "../chit-common" });
+        await bt.exec("npm", ["run", "compile"], { cwd: "../chit-core" });
 
         //copying chit common libraries
         bt.logi("Copying Common libs");
-        await bt.copy("../chit-common/lib", "./dist/chit-common/lib");
-        await bt.copy("../chit-common/package.json", "./dist/chit-common/package.json");
+        await bt.copy("../chit-core/lib", "./dist/chit-core/lib");
+        await bt.copy("../chit-core/package.json", "./dist/chit-core/package.json");
 
         // Copy config files
         bt.logi("Copying configuration files");
@@ -56,7 +56,7 @@ const build = async () => {
         delete pkg.devDependencies;
         if(pkg.dependencies.sqlite3)delete pkg.dependencies.sqlite3
         pkg.scripts = { start: "node server.js" };
-        pkg.dependencies["chit-common"] = "file:./chit-common";
+        pkg.dependencies["chitcore"] = "file:./chit-core";
         await writeFile("./dist/package.json", JSON.stringify(pkg));
         //await bt.copy('./package.prod.json', './dist/package.json');
 

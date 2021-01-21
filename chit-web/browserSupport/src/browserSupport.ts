@@ -1,4 +1,4 @@
-import { Ipchost } from "chitCore";
+import { Ipchost } from "chitcore";
 import { default as config, updateConfig } from "./config";
 import { ipciMain, ipciRenderer } from "./Ipci";
 import VirtualDbmgmt from "./VirtualDbmgmt";
@@ -30,7 +30,7 @@ const pf:pfPromisified = {
 }
 pf.openExternal("localhost:3000/500error");
 const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
-
+ipchost.init();
 ipciRenderer.init({});
 window.ipcirenderer = ipciRenderer;
 

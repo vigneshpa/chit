@@ -20,7 +20,7 @@ class App {
     server: http.Server;
     sessionParser: express.RequestHandler;
     constructor() {
-        
+
         this.rendererPath = rendererPath;
         this.sessionParser = sessionParser;
 
@@ -36,11 +36,11 @@ class App {
 
         //Reditecting to secure if it is in oproduction
         //if (process.env.NODE_ENV === 'production')
-            this.app.use((req, res, next) => {
-                if (req.headers['x-forwarded-proto'] === 'http') {
-                    res.redirect(307, `https://${req.hostname + req.originalUrl}`);
-                } else next();
-            });
+        this.app.use((req, res, next) => {
+            if (req.headers['x-forwarded-proto'] === 'http') {
+                res.redirect(307, `https://${req.hostname + req.originalUrl}`);
+            } else next();
+        });
 
         //Setting up websockets
         expressws(this.app);
@@ -48,7 +48,7 @@ class App {
         //this.app.use(compression());
 
         //setting up view engine
-        this.app.set("views", "./views");
+        this.app.set("views", process.env.NODE_ENV === "production" ? "./views" : "../src/views");
         this.app.set("view engine", "pug");
 
         //Setting up request parsers

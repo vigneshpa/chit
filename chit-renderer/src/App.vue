@@ -122,7 +122,7 @@ export default Vue.extend({
   },
 });
 
-window.ipcirenderer.call("ping").then(e=>console.log("Got pong from the renderer"));
+window.ipcirenderer.callMethod("ping").then((e: any)=>console.log("Got pong from the renderer"));
 console.log("Sent ping to the renderer.");
 </script>
 <style>

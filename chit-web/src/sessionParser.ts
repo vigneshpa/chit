@@ -1,6 +1,6 @@
 
 import * as session from "express-session";
-import {Dbmgmt} from "chit-common";
+import {Dbmgmt} from "chitcore";
 declare module 'express-session' {
   export interface SessionData {
     user: {

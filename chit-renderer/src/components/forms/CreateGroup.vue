@@ -301,7 +301,7 @@ export default Vue.extend({
       if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      this.users = await window.ipcirenderer.call("db-query", {
+      this.users = await window.ipcirenderer.callMethod("db-query", {
         query: "listUsers",
       });
       this.disableInputs = false;
@@ -312,7 +312,7 @@ export default Vue.extend({
       this.loading = true;
       this.disableInputs = true;
 
-      this.users = await window.ipcirenderer.call("db-query", {
+      this.users = await window.ipcirenderer.callMethod("db-query", {
         query: "listUsers",
       });
       this.loading = false;
@@ -329,7 +329,7 @@ export default Vue.extend({
           if (!this.batch) return fn(false);
           this.batchMessage = "";
           if (
-            !(await window.ipcirenderer.call("db-query", {
+            !(await window.ipcirenderer.callMethod("db-query", {
               query: "checkBatch",
               batch: this.batch,
               month: this.month,
@@ -363,7 +363,7 @@ export default Vue.extend({
           noOfChits: member.noOfChits,
         });
       });
-      const data = await this.window.ipcirenderer.call("db-query", {
+      const data = await this.window.ipcirenderer.callMethod("db-query", {
         query: "createGroup",
         month: this.month,
         batch: this.batch,
@@ -371,7 +371,7 @@ export default Vue.extend({
         members: finalMembers,
       });
       if (data) {
-        window.ipcirenderer.call("show-message-box", {
+        window.ipcirenderer.callMethod("show-message-box", {
           message: "Group created SUCCESSFULLY !",
           type: "info",
           title: "Created New Group!",
@@ -379,7 +379,7 @@ export default Vue.extend({
         } as ChitMessageBoxOptions);
         this.success = true;
       } else {
-        window.ipcirenderer.call("show-message-box", {
+        window.ipcirenderer.callMethod("show-message-box", {
           message:
             "Some error occoured during the creation of Group\nTry checking batch name.",
           type: "error",

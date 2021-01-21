@@ -112,10 +112,10 @@ export interface IpciR<RMM extends IpciMap, MMM extends IpciMap> {
   init: (handlers?: IpciR<RMM, MMM>["handlers"]) => void;
   handlers: rendererHandlers<RMM, MMM>;
 
-  call: rendererCall<MMM>;
+  callMethod: rendererCall<MMM>;
 }
 export interface IpciWC<MMM extends IpciMap, RMM extends IpciMap> {
-  call: mainCall<RMM>;
+  callMethod: mainCall<RMM>;
 }
 
 

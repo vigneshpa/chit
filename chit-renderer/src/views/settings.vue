@@ -123,7 +123,7 @@ export default Vue.extend({
   },
   methods: {
     async updateConfig() {
-      return window.ipcirenderer.call("update-config", {newConfig:this.config});
+      return window.ipcirenderer.callMethod("update-config", {newConfig:this.config});
     },
     async chooseDBfile(ev: Event) {
       this.config.databaseFile.isCustom = true;
@@ -135,7 +135,7 @@ export default Vue.extend({
         defaultPath: this.config.databaseFile.location,
         filters: [{ name: "SQLite Database", extensions: ["db"] }],
       };
-      const ret = await window.ipcirenderer.call("show-open-dialog", options);
+      const ret = await window.ipcirenderer.callMethod("show-open-dialog", options);
       if (!ret.canceled) {
         this.dbFileLocation = ret.filePaths.join("");
       }

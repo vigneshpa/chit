@@ -14,7 +14,7 @@ function start(){
 }
 
 function end(){
-  console.time("Completed building in ");
+  console.timeEnd("Completed building in ");
 }
 
 function exec(

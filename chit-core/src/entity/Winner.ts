@@ -4,8 +4,8 @@ import Model from "./Model";
 @Entity()
 export default class Winner extends Model{
 
-    @Column("number")
-    imonth:RangeOf2<1, 20>;
+    @Column()
+    imonth:number;
 
     constructor(base?: Partial<Model>) {
         super();

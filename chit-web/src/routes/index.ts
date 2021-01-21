@@ -11,12 +11,12 @@ router.use("/500error", function (req, res, next) {
 });
 
 //mounting public
-router.use(estatic(join(__dirname, '../public')));
+router.use(estatic(join(__dirname, '../../src/public')));
 
 //mounting pug files
 if (process.env.NODE_ENV !== 'production')
     router.use(require("express-pug-static")({
-        baseDir: join(__dirname, '../static'),
+        baseDir: join(__dirname, '../../src/static'),
         baseUrl: '/'
     }));
 

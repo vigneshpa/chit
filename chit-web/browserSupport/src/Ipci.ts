@@ -1,5 +1,5 @@
-let mainHandlers:IpciMain["handlers"];
-let rendererHandlers:IpciRenderer["handlers"];
+const mainHandlers = {} as IpciMain["handlers"];
+const rendererHandlers = {} as IpciRenderer["handlers"];
 var main:IpciMain = {
     handlers:mainHandlers,
     init(handlers){

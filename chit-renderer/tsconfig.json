@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2019",
     "module": "esnext",
-    "strict": true,
+    "strict": false,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
@@ -31,8 +31,5 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
-  ],
-  "exclude": [
-    "node_modules"
   ]
 }

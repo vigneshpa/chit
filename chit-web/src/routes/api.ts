@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import * as multer from "multer";
-import { Dbmgmt } from "chit-common";
-import { ChitORM } from "chit-common";
+import { Dbmgmt } from "chitcore";
 const upload = multer();
 const router = Router();
 
@@ -39,8 +38,7 @@ router.get("/logout", function (req, res, next) {
   });
 });
 let isPostgress = (process.env.DATABASE_URL) ? true : false;
-const pgdb = new ChitORM({ type: "postgres", url: process.env.DATABASE_URL });
-const pgdbmgmt = new Dbmgmt(pgdb);
+const pgdbmgmt = new Dbmgmt({ type: "postgres", url: process.env.DATABASE_URL });
 let pgconnected = false;
 let connectedUsers = 0;
 async function pgconnect() {
@@ -53,7 +51,7 @@ async function pgconnect() {
 }
 async function pgclose() {
   if (pgconnected && connectedUsers <= 1) {
-    await pgdbmgmt.closeDB();
+    await pgdbmgmt.close();
     pgconnected = false;
   }
   connectedUsers--;
@@ -67,15 +65,12 @@ router.ws("/dbmgmt", async function (ws, req) {
     } catch (e) { console.log(e); }
   }, 5000);
   const user = req.session.user.name;
-  let db: ChitORM;
   let dbmgmt: Dbmgmt;
   if (isPostgress) {
-    db = pgdb;
     dbmgmt = pgdbmgmt;
     await pgconnect();
   } else {
-    db = new ChitORM({ type: "sqlite", file: "./db/" + user + ".db" });
-    dbmgmt = new Dbmgmt(db);
+    dbmgmt = new Dbmgmt({ type: "sqlite", database: "./db/" + user + ".db" });
   }
   ws.on("message", async data => {
     if (typeof data !== "string") return;
@@ -85,7 +80,7 @@ router.ws("/dbmgmt", async function (ws, req) {
   });
   ws.on("close", async code => {
     clearInterval(pingInt);
-    await dbmgmt.closeDB();
+    await dbmgmt.close();
     if(isPostgress)pgclose();
   });
 });
