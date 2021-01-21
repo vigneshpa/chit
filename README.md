@@ -1,8 +1,8 @@
-# Chit Management System
+# Chit Funding Management System
 
 ## About this Software
 
-   This software aims to automate most of the work done by chit
+   This software aims to automate most of the work done by chit funding
    business holders. This software is available under free [GPL3](./LICENSE.md) license.
 
 >This is a free software.   
