@@ -47,7 +47,8 @@
   "scripts": {
     "start": "cd dist && node server.js",
     "build": "ts-node build.ts",
-    "dev": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & (cd dev && (nodemon server.js)) & wait"
+    "dev": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & (cd dev && (nodemon server.js)) & wait",
+    "dev-with-bs": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & (cd dev && (nodemon server.js)) & npx rollup -c -w & wait"
   },
   "keywords": [
     "chit",

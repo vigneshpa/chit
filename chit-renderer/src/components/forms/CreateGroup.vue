@@ -351,6 +351,7 @@ export default Vue.extend({
     },
     async submit() {
       if (this.submited) {
+        this.close();
         return;
       }
       this.submited = true;
@@ -394,6 +395,9 @@ export default Vue.extend({
   mounted() {
     window.document.title = "Create Group";
   },
+  props:[
+    "close"
+  ]
 });
 
 interface members {

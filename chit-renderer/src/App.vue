@@ -1,7 +1,7 @@
 <template lang="pug">
 v-app#1_app
   v-dialog(v-model="form.visible" max-width="500" scrollable)
-    chit-form(v-if="form.visible" :type="form.type")
+    chit-form(v-if="form.visible" :type="form.type" :close="()=>form.visible = false")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
       router-link(

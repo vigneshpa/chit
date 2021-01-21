@@ -28,7 +28,6 @@ const pf:pfPromisified = {
     showOpenDialog: async options => prompt(options.toString()) as unknown as ChitOpenDialogReturnValue,
     updateConfig: async newConfig => updateConfig(newConfig),
 }
-pf.openExternal("localhost:3000/500error");
 const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
 ipchost.init();
 ipciRenderer.init({});

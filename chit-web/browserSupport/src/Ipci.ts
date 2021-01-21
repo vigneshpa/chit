@@ -7,7 +7,7 @@ var main:IpciMain = {
     }
 };
 var webContents:IpciWebcontents = {
-    async call(method, ...args){
+    async callMethod(method, ...args){
         return await renderer.handlers[method](renderer, ...args);
     }
 };
@@ -16,7 +16,7 @@ var renderer:IpciRenderer = {
     init(handlers){
         renderer.handlers = handlers;
     },
-    async call(method, ...args){
+    async callMethod(method, ...args){
         return await main.handlers[method](webContents, ...args);
     }
 }

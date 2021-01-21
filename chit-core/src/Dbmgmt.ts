@@ -78,11 +78,12 @@ export default class Dbmgmt implements DbmgmtInterface{
                 let result: UserD = null;
                 let user = new User({ name, phone, address });
 
-                this.connection.manager.transaction(async manager => {
-                    result = await manager.save(user);
+                await this.connection.manager.transaction(async manager => {
+                    await manager.save(user);
                 });
+                result = await this.repos.user.findOne({phone})
 
-                if(!result)throw new Error();
+                if(!result)throw new Error("Create User Does not exists in database");
                 return result;
             }
 
@@ -120,11 +121,12 @@ export default class Dbmgmt implements DbmgmtInterface{
                 }
 
                 //Starting transaction
-                this.repos.group.manager.transaction(async manager => {
-                    result = await manager.save(group);
+                await this.repos.group.manager.transaction(async manager => {
+                    await manager.save(group);
                 });
 
-                console.log(result);
+                result = await this.repos.group.findOne({name:gName});
+                if(!result)throw new Error("Created group does not exists in database.");
                 return result;
             }
             //async listUsers(): Promise<userInfo[]>
