@@ -14,8 +14,8 @@ Everyone is permited to use and distribute copies of this software
 - Beautiful Google Material Design UI
 
 ## Involving in developement
-This software is completely written in JavaScript ( with TypeScript ) using [Electron](https://electronjs.org/) and [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ) frameworks for the desktop app and for the web app [Express](https://expressjs.com/) framework is used.
-[Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. This DataBase Management system used in this software is [SQlite3](https://www.sqlite.org). To involve in developement clone this repository localy by the following command.
+This software is completely written in TypeScripit ( with some vanilla JS) using [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ), [Electron](https://electronjs.org/) and [Express](https://expressjs.com/) frameworks for the desktop app and web app.
+[Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. [TypeORM](https://typeorm.io/) Object Relation Modeller is used to model and store data. To involve in developement clone this repository localy by the following command.
 
 ```
 git clone https://github.com/vigneshpa/chit.git
@@ -23,46 +23,63 @@ cd chit
 ```
 
 ## Software structure
-   This software has five sub parts or modules(npm).
-1. Main(chit)
+   This software has four sub parts or modules(npm).
+1. Core(chit-core)
 2. Renderer(chit-renderer)
-3. DataAcess(chit-db)
+3. Electron(chit-electron)
+4. Web(Chit-web)
 
-The main module does everything except from UI like database management,  windows management and system dialouges.This module imports chit-db module for database management.   
-   
-The renderer module holds the UI of the app. This is a [vue-cli](https://cli.vuejs.org/) tool's project. This module builds into the app directory of the main module for packing.   
+The Core is a platform agonostic common library which has common TypeDefinitions and DataBase ORM interfaces
 
-These renderer module communicate to main module via ipcRenderer module which is loaded into every browser window. The ipcMain module in the main module recives these communications.
+The Render module is [Vue CLI](https://cli.vuejs.org/)'s project holding the UI of the app  
+
+The Electron module imports the UI from the Renderer and implements platform functions for electron
 
 ## Developement
-This software uses webpack dev server for hot reloading during developement.The [.env](./main/.env) file contains required configuration for developement.
+The Vue CLI's dev server doesnot work here because before loading the UI IPCi Renderer must be loaded into the renderer process or browser.
 
-Starting developement server
+If you use VSCode for developement just allow automatic folder tasks to start the TypeScript watcher(s) and Vue CLI watcher automaticaly
+
+### Starting developement server for Web
 ```
-cd renderer
-npm run serve
+cd chit-web
+npm run dev
 ```
-Startind developement electron
+### Electron developement
+
+For electron you must start the watcher manually
+and start the electron app.
+the developement configurations will be used while the wather is running.
 ```
 cd chit
-electron .
+npm run dev
+```
+```
+npx electron .
 ```
 
 ## Building
-To build this software the renderer and the main modules must be built seperately
+### Building the Electron App
 
-To build renderer
+To compile the project just cd to chit-electron and run
 ```
-cd renderer
 npm run build
 ```
-To build main
+This command will build the Vue UI and prepares the app for bundeling.
+Ofcourse you can check your app before bundeling the installer executables
+just run
 ```
-cd main
-tsc
+npm run dist
 ```
-To pack app
+It will create a unpacked app (for your host system) in the dist directory for us to check before creating installers
+
+Finally to build the installers run
 ```
-cd main
+npm run bundle
+```
+### Building the Express App
+To build the express app just cd into the chit-web directory and run
+```
 npm run build
 ```
+This will generate a Express package in the dist directory which you can deploy on your server

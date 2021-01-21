@@ -1,4 +1,4 @@
-import "./vendorTypes";
+import { IpciM, IpciR, IpciWC } from "./vendorTypes";
 declare global {
 
     interface ModelD {
@@ -68,3 +68,5 @@ declare global {
 
 import Dbmgmt from "./Dbmgmt";
 export { Dbmgmt };
+import Ipchost from "./Ipchost";
+export { Ipchost };

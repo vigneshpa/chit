@@ -60,52 +60,33 @@ declare global {
 
   type IntersectMethodSignatures<S> = UnionToIntersection<S[keyof S]>;
 
-
-  // IPCI OBJECTS
-  interface IpciM<MMM extends IpciMap, RMM extends IpciMap> {
-    init: (handlers?: IpciM<MMM, RMM>["handlers"]) => void;
-    handlers: mainHandlers<MMM, RMM>;
-  }
-  interface IpciR<RMM extends IpciMap, MMM extends IpciMap> {
-    init: (handlers?: IpciR<RMM, MMM>["handlers"]) => void;
-    handlers: rendererHandlers<RMM, MMM>;
-  
-    call: rendererCall<MMM>;
-  }
-  interface IpciWC<MMM extends IpciMap, RMM extends IpciMap> {
-    init: (handlers?: IpciWC<MMM, RMM>["handlers"]) => void;
-    handlers: mainHandlers<MMM, RMM>;
-  
-    call: mainCall<RMM>;
-  }
-
 }
 
-  //IPC channel definitions
-  interface ipcMainChannels {
-    "ipci-methods": [{
-      methodID: number;
-      args: Record<string, any>;
-    }];
-    "ipci-methods-ret": [{
-      methodID: number;
-      ret: any;
-    }];
-  }
-  interface ipcRendererChannels {
-    "ipci-methods": [{
-      methodID: number;
-      args: Record<string, any>;
-    }];
-    "ipci-methods-ret": [{
-      methodID: number;
-      ret: any;
-    }];
-  }
+//IPC channel definitions
+interface ipcMainChannels {
+  "ipci-methods": [{
+    methodID: number;
+    args: Record<string, any>;
+  }];
+  "ipci-methods-ret": [{
+    methodID: number;
+    ret: any;
+  }];
+}
+interface ipcRendererChannels {
+  "ipci-methods": [{
+    methodID: number;
+    args: Record<string, any>;
+  }];
+  "ipci-methods-ret": [{
+    methodID: number;
+    ret: any;
+  }];
+}
 
 
 // TYPE DEFINITIONS FOR IPC IMPROVED
-type IpciMap = Record<string, (...args:any[]) => any>;
+type IpciMap = Record<string, (...args: any[]) => any>;
 
 type mainHandlers<MMM extends IpciMap, RMM extends IpciMap> = {
   [K in keyof MMM]: (sender: IpciWC<MMM, RMM>, ...args: Parameters<MMM[K]>) => Promise<ReturnType<MMM[K]>>;
@@ -122,7 +103,20 @@ type rendererHandlers<RMM extends IpciMap, MMM extends IpciMap> = {
 type rendererCall<MMM extends IpciMap> = IntersectMethodSignatures<{
   [K in keyof MMM]: (method: K, ...args: Parameters<MMM[K]>) => Promise<ReturnType<MMM[K]>>;
 }>
+// IPCI OBJECTS
+export interface IpciM<MMM extends IpciMap, RMM extends IpciMap> {
+  init: (handlers?: IpciM<MMM, RMM>["handlers"]) => void;
+  handlers: mainHandlers<MMM, RMM>;
+}
+export interface IpciR<RMM extends IpciMap, MMM extends IpciMap> {
+  init: (handlers?: IpciR<RMM, MMM>["handlers"]) => void;
+  handlers: rendererHandlers<RMM, MMM>;
 
+  call: rendererCall<MMM>;
+}
+export interface IpciWC<MMM extends IpciMap, RMM extends IpciMap> {
+  call: mainCall<RMM>;
+}
 
 
 
@@ -195,4 +189,3 @@ type TupleOf<T, N extends number> = number extends N ? T[] : {
 }[N]
 
 type RangeOf<N extends number> = Partial<TupleOf<unknown, N>>["length"];
-export { };

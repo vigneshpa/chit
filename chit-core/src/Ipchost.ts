@@ -1,5 +1,4 @@
 import { type } from "os";
-import Dbmgmt from "./Dbmgmt";
 
 declare global {
     type PlatformFunctions = {
@@ -7,18 +6,20 @@ declare global {
         pingRecived: () => void;
         showMessageBox: (options: ChitMessageBoxOptions, sender: IpciWebcontents) => number;
         showOpenDialog: (options: ChitOpenDialogOptions, sender: IpciWebcontents) => ChitOpenDialogReturnValue;
-        openExternal: (url: string) => any;
+        openExternal: (url: string) => void;
     }
-    type pfPromisified = { [K in keyof PlatformFunctions]: (...p: Parameters<PlatformFunctions[K]>) => ReturnType<PlatformFunctions[K]> }
+    type pfPromisified = { [K in keyof PlatformFunctions]: (...p: Parameters<PlatformFunctions[K]>) => Promise<ReturnType<PlatformFunctions[K]>> }
 }
 export default class Ipchost {
     ipc: IpciMain;
-    dbmgmt: Dbmgmt;
-    pf: PlatformFunctions;
-    constructor(ipciMain: IpciMain, dbmgmt: Dbmgmt, pf: pfPromisified) {
+    dbmgmt: DbmgmtInterface;
+    pf: pfPromisified;
+    config:Configuration
+    constructor(ipciMain: IpciMain, dbmgmt: DbmgmtInterface, pf: pfPromisified, config:Configuration) {
         this.ipc = ipciMain;
         this.dbmgmt = dbmgmt;
         this.pf = pf;
+        this.config = config;
     }
     init() {
         const handler: IpciMain["handlers"] = {
@@ -28,7 +29,7 @@ export default class Ipchost {
         };
         for (const key in this.pf) {
             if (Object.prototype.hasOwnProperty.call(this.pf, key)) {
-                handler[key] = (sender, ...args) => this.pf[key](...args);
+                handler[key] = async (sender, ...args) => await this.pf[key](...args);
             }
         }
         this.ipc.init(handler);

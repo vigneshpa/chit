@@ -19,6 +19,12 @@ declare global {
         | { query: "listGroups", ret?:GroupD[] }
         | { query: "listUsers", ret?:UserD[] }
         | { query: "userDetails", uuid: string, ret?:UserD };
+    interface DbmgmtInterface{
+        constructor:Function;
+        connect:()=>Promise<void>;
+        close:()=>Promise<void>;
+        runQuery:(args:DbmgmtQueryArgs)=>Promise<DbmgmtQueryArgs["ret"]>;
+    }
 }
 interface ORMRepos {
     user: Repository<User>;
@@ -28,7 +34,7 @@ interface ORMRepos {
     winner: Repository<Winner>;
     [entity: string]: Repository<any>;
 }
-export default class Dbmgmt {
+export default class Dbmgmt implements DbmgmtInterface{
     static readonly entities = [User, Chit, Group, Payment, Winner];
     private options: ConnectionOptions;
     constructor(options: DbmgmtOptions) {
@@ -38,7 +44,7 @@ export default class Dbmgmt {
         };
     }
 
-    connection: Connection;
+    private connection: Connection;
     async connect() {
         this.connection = await createConnection(this.options);
         this.repos = {

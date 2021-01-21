@@ -1,12 +1,12 @@
-import { Ipchost, IpciRenderer } from "chit-common";
+import { Ipchost } from "chitCore";
 import { default as config, updateConfig } from "./config";
-import Ipci from "./Ipci";
-import Dbmgmt from "./Dbmgmt";
+import { ipciMain, ipciRenderer } from "./Ipci";
+import VirtualDbmgmt from "./VirtualDbmgmt";
 
-declare global{
-    interface Window{
-        ipcirenderer:IpciRenderer;
-        config:Configuration;
+declare global {
+    interface Window {
+        ipcirenderer: IpciRenderer;
+        config: Configuration;
     }
 }
 fetch("/api/login").then((response) => response.text().then((restxt) => {
@@ -19,17 +19,19 @@ fetch("/api/login").then((response) => response.text().then((restxt) => {
     }
 })).catch((reson) => console.log("CAUGHT_ERROR", reson));
 window.config = config;
-const ipci = new Ipci();
-const dbmgmt = new Dbmgmt;
+const dbmgmt = new VirtualDbmgmt;
 dbmgmt.connect();
-const ipchost = new Ipchost(ipci.main, dbmgmt, config);
-ipchost.on("openExternal", url=>window.open(url, "_blank"));
-ipchost.on("pingRecived", ()=>console.log("Ping Recived"));
-ipchost.on("showMessageBox", async options => alert(options.message));
-ipchost.on("showOpenDialog", async options => prompt(options.toString()) as unknown as ChitOpenDialogReturnValue );
-ipchost.on("updateConfig", async newConfig => updateConfig(newConfig));
-ipchost.initialise();
+const pf:pfPromisified = {
+    openExternal: async url =>{window.open(url, "_blank")},
+    pingRecived: async () => console.log("Ping Recived"),
+    showMessageBox: async options => confirm(options.message)?1:0,
+    showOpenDialog: async options => prompt(options.toString()) as unknown as ChitOpenDialogReturnValue,
+    updateConfig: async newConfig => updateConfig(newConfig),
+}
+pf.openExternal("localhost:3000/500error");
+const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
 
-window.ipcirenderer = ipci.renderer;
+ipciRenderer.init({});
+window.ipcirenderer = ipciRenderer;
 
 console.log("Finished loading browser support libraries ");

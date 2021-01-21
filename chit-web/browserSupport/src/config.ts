@@ -1,4 +1,3 @@
-import "chitCore";
 let config: Configuration = {
   isDevelopement: false,
   theme: "system",
@@ -17,11 +16,7 @@ if (ls) {
   localStorage.setItem("config", JSON.stringify(config));
 }
 export function updateConfig(newConfig: Configuration) {
-  try {
     localStorage.setItem("config", JSON.stringify(newConfig));
-    return true;
-  } catch (e) {
-    return false;
-  }
+    return;
 }
 export default config;
