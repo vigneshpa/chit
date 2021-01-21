@@ -2,7 +2,7 @@
   "compilerOptions": {
     "outDir": "lib",
     //"outFile":"lib/chitCommon.js",
-    "strict": false,
+    "strict": true,
     "target": "ES2019",
     "module": "CommonJS",
     "lib": [
@@ -24,6 +24,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "strictNullChecks": false
   },
   "include": [
     "src/**/*"

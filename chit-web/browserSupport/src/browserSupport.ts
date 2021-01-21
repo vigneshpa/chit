@@ -23,7 +23,7 @@ const dbmgmt = new VirtualDbmgmt;
 dbmgmt.connect();
 const pf:pfPromisified = {
     openExternal: async url =>{window.open(url, "_blank")},
-    pingRecived: async () => console.log("Ping Recived"),
+    ping: async () => console.log("Ping Recived"),
     showMessageBox: async options => confirm(options.message)?1:0,
     showOpenDialog: async options => prompt(options.toString()) as unknown as ChitOpenDialogReturnValue,
     updateConfig: async newConfig => updateConfig(newConfig),

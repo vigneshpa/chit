@@ -44,7 +44,7 @@ export default class Dbmgmt implements DbmgmtInterface{
         };
     }
 
-    private connection: Connection;
+    private connection?: Connection;
     async connect() {
         this.connection = await createConnection(this.options);
         this.repos = {
@@ -60,8 +60,9 @@ export default class Dbmgmt implements DbmgmtInterface{
         if (this.connection?.isConnected) await this.connection.close();
         console.log("Database connection closed")
     }
-    private repos: ORMRepos;
+    private repos?: ORMRepos;
     public async runQuery(args: DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
+        if(!(this.repos && this.connection))throw new Error("Running a query before connecting is invalid");
         console.log("DBMGMT: Recived message to run query", args);
         switch (args.query) {
 
@@ -74,13 +75,14 @@ export default class Dbmgmt implements DbmgmtInterface{
 
             case "createUser": {
                 const { name, phone, address } = args;
-                let result: UserD;
+                let result: UserD = null;
                 let user = new User({ name, phone, address });
 
                 this.connection.manager.transaction(async manager => {
                     result = await manager.save(user);
                 });
 
+                if(!result)throw new Error();
                 return result;
             }
 

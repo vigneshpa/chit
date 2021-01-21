@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "outDir": "lib/esm",
-    "strict": false,
+    "strict": true,
     "target": "ES2019",
     "module": "ES6",
     "lib": [
@@ -22,6 +22,7 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "strictNullChecks": false
   },
   "include": [
     "src/**/*"

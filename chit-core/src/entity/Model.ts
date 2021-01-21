@@ -22,7 +22,7 @@ export default abstract class Model {
         (this.uuid as Model["uuid"]) = uuid();
     }
 
-    toJSON() {
+    toJSON():string {
         return { ...this, id: undefined }
     }
 }

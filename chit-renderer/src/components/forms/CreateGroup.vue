@@ -301,7 +301,7 @@ export default Vue.extend({
       if (this.loadedUsers) return;
       this.loading = true;
       this.disableInputs = true;
-      this.users = await window.ipcirenderer.callMethod("db-query", {
+      this.users = await window.ipcirenderer.callMethod("dbQuery", {
         query: "listUsers",
       });
       this.disableInputs = false;
