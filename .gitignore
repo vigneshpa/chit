@@ -13,3 +13,4 @@ node_modules
 chit-web(Old)
 chit-electron(Old)
 chit-web/src/public/app/resources/browserSupport.js
+chit-web/src/db/*
