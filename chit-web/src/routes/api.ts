@@ -38,7 +38,11 @@ router.get("/logout", function (req, res, next) {
   });
 });
 let isPostgress = (process.env.DATABASE_URL) ? true : false;
-const pgdbmgmt = new Dbmgmt({ type: "postgres", url: process.env.DATABASE_URL });
+const pgOptions: { type: "postgres", url: string, ssl?: { rejectUnauthorized: false } } = { type: "postgres", url: process.env.DATABASE_URL };
+if (process.env?.DISABLE_PG_SSL !== "true") {
+  pgOptions.ssl = { rejectUnauthorized: false };
+}
+const pgdbmgmt = new Dbmgmt(pgOptions);
 let pgconnected = false;
 let connectedUsers = 0;
 async function pgconnect() {

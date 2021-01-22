@@ -15,7 +15,10 @@ Everyone is permited to use and distribute copies of this software
 
 ## Involving in developement
 This software is completely written in TypeScripit ( with some vanilla JS) using [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ), [Electron](https://electronjs.org/) and [Express](https://expressjs.com/) frameworks for the desktop app and web app.
-[Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. [TypeORM](https://typeorm.io/) Object Relation Modeller is used to model and store data. To involve in developement clone this repository localy by the following command.
+
+[Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. [TypeORM](https://typeorm.io/) Object Relation Modeller is used to model and store data.
+
+To involve in developement clone this repository localy by the following command.
 
 ```
 git clone https://github.com/vigneshpa/chit.git
@@ -59,6 +62,10 @@ npx electron .
 ```
 
 ## Building
+
+>WARNING:  
+Disable syncronise in connection options to prevent any dataloss in production updates.
+
 ### Building the Electron App
 
 To compile the project just cd to chit-electron and run

@@ -8,22 +8,25 @@ declare global {
     type DbmgmtOptions = {
         type: "postgres";
         url: string;
+        ssl?: {
+            rejectUnauthorized: false
+        };
     } | {
         type: "sqlite";
         database: string;
     };
-    type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?:boolean }
-        | { query: "createUser", name: string, phone: string, address?: string, ret?:UserD }
-        | { query: "checkBatch", batch: string, month: number, year: number, ret?:boolean}
-        | { query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[] , ret?:GroupD}
-        | { query: "listGroups", ret?:GroupD[] }
-        | { query: "listUsers", ret?:UserD[] }
-        | { query: "userDetails", uuid: string, ret?:UserD };
-    interface DbmgmtInterface{
-        constructor:Function;
-        connect:()=>Promise<void>;
-        close:()=>Promise<void>;
-        runQuery:(args:DbmgmtQueryArgs)=>Promise<DbmgmtQueryArgs["ret"]>;
+    type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?: boolean }
+        | { query: "createUser", name: string, phone: string, address?: string, ret?: UserD }
+        | { query: "checkBatch", batch: string, month: number, year: number, ret?: boolean }
+        | { query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[], ret?: GroupD }
+        | { query: "listGroups", ret?: GroupD[] }
+        | { query: "listUsers", ret?: UserD[] }
+        | { query: "userDetails", uuid: string, ret?: UserD };
+    interface DbmgmtInterface {
+        constructor: Function;
+        connect: () => Promise<void>;
+        close: () => Promise<void>;
+        runQuery: (args: DbmgmtQueryArgs) => Promise<DbmgmtQueryArgs["ret"]>;
     }
 }
 interface ORMRepos {
@@ -34,13 +37,14 @@ interface ORMRepos {
     winner: Repository<Winner>;
     [entity: string]: Repository<any>;
 }
-export default class Dbmgmt implements DbmgmtInterface{
+export default class Dbmgmt implements DbmgmtInterface {
     static readonly entities = [User, Chit, Group, Payment, Winner];
     private options: ConnectionOptions;
     constructor(options: DbmgmtOptions) {
         this.options = {
             entities: Dbmgmt.entities,
-            ...options
+            ...options,
+            synchronize:true
         };
     }
 
@@ -62,7 +66,7 @@ export default class Dbmgmt implements DbmgmtInterface{
     }
     private repos?: ORMRepos;
     public async runQuery(args: DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
-        if(!(this.repos && this.connection))throw new Error("Running a query before connecting is invalid");
+        if (!(this.repos && this.connection)) throw new Error("Running a query before connecting is invalid");
         console.log("DBMGMT: Recived message to run query", args);
         switch (args.query) {
 
@@ -81,9 +85,9 @@ export default class Dbmgmt implements DbmgmtInterface{
                 await this.connection.manager.transaction(async manager => {
                     await manager.save(user);
                 });
-                result = await this.repos.user.findOne({phone})
+                result = await this.repos.user.findOne({ phone })
 
-                if(!result)throw new Error("Create User Does not exists in database");
+                if (!result) throw new Error("Create User Does not exists in database");
                 return result;
             }
 
@@ -125,8 +129,8 @@ export default class Dbmgmt implements DbmgmtInterface{
                     await manager.save(group);
                 });
 
-                result = await this.repos.group.findOne({name:gName});
-                if(!result)throw new Error("Created group does not exists in database.");
+                result = await this.repos.group.findOne({ name: gName });
+                if (!result) throw new Error("Created group does not exists in database.");
                 return result;
             }
             //async listUsers(): Promise<userInfo[]>
