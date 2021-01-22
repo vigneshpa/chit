@@ -1,5 +1,3 @@
-import { type } from "os";
-
 declare global {
     type PlatformFunctions = {
         updateConfig: (newConfig: Configuration) => void;
