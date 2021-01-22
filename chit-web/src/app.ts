@@ -5,7 +5,6 @@ import * as logger from "morgan";
 import { inspect } from "util";
 import * as expressws from "express-ws";
 import * as http from "http";
-import * as cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
@@ -27,9 +26,6 @@ class App {
         //Adding app and server instance
         this.app = appWS;
         this.server = server;
-
-        //Configuring cors
-        this.app.use(cors());
 
         //Setting up Morgan
         this.app.use(logger('dev'));
