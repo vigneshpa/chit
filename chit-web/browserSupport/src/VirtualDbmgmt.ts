@@ -15,12 +15,17 @@ export default class VirtualDbmgmt implements DbmgmtInterface {
   async close(): Promise<void> {
     this.dbws.close();
   };
+  private delayedSend(args:string){
+    this.dbws.addEventListener("open", ev=> this.dbws.send(args));
+  }
   runQuery(args1:DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
     return new Promise((resolve, reject) => {
       let args:DbmgmtQueryArgs&{queryId?:number} = args1;
       const queryId = Math.floor(Math.random() * (10 ** 5));
       args.queryId = queryId;
-      this.dbws.send(JSON.stringify(args));
+      if(this.dbws.readyState !== 1){
+        this.delayedSend(JSON.stringify(args));
+      }else this.dbws.send(JSON.stringify(args));
       this.dbws.addEventListener("message", (ev) => {
         let data = JSON.parse(ev.data);
         if (data.queryId === queryId) {
