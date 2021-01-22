@@ -9,15 +9,6 @@ declare global {
         config: Configuration;
     }
 }
-fetch("/api/login").then((response) => response.text().then((restxt) => {
-    if (response.status === 401 || JSON.parse(restxt) !== "LOGGED_IN") {
-        alert("You are not signed in!\nPlease Sign in");
-        location.href = "/login.html";
-    } else if (response.status !== 200) {
-        alert("Nerwork Error!\nPlease check your internet connection.");
-        location.reload();
-    }
-})).catch((reson) => console.log("CAUGHT_ERROR", reson));
 window.config = config;
 const dbmgmt = new VirtualDbmgmt;
 dbmgmt.connect();
