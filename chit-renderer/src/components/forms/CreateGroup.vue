@@ -45,7 +45,7 @@ v-card.mx-auto(max-width="500")
               hide-no-data,
               hide-selected,
               item-text="name",
-              item-value="UID",
+              item-value="uuid",
               label="Member",
               prepend-icon="mdi-account",
               :readonly="disableInputs",
@@ -95,20 +95,21 @@ v-card.mx-auto(max-width="500")
               v-icon mdi-plus
         div(style="height: 304px; overflow: auto")
           v-subheader Members of the new group:
-          v-list
-            v-fab-transition(group)
-              v-list-item(
-                v-for="member in members",
-                :key="member.info.UID + 'memberDetail'",
-                @click="empty"
-              )
-                v-list-item-content(:title="member.info.phone + '\\n' + member.info.address") {{ member.info.name }}
-                v-chip(v-text="member.noOfChits")
-                v-list-item-action(
-                  @click="removeMember(member)",
-                  v-if="!disableInputs"
+          v-expand-transition
+            v-list
+              v-fab-transition(group)
+                v-list-item(
+                  v-for="member in members",
+                  :key="member.info.uuid + 'memberDetail'",
+                  @click="empty"
                 )
-                  v-icon mdi-close-circle
+                  v-list-item-content(:title="member.info.phone + '\\n' + member.info.address") {{ member.info.name }}
+                  v-chip(v-text="member.noOfChits")
+                  v-list-item-action(
+                    @click="removeMember(member)",
+                    v-if="!disableInputs"
+                  )
+                    v-icon mdi-close-circle
         span.caption.grey--text.text--darken-1
           | Please add members for this group. Total no of chits must be 20.
           br
@@ -137,7 +138,7 @@ v-card.mx-auto(max-width="500")
                 v-list-item-title {{ members.length }} Members
             v-list-item(
               v-for="member in members",
-              :key="member.info.UID + 'memberFinal'",
+              :key="member.info.uuid + 'memberFinal'",
               @click="empty"
             )
               v-list-item-content(v-text="member.info.name" :title="member.info.phone + '\\n' + member.info.address")

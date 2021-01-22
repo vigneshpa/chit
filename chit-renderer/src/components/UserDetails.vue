@@ -5,8 +5,8 @@
     v-card-text
       v-list
         v-list-item
-          v-list-item-content User Identity Number
-          v-list-item-content {{ details.UID }}
+          v-list-item-content User Identity String
+          v-list-item-content {{ details.uuid }}
         v-list-item
           v-list-item-content Phone Number
           v-list-item-content {{ details.phone }}
