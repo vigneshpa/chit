@@ -1,6 +1,7 @@
 import { Entity, Column, OneToMany } from "typeorm";
-import Chit from "./Chit";
 import Model from "./Model";
+
+import Chit from "./Chit";
 
 @Entity()
 export default class User extends Model {

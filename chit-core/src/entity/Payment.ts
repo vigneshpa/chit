@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import Chit from "./Chit";
 import Model from "./Model";
+
+import Chit from "./Chit";
 import User from "./User";
 
 @Entity()
