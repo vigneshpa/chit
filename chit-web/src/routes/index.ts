@@ -11,7 +11,7 @@ router.use("/500error", function (req, res, next) {
 });
 
 //mounting public
-router.use(estatic(join(__dirname, '../../src/public')));
+router.use(estatic(join(__dirname, (process.env.NODE_ENV !== "production" ? "../../src/public" : "../public"))));
 
 //mounting pug files
 if (process.env.NODE_ENV !== 'production')

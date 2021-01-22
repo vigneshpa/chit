@@ -10,7 +10,7 @@ declare global {
     }
 }
 fetch("/api/login").then((response) => response.text().then((restxt) => {
-    if (!(response.status !== 401 && restxt === "LOGGED_IN")) {
+    if (response.status === 401 || JSON.parse(restxt) !== "LOGGED_IN") {
         alert("You are not signed in!\nPlease Sign in");
         location.href = "/login.html";
     } else if (response.status !== 200) {

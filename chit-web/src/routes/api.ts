@@ -29,12 +29,12 @@ router.use(function auth(req, res, next) {
   res.status(401).render("error", { code: 401, title: "Forbidden!", message: "You are not allowed here." });
 });
 
-router.get("/login", (req, res, next) => res.send("LOGGED_IN"));
+router.get("/login", (req, res, next) => res.status(200).json("LOGGED_IN"));
 
 router.get("/logout", function (req, res, next) {
   req.session.destroy((err) => {
     if (err) throw err;
-    res.type('json').status(200).send(JSON.stringify("LOGGED_OUT"));
+    res.status(200).json("LOGGED_OUT");
   });
 });
 let isPostgress = (process.env.DATABASE_URL) ? true : false;
@@ -59,29 +59,43 @@ async function pgclose() {
 }
 
 router.ws("/dbmgmt", async function (ws, req) {
+
+  // Ping Timer
   const pingInt = setInterval(() => {
     try {
       ws.ping();
     } catch (e) { console.log(e); }
   }, 5000);
+
+
   const user = req.session.user.name;
   let dbmgmt: Dbmgmt;
+
+  // Opening connection
   if (isPostgress) {
     dbmgmt = pgdbmgmt;
     await pgconnect();
   } else {
     dbmgmt = new Dbmgmt({ type: "sqlite", database: "./db/" + user + ".db" });
+    await dbmgmt.connect();
   }
+
+  // Binding listeners
   ws.on("message", async data => {
     if (typeof data !== "string") return;
     let args = JSON.parse(data);
     let response = await dbmgmt.runQuery(args);
     ws.send(JSON.stringify({ queryId: args.queryId, reply: response }));
   });
+
+  // Closing connection
   ws.on("close", async code => {
     clearInterval(pingInt);
-    await dbmgmt.close();
-    if(isPostgress)pgclose();
+    if (isPostgress) {
+      await pgclose();
+    } else {
+      await dbmgmt.close();
+    }
   });
 });
 
