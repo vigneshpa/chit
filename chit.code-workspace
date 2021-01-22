@@ -18,67 +18,6 @@
 		"tasks": [
 			{
 				"type": "npm",
-				"script": "start",
-				"path": "chit-electron/",
-				"group": "none",
-				"label": "ELECTRON: Start",
-				"detail": "ts-node build.ts"
-			},
-			{
-				"type": "shell",
-				"options": {
-					"cwd": "chit-electron/"
-				},
-				"command": [
-					"ts-node",
-					"build.ts",
-					"--skip-renderer"
-				],
-				"group": "build",
-				"label": "ELECTRON: Build",
-				"detail": "ts-node build.ts"
-			},
-			{
-				"type": "shell",
-				"options": {
-					"cwd": "chit-electron/"
-				},
-				"command": [
-					"ts-node",
-					"build.ts",
-					"--skip-renderer"
-				],
-				"group": "build",
-				"label": "ELECTRON: Build without renderer",
-				"detail": "ts-node build.ts --skip-renderer"
-			},
-			{
-				"type": "npm",
-				"script": "dev",
-				"path": "chit-web/",
-				"problemMatcher": [],
-				"label": "WEB:Start dev server",
-				"detail": "cd src && ts-node-dev -P ./../tsconfig.json server.ts"
-			},
-			{
-				"type": "npm",
-				"script": "build",
-				"path": "chit-web/",
-				"problemMatcher": [],
-				"group": "build",
-				"label": "WEB: Build",
-				"detail": "ts-node build.ts"
-			},
-			{
-				"type": "npm",
-				"script": "build",
-				"path": "chit-core/",
-				"group": "build",
-				"problemMatcher": [],
-				"label": "COMMON: Build library"
-			},
-			{
-				"type": "npm",
 				"script": "dev",
 				"path": "chit-core/",
 				"problemMatcher": [],
@@ -87,24 +26,6 @@
 					"runOn": "folderOpen"
 				},
 				"detail": "tsc -w & tsc -p tsconfig.esm.json -w"
-			},
-			{
-				"type": "npm",
-				"script": "compile",
-				"path": "chit-core/",
-				"group": "build",
-				"problemMatcher": [],
-				"label": "npm: compile - chit-common",
-				"detail": "tsc && tsc -p tsconfig.esm.json"
-			},
-			{
-				"type": "npm",
-				"script": "build",
-				"path": "chit-renderer/",
-				"group": "build",
-				"problemMatcher": [],
-				"label": "RENDERER: Build",
-				"detail": "vue-cli-service build"
 			},
 			{
 				"type": "npm",
