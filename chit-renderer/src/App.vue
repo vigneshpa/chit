@@ -24,9 +24,15 @@ v-app#1_app
     app,
     clipped-left,
     color="blue",
-    dark,
-    :loading="this.appLoading"
+    dark
   )
+    v-progress-linear(
+      :active="appLoading"
+      indeterminate
+      bottom
+      absolute
+      color="white"
+    )
     v-app-bar-nav-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ pageTitle }}
     v-spacer
@@ -47,7 +53,7 @@ v-app#1_app
             v-list-item-title {{ item.title }}
 
   v-main
-    transition(name="fade")
+    v-expand-transition
       router-view
 
   v-footer(app, dense)
@@ -84,7 +90,7 @@ export default Vue.extend({
         icon: "mdi-account-multiple-plus",
       },
     ],
-    appLoading: false,
+    appLoading: true,
     form: {
       type: "" as FormType,
       visible: false,
@@ -92,14 +98,14 @@ export default Vue.extend({
   }),
   computed: {
     pageTitle() {
-      if(this.$route?.name)return this.$route.name;
+      if (this.$route?.name) return this.$route.name;
       return "Chit Management System";
     },
   },
   watch: {
-    pageTitle(){
+    pageTitle() {
       window.document.title = this.pageTitle;
-    }
+    },
   },
   methods: {
     openGithub(ev: Event) {
@@ -118,11 +124,20 @@ export default Vue.extend({
     },
   },
   components: {
-    "chit-form":()=> import("@/components/chit-form.vue"),
+    "chit-form": () => import("@/components/chit-form.vue"),
+  },
+  mounted() {
+    this.$router.beforeEach((to, from, next) => {
+      this.appLoading = true;
+      next();
+    });
+    this.$router.afterEach((to, from) => (this.appLoading = false));
   },
 });
 
-window.ipcirenderer.callMethod("ping").then((e: any)=>console.log("Got pong from the renderer"));
+window.ipcirenderer
+  .callMethod("ping")
+  .then((e: any) => console.log("Got pong from the renderer"));
 console.log("Sent ping to the renderer.");
 </script>
 <style>

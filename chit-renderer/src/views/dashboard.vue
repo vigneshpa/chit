@@ -8,8 +8,3 @@ v-container#dashboard(fluid)
 import Vue from "vue";
 export default Vue.extend({});
 </script>
-<style lang="scss">
-#dashboard {
-  background-color: rgba($color: #ffa6006e, $alpha: 1);
-}
-</style>

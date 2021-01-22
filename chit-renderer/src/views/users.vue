@@ -1,12 +1,15 @@
 <template lang="pug">
-v-container(fluid)
+v-container(fluid class="text-center")
   v-dialog(v-model="userDetails.visible")
     user-details(:uuid="userDetails.uuid")
+  v-overlay(v-if="loading" absolute)
+    v-progress-circular(indeterminate style="padding:20px;margin:20px;")
   v-data-iterator(
     :items="users",
     :search="search",
     :sort-by="keys[sortBy]",
     :sort-desc="sortDesc"
+    v-if="!loading"
   )
     template(v-slot:header)
       v-toolbar.mb-1(dark, color="blue darken-3")
@@ -89,8 +92,8 @@ export default Vue.extend({
       } as { [key: string]: string },
       items: [],
       userDetails: {
-        visible:false as boolean,
-        uuid: "" as string
+        visible: false as boolean,
+        uuid: "" as string,
       },
     };
   },
@@ -118,7 +121,9 @@ export default Vue.extend({
   },
   async mounted() {
     this.loading = true;
-    this.users = <UserD[]>await window.ipcirenderer.callMethod("dbQuery", { query: "listUsers" });
+    this.users = <UserD[]>(
+      await window.ipcirenderer.callMethod("dbQuery", { query: "listUsers" })
+    );
     this.loading = false;
   },
 });
