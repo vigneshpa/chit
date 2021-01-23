@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, OneToMany, Unique } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import Chit from "./Chit";
 import Model from "./Model";
 
