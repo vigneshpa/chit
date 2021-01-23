@@ -22,7 +22,7 @@ declare global {
     interface GroupD extends ModelD {
         name: string;
         batch: string;
-        month: number;
+        month: RangeOf2<1, 12>;
         year: number;
         chits: ChitD[];
         /**
@@ -34,7 +34,7 @@ declare global {
     interface PaymentD extends ModelD {
         ispaid: boolean;
         chit: ChitD;
-        imonth: number;
+        imonth: RangeOf2<1, 20>;
         toBePaid: number;
         user: UserD;
     }
