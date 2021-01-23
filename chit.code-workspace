@@ -1,0 +1,44 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"vetur.format.defaultFormatter.ts": "vscode-typescript",
+		"vetur.format.defaultFormatter.pug": "prettier",
+		"vetur.format.defaultFormatter.css": "prettier",
+		"vetur.format.defaultFormatter.html": "prettier",
+		"files.exclude": {
+			"**/node_modules": true
+		},
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"type": "npm",
+				"script": "dev",
+				"path": "chit-core/",
+				"problemMatcher": [],
+				"label": "COMMON: Watch library",
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
+				"detail": "tsc -w & tsc -p tsconfig.esm.json -w"
+			},
+			{
+				"type": "npm",
+				"script": "watch",
+				"path": "chit-renderer/",
+				"group": "build",
+				"problemMatcher": [],
+				"label": "RENDERER: Watch",
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
+				"detail": "vue-cli-service build"
+			}
+		]
+	},
+}

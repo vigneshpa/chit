@@ -1,0 +1,14 @@
+node_modules
+package-lock.json
+chit-elecrtron/app
+chit-elecrtron/dist
+chit-electron/electron-builder.yml
+chit-core/lib
+chit-renderer/app
+chit-web/dist
+chit-web/dev
+!chit-web/dev/.env
+chit-web/src/prod.env
+chit-web(Old)
+chit-electron(Old)
+chit-web/src/public/app/resources/browserSupport.js
