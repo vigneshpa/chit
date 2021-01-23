@@ -17,6 +17,7 @@ declare global {
         noOfChits: number;
         group: GroupD;
         payments: PaymentD[];
+        wonAtMonth: RangeOf2<1, 20>;
     }
     interface GroupD extends ModelD {
         name: string;
@@ -24,9 +25,6 @@ declare global {
         month: number;
         year: number;
         chits: ChitD[];
-        winners: {
-            [imonth: number]: string[];
-        }
         /**
          * THIS IS ONLY FOR CREATION OF GROUP
          * array of members' uuid(s) and noOfChits

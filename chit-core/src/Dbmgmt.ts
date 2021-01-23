@@ -1,6 +1,5 @@
 import { Connection, ConnectionOptions, createConnection, Repository } from "typeorm";
 import Payment from "./entity/Payment";
-import Winner from "./entity/Winner";
 import Group from "./entity/Group";
 import Chit from "./entity/Chit";
 import User from "./entity/User";
@@ -17,8 +16,8 @@ declare global {
     };
     type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?: boolean }
         | { query: "createUser", name: string, phone: string, address?: string, ret?: UserD }
-        | { query: "checkBatch", batch: string, month: number, year: number, ret?: boolean }
-        | { query: "createGroup", year: number, month: number, batch: string, members: { uuid: string, noOfChits: number }[], ret?: GroupD }
+        | { query: "checkBatch", batch: string, month: RangeOf2<1, 12>, year: number, ret?: boolean }
+        | { query: "createGroup", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number }[], ret?: GroupD }
         | { query: "listGroups", ret?: GroupD[] }
         | { query: "listUsers", ret?: UserD[] }
         | { query: "userDetails", uuid: string, ret?: UserD };
@@ -34,11 +33,10 @@ interface ORMRepos {
     chit: Repository<Chit>;
     group: Repository<Group>;
     payment: Repository<Payment>;
-    winner: Repository<Winner>;
     [entity: string]: Repository<any>;
 }
 export default class Dbmgmt implements DbmgmtInterface {
-    static readonly entities = [User, Chit, Group, Payment, Winner];
+    static readonly entities = [User, Chit, Group, Payment];
     private options: ConnectionOptions;
     constructor(options: DbmgmtOptions) {
         this.options = {
@@ -56,7 +54,6 @@ export default class Dbmgmt implements DbmgmtInterface {
             chit: this.connection.getRepository(Chit),
             group: this.connection.getRepository(Group),
             payment: this.connection.getRepository(Payment),
-            winner: this.connection.getRepository(Winner),
         }
         console.log("Database connection opened");
     }
