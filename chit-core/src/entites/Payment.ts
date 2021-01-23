@@ -7,7 +7,7 @@ import User from "./User";
 @Entity()
 export default class Payment extends Model {
 
-    @ManyToOne(type => Chit, Chit => Chit.payments, {cascade:true})
+    @ManyToOne(type => Chit, Chit => Chit.payments)
     @JoinColumn()
     readonly chit: Chit;
 

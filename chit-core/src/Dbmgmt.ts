@@ -1,8 +1,8 @@
 import { Connection, ConnectionOptions, createConnection, Repository } from "typeorm";
-import Payment from "./entity/Payment";
-import Group from "./entity/Group";
-import Chit from "./entity/Chit";
-import User from "./entity/User";
+import Payment from "./entites/Payment";
+import Group from "./entites/Group";
+import Chit from "./entites/Chit";
+import User from "./entites/User";
 declare global {
     type DbmgmtOptions = {
         type: "postgres";
