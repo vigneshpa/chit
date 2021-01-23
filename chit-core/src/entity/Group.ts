@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
+=======
+import { Column, Entity, OneToMany } from "typeorm";
+>>>>>>> c50ec8ebd496835339570cd24c507ca9592528a9
 import Chit from "./Chit";
 import Model from "./Model";
 
