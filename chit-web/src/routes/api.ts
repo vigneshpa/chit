@@ -80,7 +80,7 @@ router.ws("/dbmgmt", async function (ws, req) {
     dbmgmt = pgdbmgmt;
     await pgconnect();
   } else {
-    dbmgmt = new Dbmgmt({ type: "sqlite", database: "./db/" + user + ".db" });
+    dbmgmt = new Dbmgmt({ type: "sqlite", database: "./" + user + ".db" });
     await dbmgmt.connect();
   }
 
