@@ -7,18 +7,25 @@ import User from "./User";
 @Entity()
 export default class Payment extends Model {
 
-    @ManyToOne(type => Chit, Chit => Chit.payments)
+    @ManyToOne(type => Chit, Chit => Chit.payments, {cascade:true})
     @JoinColumn()
     readonly chit: Chit;
 
-    @Column()
+    @Column("integer")
     readonly imonth: RangeOf2<1, 20>;
 
-    @Column()
+    @Column({nullable:false})
     ispaid: boolean;
 
     get toBePaid(): number {
-        return this.chit.noOfChits * 5000;
+        const base = 5000;
+        const intrest = 1000;
+
+        let toBePaidPerChit = base;
+        if(this.chit.wonAtMonth){
+            if(this.chit.wonAtMonth<=this.imonth)toBePaidPerChit += intrest;
+        }
+        return this.chit.noOfChits * toBePaidPerChit;
     }
 
     get user(): User {
