@@ -26,7 +26,7 @@ export default class VirtualDbmgmt implements DbmgmtInterface {
       console.log("Web socket address", this.socketAddress);
       this.dbws = new WebSocket(this.socketAddress);
       this.dbws.onopen = e => resolve();
-      this.dbws.onerror = e => console.log(e);
+      this.dbws.onerror = e => {alert("Error occoured while connecting to the server\nCheck your internet connection.");this.connect()};
       this.dbws.onclose = e => this.connect()
     });
   };
