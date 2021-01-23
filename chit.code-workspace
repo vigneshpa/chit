@@ -17,27 +17,12 @@
 		"version": "2.0.0",
 		"tasks": [
 			{
-				"type": "npm",
-				"script": "dev",
-				"path": "chit-core/",
-				"problemMatcher": [],
-				"label": "COMMON: Watch library",
+				"label": "Start Watchers",
+				"type": "shell",
 				"runOptions": {
 					"runOn": "folderOpen"
 				},
-				"detail": "tsc -w & tsc -p tsconfig.esm.json -w"
-			},
-			{
-				"type": "npm",
-				"script": "watch",
-				"path": "chit-renderer/",
-				"group": "build",
-				"problemMatcher": [],
-				"label": "RENDERER: Watch",
-				"runOptions": {
-					"runOn": "folderOpen"
-				},
-				"detail": "vue-cli-service build"
+				"command": "gnome-terminal --tab -e 'sh -c \"cd chit-core; npm run watch;exec zsh\"' --tab -e 'sh -c \"cd chit-renderer; npm run watch;exec zsh\"'"
 			}
 		]
 	},

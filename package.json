@@ -4,7 +4,7 @@
   "description": "Chit MonoRepo",
   "main": "null",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "onstart": "gnome-terminal --tab -e 'sh -c \"cd chit-core; npm run watch;exec zsh\"' --tab -e 'sh -c \"cd chit-renderer; npm run watch;exec zsh\"'"
   },
   "repository": {
     "type": "git",

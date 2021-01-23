@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rm ./lib -r && mkdir -p ./lib/esm && tsc && tsc -p tsconfig.esm.json",
     "compile": "tsc && tsc -p tsconfig.esm.json",
-    "dev": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & tsc -p tsconfig.esm.json -w & wait"
+    "watch": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & tsc -p tsconfig.esm.json -w & wait"
   },
   "repository": {
     "type": "git",
