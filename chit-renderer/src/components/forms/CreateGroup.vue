@@ -216,8 +216,8 @@ export default Vue.extend({
           return "Final";
       }
     },
-    month(): number {
-      return parseInt(this.monthModel.split("-")[1]);
+    month() {
+      return parseInt(this.monthModel.split("-")[1]) as RangeOf2<1, 12>;
     },
     year(): number {
       return parseInt(this.monthModel.split("-")[0]);
@@ -396,9 +396,7 @@ export default Vue.extend({
   mounted() {
     window.document.title = "Create Group";
   },
-  props:[
-    "close"
-  ]
+  props: ["close"],
 });
 
 interface members {
