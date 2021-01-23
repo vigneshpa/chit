@@ -1,18 +1,18 @@
-import { BeforeInsert, Column, Entity, OneToMany, Unique } from "typeorm";
+import { BeforeInsert, Column, Entity, OneToMany } from "typeorm";
 import Chit from "./Chit";
 import Model from "./Model";
 
 @Entity()
 export default class Group extends Model {
 
-  @Column({unique:true})
+  @Column()
   readonly name: string;
 
   @Column()
   readonly batch: string;
 
-  @Column("integer")
-  readonly month: RangeOf2<1, 12>;
+  @Column()
+  readonly month: number;
 
   @Column()
   readonly year: number;
@@ -20,8 +20,19 @@ export default class Group extends Model {
   @OneToMany(type => Chit, Chit => Chit.group, { cascade: true })
   chits: Chit[];
 
+  @Column("json")
+  winners:{[imonth:number]:string[]};
+
   constructor(base?: Partial<Group>) {
     super();
     Object.assign(this, base);
+  }
+
+  @BeforeInsert()
+  private beforeInsert(){
+    this.winners = {};
+    for(let i = 1; i<=20; i++){
+      this.winners[i] = [];
+    }
   }
 }
