@@ -6,14 +6,20 @@ export default class VirtualDbmgmt implements DbmgmtInterface {
   connect(): Promise<void> {
     return new Promise(async (resolve, reject) => {
 
-      let response = await fetch("/api/login");
-      let restxt = await response.text();
-      if (response.status === 401 || JSON.parse(restxt) !== "LOGGED_IN") {
-        alert("You are not signed in!\nPlease Sign in");
-        location.href = "/login.html";
-      } else if (response.status !== 200) {
-        alert("Nerwork Error!\nPlease check your internet connection.");
-        location.reload();
+      try {
+        let response = await fetch("/api/login");
+        let restxt = await response.text();
+        if (response.status === 200 && JSON.parse(restxt) === "LOGGED_IN") {
+          console.log("Login verified");
+        } else if (response.status === 401) {
+          alert("You are not signed in!\nPlease Sign in");
+          location.href = "/login.html";
+        } else {
+          if (confirm("Nerwork Error!\nPlease check your internet connection.\nConfirm to retry."))
+            this.connect();
+        }
+      } catch (e) {
+        console.log(e)
       }
 
       this.socketAddress = location?.host ? (((location.protocol === "http:") ? "ws" : "wss") + "://" + location.host + "/api/dbmgmt") : "ws://localhost:3000/dbmgmt";
@@ -28,7 +34,10 @@ export default class VirtualDbmgmt implements DbmgmtInterface {
     this.dbws.close();
   };
   private delayedSend(args: string) {
-    this.dbws.addEventListener("open", ev => this.dbws.send(args));
+    if (this.dbws.readyState === 1) {
+      this.dbws.send(args);
+    } else
+      this.dbws.addEventListener("open", ev => this.dbws.send(args));
   }
   runQuery(args1: DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
     return new Promise((resolve, reject) => {
