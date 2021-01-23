@@ -6,8 +6,7 @@ chit-electron/electron-builder.yml
 chit-core/lib
 chit-renderer/app
 chit-web/dist
-chit-web/dev
-!chit-web/dev/.env
+chit-web/dev/**/*.js
 chit-web/src/prod.env
 chit-web(Old)
 chit-electron(Old)
