@@ -23,7 +23,7 @@ export default class Payment extends Model {
 
         let toBePaidPerChit = base;
         if(this.chit.wonAtMonth){
-            if(this.chit.wonAtMonth<=this.imonth)toBePaidPerChit += intrest;
+            if(this.chit.wonAtMonth<this.imonth)toBePaidPerChit += intrest;
         }
         return this.chit.noOfChits * toBePaidPerChit;
     }
