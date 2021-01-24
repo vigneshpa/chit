@@ -3,82 +3,43 @@ html(lang="en")
 
   head
     meta(charset="UTF-8")
+    link(rel="stylesheet" href="/stylesheets/mini.min.css")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    meta(rel="stylesheet" href="/css/mdb.min.css")
-    script(src="/js/mdb.min.js")
     title Login
     style.
-      * {
-        font-family: Roboto;
+      footer, fieldset div {
         text-align: center;
-      }
-
-      form {
-        border: solid 1px rgb(175, 175, 175);
-        border-radius: 5px;
-        width: 500px;
-        margin: auto;
-        padding-bottom:20px;
-        background-color:rgb(255, 248, 235);
-        box-shadow:0px 0px 5px;
-      }
-      input{
-        transition: scale 0.3s ease;
-        margin:10px;
-      }
-      input:focus{
-        scale:1.1;
-      }
-      img{
-        width:calc(100px + 30vmax);
-      }
-      table{
-        margin:auto;
       }
       #footer{
         color:grey;
         margin-top:30px;
       }
+      form{
+        max-width:500px;
+        margin:auto;
+        margin-top:50px;
+        background-color:rgba(255, 255, 255, 0.5);
+      }
   body
-    div
-      img(src="/images/authenticate.png")
-      form(action="/api/login" method="POST")
-        h2 Login
-        table
-          tr
-            td
-              lablel User Name
-            td
-              input(type="text" name="user")
-          tr
-            td
-              label Password
-            td
-              input(type="password" name="pwd")
-        input(type="submit" value="submit")
-    div#footer
-      |Chit Funding Management System
+    header.sticky.row
+      a.logo.fluid.col-sm-7(href="/") Chit App
+      a.button.col-sm(href="/download.html") Download
     form
-      div(class="form-outline mb-4")
-        input(type="email" id="form1Example1" class="form-control" )
-        label(class="form-label" for="form1Example1") Email address
-      div(class="form-outline mb-4")
-        input(type="password" id="form1Example2" class="form-control" )
-        label(class="form-label" for="form1Example2") Password
-      div(class="row mb-4")
-        div(class="col d-flex justify-content-center")
-          div(class="form-check")
-            input(
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              id="form1Example3"
-             checked
-            )
-            label(class="form-check-label" for="form1Example3") Remember me
-        div(class="col")
-          a(href="#!") Forgot password?
-      button(type="submit" class="btn btn-primary btn-block") Sign in
+      fieldset
+        legend Login
+        .row.cols-sm-12
+          div
+            label(for="username")
+              span.icon-user
+            input(type="text" id="Username" placeholder="Username" name="user")
+          div
+            label(for="password")
+              span.icon-lock
+            input(type="password" id="password" placeholder="Password" name="pwd")
+          div
+            input.button.shadowed.primary(type="Submit" value="Login")
+    footer#footer
+      |Chit Management System
     script.
       let form = document.getElementsByTagName("form")[0];
       form.onsubmit = function (e) {

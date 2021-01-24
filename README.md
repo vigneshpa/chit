@@ -1,4 +1,4 @@
-# Chit Funding Management System
+# Chit Management System
 
 ## About this Software
 
