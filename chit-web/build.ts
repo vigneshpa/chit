@@ -1,10 +1,11 @@
 /**
  *  Chit Web build file.
  */
-import { readFile as readFileP, writeFile as writeFileP } from "fs";
+import { createWriteStream, readFile as readFileP, writeFile as writeFileP } from "fs";
 import { promisify } from "util";
 const readFile = promisify(readFileP), writeFile = promisify(writeFileP);
 import bt from "../buildTools";
+import * as tar from "tar";
 const buildDir = "./dist";
 const build = async () => {
     try {
@@ -22,7 +23,7 @@ const build = async () => {
 
         //Copying Renderer
         bt.logi("Copying renderer files");
-        await bt.copy("../chit-renderer/app/renderer", "./dist/public/app");
+        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/app");
 
         // Building frontend JS
         bt.logi("Building browser support files");
@@ -30,12 +31,12 @@ const build = async () => {
 
         // Copy front-end files
         bt.logi("Copying front-end files")
-        await bt.copy('./src/public', './dist/public');
-        await bt.copy('./src/views', './dist/views');
+        await bt.copy('./src/public', buildDir+'/public');
+        await bt.copy('./src/views', buildDir+'/views');
 
         //Building pug static files
         bt.logi("Building pug static files");
-        await bt.exec("pug", ["./src/static", "-o", "./dist/public"]);
+        await bt.exec("pug", ["./src/static", "-o", buildDir+"/public"]);
 
         //Building chit common libraries
         bt.logi("Building common libraries");
@@ -43,12 +44,14 @@ const build = async () => {
 
         //copying chit common libraries
         bt.logi("Copying Common libs");
-        await bt.copy("../chit-core/lib", "./dist/chit-core/lib");
-        await bt.copy("../chit-core/package.json", "./dist/chit-core/package.json");
+        tar.create({
+            gzip:true,
+            cwd:"../chit-core"
+        }, ["lib", "package.json"]).pipe(createWriteStream(buildDir+"/chit-core.tar.gz"));
 
         // Copy config files
         bt.logi("Copying configuration files");
-        await bt.copy('./src/prod.env', './dist/.env');
+        await bt.copy('./src/prod.env', buildDir+'/.env');
 
         //Modifiying package.json for production
         let pkg = JSON.parse((await readFile("./package.json")).toString());
@@ -56,16 +59,15 @@ const build = async () => {
         delete pkg.devDependencies;
         if(pkg.dependencies.sqlite3)delete pkg.dependencies.sqlite3
         pkg.scripts = { start: "node server.js" };
-        pkg.dependencies["chitcore"] = "file:./chit-core";
-        await writeFile("./dist/package.json", JSON.stringify(pkg));
-        //await bt.copy('./package.prod.json', './dist/package.json');
+        pkg.dependencies["chitcore"] = "file:./chit-core.tar.gz";
+        await writeFile(buildDir+"/package.json", JSON.stringify(pkg));
 
         //Compiling TypeScript
         bt.logi("Building server TypeScript files");
         await bt.exec('tsc', ['--build', 'tsconfig.prod.json']);
 
         //Create db directory
-        await bt.fs.ensureFile("./dist/db/placeholder");
+        await bt.fs.ensureFile(buildDir+"/db/placeholder");
 
         bt.end();
 
