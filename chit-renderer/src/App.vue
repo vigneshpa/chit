@@ -1,6 +1,6 @@
 <template lang="pug">
 v-app#1_app
-  v-dialog(v-model="form.visible" max-width="500" scrollable)
+  v-dialog(v-model="form.visible" max-width="500")
     chit-form(v-if="form.visible" :type="form.type" :close="()=>form.visible = false")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
@@ -63,7 +63,7 @@ v-app#1_app
       a(@click="openGithub")
         v-icon(size="20") mdi-github
         | vigneshpa/chit
-      a(@click="openGithubLicense")  &copy; {{ new Date().getFullYear() }} GPL3
+      a(@click="openGithubLicense")  GPL-3.0 &copy; {{ new Date().getFullYear() }} Vignesh
 </template>
 
 <script lang="ts">

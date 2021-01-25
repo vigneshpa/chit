@@ -46,8 +46,8 @@ const build = async () => {
         bt.logi("Copying Common libs");
         tar.create({
             gzip:true,
-            cwd:"../chit-core"
-        }, ["lib", "package.json"]).pipe(createWriteStream(buildDir+"/chit-core.tar.gz"));
+            cwd:".."
+        }, ["chit-core/lib", "chit-core/package.json"]).pipe(createWriteStream(buildDir+"/chit-core.tar.gz"));
 
         // Copy config files
         bt.logi("Copying configuration files");

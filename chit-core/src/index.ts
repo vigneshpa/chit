@@ -1,4 +1,5 @@
 import { IpciM, IpciR, IpciWC } from "./vendorTypes";
+import * as moment from "moment";
 declare global {
 
     interface ModelD {
@@ -60,10 +61,10 @@ declare global {
             autoCheck: boolean;
             autoDownload: boolean;
         },
-        vueApp: string
+        vueApp: string;
+        locale:string;
     }
 }
-
 import Dbmgmt from "./Dbmgmt";
 export { Dbmgmt };
 import Ipchost from "./Ipchost";

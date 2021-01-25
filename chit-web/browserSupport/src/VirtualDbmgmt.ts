@@ -1,15 +1,21 @@
+let noOfTries: number = 0;
+const connectionLimit = 20;
 export default class VirtualDbmgmt implements DbmgmtInterface {
   dbws: WebSocket;
   socketAddress: string;
   constructor() {
   };
   connect(): Promise<void> {
+    noOfTries++;
+    if (noOfTries > connectionLimit) {
+      console.log("Connection limit", connectionLimit, "reached");
+      location.reload(); return; }
     return new Promise(async (resolve, reject) => {
 
       try {
         let response = await fetch("/api/login");
         let restxt = await response.text();
-        if (response.status === 200 && JSON.parse(restxt) === "LOGGED_IN") {
+        if (response.status !== 401 && JSON.parse(restxt) === "LOGGED_IN") {
           console.log("Login verified");
         } else if (response.status === 401) {
           alert("You are not signed in!\nPlease Sign in");
@@ -26,7 +32,7 @@ export default class VirtualDbmgmt implements DbmgmtInterface {
       console.log("Web socket address", this.socketAddress);
       this.dbws = new WebSocket(this.socketAddress);
       this.dbws.onopen = e => resolve();
-      this.dbws.onerror = e => {alert("Error occoured while connecting to the server\nCheck your internet connection.");this.connect()};
+      this.dbws.onerror = e => { if (confirm("Error occoured while connecting to the server\nCheck your internet connection.")) this.connect() };
       this.dbws.onclose = e => this.connect()
     });
   };

@@ -7,7 +7,8 @@ let config: Configuration = {
     autoCheck: true,
     autoDownload: false
   },
-  vueApp: null
+  vueApp: null,
+  locale:"en-in"
 };
 let ls = localStorage.getItem('config');
 if (ls) {

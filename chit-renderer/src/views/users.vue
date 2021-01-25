@@ -29,7 +29,7 @@ v-container(fluid class="text-center")
             flat,
             solo-inverted,
             hide-details,
-            :items="keysNames",
+            :items="sortByKeys",
             prepend-inner-icon="mdi-sort",
             label="Sort by"
           )
@@ -65,12 +65,14 @@ v-container(fluid class="text-center")
                   :class="{ 'blue--text': sortBy === key }"
                 ) {{ key }}:
                 v-list-item-content.align-end(
-                  :class="{ 'blue--text': sortBy === key }"
-                ) {{ item[keys[key]] }}
+                  :class="{'blue--text': sortBy === key }"
+                ) {{ formatter.hasOwnProperty(keys[key])?formatter[keys[key]](item[keys[key]]):item[keys[key]] }}
 </template>
 <script lang="ts">
 import Vue from "vue";
 import UserDetails from "@/components/UserDetails.vue";
+import moment from "moment";
+moment.locale("en-in");
 export default Vue.extend({
   data() {
     return {
@@ -82,14 +84,27 @@ export default Vue.extend({
       sortDesc: false as boolean,
       page: 1 as number,
       itemsPerPage: 4 as number,
-      sortBy: "name" as string,
-      keysNames: ["Name", "Phone", "Address"] as string[],
+      sortBy: "Name" as string,
+      sortByKeys: [
+        "Name",
+        "Phone",
+        "Address",
+        "Created At",
+      ] as string[],
       keys: {
         Name: "name",
-        UUID: "uuid",
         Phone: "phone",
         Address: "address",
+        "Created At": "createdAt",
       } as { [key: string]: string },
+      formatter: {
+        createdAt(date) {
+          return moment(date).calendar();
+        },
+        updatedAt(date) {
+          return moment(date).calendar();
+        },
+      } as { [key in keyof UserD]: (value: UserD[key]) => string },
       items: [],
       userDetails: {
         visible: false as boolean,
@@ -105,7 +120,7 @@ export default Vue.extend({
       return Math.ceil(this.items.length / this.itemsPerPage);
     },
     filteredKeys(): string[] {
-      return this.keysNames.filter((key: string) => key !== "Name");
+      return this.sortByKeys.filter((key: string) => key !== "Name");
     },
   },
   methods: {

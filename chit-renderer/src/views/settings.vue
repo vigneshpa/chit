@@ -13,6 +13,8 @@ v-container#settings(fluid)
       v-tab
         | Updates
         v-icon(right) mdi-update
+      v-tab
+        | Other
       v-tab-item
         v-card(flat)
           v-card-title
@@ -61,6 +63,16 @@ v-container#settings(fluid)
               label="Download updates Automaticaly",
               v-model="updateAutomaticDownload"
             )
+      v-tab-item
+        v-card(flat)
+          v-card-title
+           | Other Settings
+          v-card-text
+            v-text-field(
+              lable = "Time Locale"
+              v-model="locale"
+            )
+          
 </template>
 <script lang="ts">
 import Vue from "vue";
@@ -76,6 +88,7 @@ export default Vue.extend({
       dbFileLocation: this.config.databaseFile.location,
       updateAutomaticCheck: this.config.updates.autoCheck,
       updateAutomaticDownload: this.config.updates.autoDownload,
+      locale:this.config.locale
     };
   },
   watch: {

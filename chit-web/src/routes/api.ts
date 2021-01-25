@@ -44,17 +44,20 @@ if (process.env?.DISABLE_PG_SSL !== "true") {
 }
 const pgdbmgmt = new Dbmgmt(pgOptions);
 let pgconnected = false;
+let pgConnecting = false;
 let connectedUsers = 0;
 async function pgconnect() {
-  if (!pgconnected) {
+  if (!(pgconnected || pgConnecting)) {
+    pgConnecting = true;
     await pgdbmgmt.connect();
+    pgConnecting = false;
     pgconnected = true;
   }
   connectedUsers++;
   return;
 }
 async function pgclose() {
-  if (pgconnected && connectedUsers <= 1) {
+  if (pgconnected && connectedUsers <= 1 && !pgConnecting) {
     await pgdbmgmt.close();
     pgconnected = false;
   }
@@ -63,6 +66,9 @@ async function pgclose() {
 }
 
 router.ws("/dbmgmt", async function (ws, req) {
+
+  //Auth
+  if (!req.session.user?.loggedIn) return ws.close();
 
   // Ping Timer
   const pingInt = setInterval(() => {
@@ -75,20 +81,49 @@ router.ws("/dbmgmt", async function (ws, req) {
   const user = req.session.user.name;
   let dbmgmt: Dbmgmt;
 
+
+  //STARTING DELAYED query WARPER
+  let connected: boolean = false;
+  const afterconnectFunctions: (() => void)[] = [];
+  const executeAfterconnect = () => afterconnectFunctions.forEach(fn => fn());
+
   // Opening connection
   if (isPostgress) {
     dbmgmt = pgdbmgmt;
-    await pgconnect();
+    (async function () {
+      await pgconnect();
+      connected = true;
+      executeAfterconnect();
+    })();
   } else {
     dbmgmt = new Dbmgmt({ type: "sqlite", database: "./" + user + ".db" });
-    await dbmgmt.connect();
+    (async function () {
+      await dbmgmt.connect();
+      connected = true;
+      executeAfterconnect();
+    })();
   }
+  const delayedQuery = (args: DbmgmtQueryArgs) => {
+    return new Promise((resolve: (value: DbmgmtQueryArgs["ret"]) => void, reject) => {
+      if (connected) {
+        dbmgmt.runQuery(args).then(resolve);
+      } else {
+        afterconnectFunctions.push(() => dbmgmt.runQuery(args).then(resolve));
+      }
+    });
+  }
+
+
+
 
   // Binding listeners
   ws.on("message", async data => {
     if (typeof data !== "string") return;
-    let args = JSON.parse(data);
-    let response = await dbmgmt.runQuery(args);
+    const args = JSON.parse(data);
+    let response: DbmgmtQueryArgs["ret"];
+    if (connected) {
+      response = await dbmgmt.runQuery(args);
+    } else response = await delayedQuery(args);
     ws.send(JSON.stringify({ queryId: args.queryId, reply: response }));
   });
 
@@ -100,6 +135,7 @@ router.ws("/dbmgmt", async function (ws, req) {
     } else {
       await dbmgmt.close();
     }
+    connected = false;
   });
 });
 

@@ -1,7 +1,7 @@
 import * as express from "express";
 import * as path from "path";
 import * as logger from "morgan";
-//import * as compression from "compression";
+import * as compression from "compression";
 import { inspect } from "util";
 import * as expressws from "express-ws";
 import * as http from "http";
@@ -41,7 +41,7 @@ class App {
         //Setting up websockets
         expressws(this.app);
         //Setting up compression
-        //this.app.use(compression());
+        this.app.use(compression());
 
         //setting up view engine
         this.app.set("views", process.env.NODE_ENV !== "production" ? "../src/views" : "./views");
