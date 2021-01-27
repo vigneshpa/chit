@@ -47,12 +47,6 @@ declare global {
     bookmarks?: string[];
   }
 
-  type ChitIpcMain = ChitIpcM<ipcMainChannels, ipcRendererChannels>;
-  type ChitIpcRenderer = ChitIpcR<ipcRendererChannels, ipcMainChannels>;
-  type ChitIpcMainWebcontents = ChitIpcMWebcontents<ipcRendererChannels>;
-  type ChitIpcRendererEvent = ChitIpcREvent<ipcRendererChannels, ipcMainChannels>;
-  type ChitIpcMainEvent = ChitIpcMEvent<ipcRendererChannels>;
-
   // UNION TO INTERSECTION
   type UnionToIntersection<U> = (
     U extends any ? (k: U) => void : never
@@ -61,30 +55,6 @@ declare global {
   type IntersectMethodSignatures<S> = UnionToIntersection<S[keyof S]>;
 
 }
-
-//IPC channel definitions
-interface ipcMainChannels {
-  "ipci-methods": [{
-    methodID: number;
-    args: Record<string, any>;
-  }];
-  "ipci-methods-ret": [{
-    methodID: number;
-    ret: any;
-  }];
-}
-interface ipcRendererChannels {
-  "ipci-methods": [{
-    methodID: number;
-    args: Record<string, any>;
-  }];
-  "ipci-methods-ret": [{
-    methodID: number;
-    ret: any;
-  }];
-}
-
-
 // TYPE DEFINITIONS FOR IPC IMPROVED
 type IpciMap = Record<string, (...args: any[]) => any>;
 
