@@ -10,6 +10,8 @@ declare global {
         ssl?: {
             rejectUnauthorized: false
         };
+        schema:string;
+        name:string;
     } | {
         type: "sqlite";
         database: string;
@@ -55,7 +57,7 @@ export default class Dbmgmt implements DbmgmtInterface {
             group: this.connection.getRepository(Group),
             payment: this.connection.getRepository(Payment),
         }
-        console.log("Database connection opened");
+        console.log("Database connection opened" + this.options?.name?" for connection id "+this.options.name:"" );
     }
     async close() {
         if (this.connection?.isConnected) await this.connection.close();
@@ -114,7 +116,7 @@ export default class Dbmgmt implements DbmgmtInterface {
                 for (const member of members) {
                     const user = await this.repos.user.findOne({ uuid: member.uuid });
                     if (!user) throw new Error("Invalid member got from the renderer");
-                    const chit = new Chit({ user, group, noOfChits: member.noOfChits, payments: [] });
+                    const chit = new Chit({ user, group, noOfChits: member.noOfChits, payments: [], month, year, });
                     for (let i = 1; i <= 20; i++) {
                         chit.payments.push(new Payment({ chit, ispaid: false, imonth: i as RangeOf2<1, 20> }));
                     }

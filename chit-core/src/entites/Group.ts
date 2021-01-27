@@ -8,13 +8,13 @@ export default class Group extends Model {
   @Column({unique:true})
   readonly name: string;
 
-  @Column()
+  @Column({nullable:false})
   readonly batch: string;
 
   @Column("integer")
   readonly month: RangeOf2<1, 12>;
 
-  @Column()
+  @Column({nullable:false})
   readonly year: number;
 
   @OneToMany(type => Chit, Chit => Chit.group, { cascade: true })

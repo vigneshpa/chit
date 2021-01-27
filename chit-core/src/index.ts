@@ -1,5 +1,4 @@
 import { IpciM, IpciR, IpciWC } from "./vendorTypes";
-import * as moment from "moment";
 declare global {
 
     interface ModelD {
@@ -43,7 +42,8 @@ declare global {
     type mainMethodMap = {
         dbQuery: (args: DbmgmtQueryArgs) => DbmgmtQueryArgs["ret"];
     } & Partial<PlatformFunctions>;
-    type rendererMethodMap = {}
+    type rendererMethodMap = {
+    };
 
     type IpciMain = IpciM<mainMethodMap, rendererMethodMap>;
     type IpciRenderer = IpciR<rendererMethodMap, mainMethodMap>;
@@ -62,7 +62,7 @@ declare global {
             autoDownload: boolean;
         },
         vueApp: string;
-        locale:string;
+        locale: string;
     }
 }
 import Dbmgmt from "./Dbmgmt";
