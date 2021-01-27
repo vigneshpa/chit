@@ -89,13 +89,13 @@ export default Vue.extend({
         "Name",
         "Phone",
         "Address",
-        "Created At",
+        "Joined At",
       ] as string[],
       keys: {
         Name: "name",
         Phone: "phone",
         Address: "address",
-        "Created At": "createdAt",
+        "Joined At": "createdAt",
       } as { [key: string]: string },
       formatter: {
         createdAt(date) {

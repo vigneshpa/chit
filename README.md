@@ -66,6 +66,13 @@ npx electron .
 >WARNING:  
 Disable syncronise in connection options to prevent any dataloss in production updates.
 
+### Building the Express App
+To build the express app just cd into the chit-web directory and run
+```
+npm run build
+```
+This will generate a Express package in the dist directory which you can deploy on your nodeJS server.
+
 ### Building the Electron App
 
 To compile the project just cd to chit-electron and run
@@ -84,9 +91,3 @@ Finally to build the installers run
 ```
 npm run bundle
 ```
-### Building the Express App
-To build the express app just cd into the chit-web directory and run
-```
-npm run build
-```
-This will generate a Express package in the dist directory which you can deploy on your server
