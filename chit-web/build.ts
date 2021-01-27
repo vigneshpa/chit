@@ -53,6 +53,10 @@ const build = async () => {
         bt.logi("Copying configuration files");
         await bt.copy('./src/prod.env', buildDir+'/.env');
 
+        //Copying users info
+        bt.logi("Copying users info");
+        await bt.copy("./src/users.prod.json", buildDir+"/users.json");
+
         //Modifiying package.json for production
         let pkg = JSON.parse((await readFile("./package.json")).toString());
         pkg.main = "server.js";

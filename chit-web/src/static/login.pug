@@ -41,6 +41,12 @@ html(lang="en")
     footer#footer
       |Chit Management System
     script.
+      fetch("/api/login").then(res=>res.text().then(value=>{
+        if( res.status !== 401 && JSON.parse(value) === "LOGGED_IN"){
+          window.location.href = "/app";
+        }
+      }));
+    script.
       let form = document.getElementsByTagName("form")[0];
       form.onsubmit = function (e) {
       e.preventDefault();

@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import * as multer from "multer";
 import { Dbmgmt } from "chitcore";
+import { Client } from "pg";
+import * as pgFormat from "pg-format";
+import { readFileSync } from 'fs';
+const users: { [user: string]: string } = JSON.parse((readFileSync("users.json")).toString());
 const upload = multer();
 const router = Router();
 
@@ -10,7 +14,7 @@ router.post("/login", upload.none(), function (req, res, next) {
     return;
   }
 
-  if (req.body.user === "admin" && req.body.pwd === "admin") {
+  if (users.hasOwnProperty(req.body.user) && req.body.pwd === users[req.body.user]) {
     req.session.user = {
       loggedIn: true,
       name: "admin"
@@ -37,38 +41,12 @@ router.get("/logout", function (req, res, next) {
     res.status(200).json("LOGGED_OUT");
   });
 });
-let isPostgress = (process.env.DATABASE_URL) ? true : false;
-const pgOptions: { type: "postgres", url: string, ssl?: { rejectUnauthorized: false } } = { type: "postgres", url: process.env.DATABASE_URL };
-if (process.env?.DISABLE_PG_SSL !== "true") {
-  pgOptions.ssl = { rejectUnauthorized: false };
-}
-const pgdbmgmt = new Dbmgmt(pgOptions);
-let pgconnected = false;
-let pgConnecting = false;
-let connectedUsers = 0;
-async function pgconnect() {
-  if (!(pgconnected || pgConnecting)) {
-    pgConnecting = true;
-    await pgdbmgmt.connect();
-    pgConnecting = false;
-    pgconnected = true;
-  }
-  connectedUsers++;
-  return;
-}
-async function pgclose() {
-  if (pgconnected && connectedUsers <= 1 && !pgConnecting) {
-    await pgdbmgmt.close();
-    pgconnected = false;
-  }
-  connectedUsers--;
-  return;
-}
 
+// Virtual Dbmgmt WebSocket Connection
 router.ws("/dbmgmt", async function (ws, req) {
 
   //Auth
-  if (!req.session.user?.loggedIn) return ws.close();
+  if (!req.session.user?.loggedIn) return ws.close(401, "You are not allowed here");
 
   // Ping Timer
   const pingInt = setInterval(() => {
@@ -79,30 +57,42 @@ router.ws("/dbmgmt", async function (ws, req) {
 
 
   const user = req.session.user.name;
-  let dbmgmt: Dbmgmt;
-
 
   //STARTING DELAYED query WARPER
   let connected: boolean = false;
   const afterconnectFunctions: (() => void)[] = [];
   const executeAfterconnect = () => afterconnectFunctions.forEach(fn => fn());
 
-  // Opening connection
-  if (isPostgress) {
-    dbmgmt = pgdbmgmt;
-    (async function () {
-      await pgconnect();
-      connected = true;
-      executeAfterconnect();
-    })();
-  } else {
-    dbmgmt = new Dbmgmt({ type: "sqlite", database: "./" + user + ".db" });
-    (async function () {
-      await dbmgmt.connect();
-      connected = true;
-      executeAfterconnect();
-    })();
-  }
+  // Opening Database Connection
+  const options: DbmgmtOptions = (process.env.DATABASE_URL) ?
+    {
+      type: "postgres",
+      name: (Math.random()*(10**10))+"",
+      url: process.env.DATABASE_URL,
+      ssl: ((process.env?.DISABLE_PG_SSL !== "true") ?
+        { rejectUnauthorized: false }
+        : null),
+      schema: user
+    }
+    : { type: "sqlite", database: "./" + user + ".db" };
+  const dbmgmt = new Dbmgmt(options);
+  (async function () {
+    if (options.type == "postgres") {
+      if (options.schema) {
+        console.log("Checking existance of ", user, " in DB");
+        const client = new Client({ ssl: options.ssl, connectionString: options.url });
+        await client.connect();
+        await client.query("CREATE SCHEMA IF NOT EXISTS " + pgFormat(options.schema) + ";");
+        await client.end();
+      }
+    }
+    await dbmgmt.connect();
+    connected = true;
+    executeAfterconnect();
+  })();
+
+
+  //Handeling Queries before DB connection
   const delayedQuery = (args: DbmgmtQueryArgs) => {
     return new Promise((resolve: (value: DbmgmtQueryArgs["ret"]) => void, reject) => {
       if (connected) {
@@ -114,13 +104,12 @@ router.ws("/dbmgmt", async function (ws, req) {
   }
 
 
-
-
   // Binding listeners
   ws.on("message", async data => {
     if (typeof data !== "string") return;
     const args = JSON.parse(data);
     let response: DbmgmtQueryArgs["ret"];
+    console.log("DBMGMT: ", { data, connected });
     if (connected) {
       response = await dbmgmt.runQuery(args);
     } else response = await delayedQuery(args);
@@ -130,11 +119,7 @@ router.ws("/dbmgmt", async function (ws, req) {
   // Closing connection
   ws.on("close", async code => {
     clearInterval(pingInt);
-    if (isPostgress) {
-      await pgclose();
-    } else {
-      await dbmgmt.close();
-    }
+    await dbmgmt.close();
     connected = false;
   });
 });
