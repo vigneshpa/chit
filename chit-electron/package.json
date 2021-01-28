@@ -6,6 +6,7 @@
   "scripts": {
     "start": "electron .",
     "watch": "cp ./dev.env ./app/.env && tsc -w",
+    "dev": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;(cp ./dev.env ./app/.env && tsc -w) & npx electron . & wait",
     "build": "ts-node build.ts",
     "dist": "electron-builder --dir --publish never",
     "bundle": "electron-builder --publish never",
@@ -28,7 +29,8 @@
   "homepage": "https://github.com/vigneshpa/chit#readme",
   "devDependencies": {
     "electron": "^11.2.1",
-    "electron-builder": "^22.9.1"
+    "electron-builder": "^22.9.1",
+    "electron-reload": "^1.5.0"
   },
   "dependencies": {
     "chitcore": "file:../chit-core",

@@ -4,6 +4,7 @@ html(lang="en")
     meta(charset="UTF-8")
     meta(name="google-site-verification" content="kfjS61Hat28JQl8ZPz0VU1a6jewKjbXJEnBKryTmfxI")
     link(rel="stylesheet" href="/stylesheets/mini.min.css")
+    link(rel="stylesheet" href="/stylesheets/mini.vars.css")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Chit
   body
@@ -14,45 +15,56 @@ html(lang="en")
         span.icon-user
         |Login
     .container
-      .row.cols-lg-9.cols-sm-12
-        .card.fluid
-          .section.title
-            h3 What is Chit App?  🤨
-          .section
-            p.
-              Chit App is a business software for Chit Funds.
-            blockquote(cite="https://en.wikipedia.org/wiki/Chit_fund").
-              A chit fund is a type of rotating savings and credit association system.
-              Chit fund schemes may be organized by financial institutions, or informally among friends, relatives, or neighbours.
-              In some variations of chit funds, the savings are for a specific purpose. Chit funds are often microfinance organizations.
-        .card.fluid
-          .section.title
-            h3 How much does it cost?  💸
-          .section
-            h4 Ans: Nothing
-            p
-              | Chit App is not just free, it's more than that.
-              br
-              b Chit App is a OpenSoruce Software
-              |  and Available under GPL-3.0 Licence
-              | If you have any suggestions or need to report a bug, feel free to create an issue in 
-              a(href="https://github.com/vigneshpa/chit/issues") GitHub 
-              | issues page.
-            blockquote(cite="Linus Torvalds").
-              In real open source, you have the right to control your own destiny.
-        .card.fluid
-          .section.title
-            h3 Where can I get this App?
-          .section
-            p
-              | You can Download this app in 
-              a(href="/download.html") Downloads 
-              | page or in our 
-              a(href="https://github.com/vigneshpa/chit/releases") GitHub 
-              | releases page. 
-              | Open the assets and download the version for your system.
-              | You can also host a web version on your server.
-              | If this page is delivered your server, login to open your app
+      .row
+        .col-sm-12.col-lg-9
+          .card.fluid
+            .section.title
+              h3 What is Chit App?  🤨
+            .section
+              p.
+                Chit App is a business software for Chit Funds.
+              blockquote(cite="https://en.wikipedia.org/wiki/Chit_fund").
+                A chit fund is a type of rotating savings and credit association system.
+                Chit fund schemes may be organized by financial institutions, or informally among friends, relatives, or neighbours.
+                In some variations of chit funds, the savings are for a specific purpose. Chit funds are often microfinance organizations.
+          .card.fluid
+            .section.title
+              h3 How much does it cost?  💸
+            .section
+              h4 Ans: Nothing
+              p
+                | Chit App is not just free, it's more than that.
+                br
+                b Chit App is a OpenSoruce Software
+                |  and Available under GPL-3.0 Licence
+                | If you have any suggestions or need to report a bug, feel free to create an issue in 
+                a(href="https://github.com/vigneshpa/chit/issues") GitHub 
+                | issues page.
+              blockquote(cite="Linus Torvalds").
+                In real open source, you have the right to control your own destiny.
+          .card.fluid
+            .section.title
+              h3 Where can I get this App?
+            .section
+              p
+                | You can Download this app in 
+                a(href="/download.html") Downloads 
+                | page or in our 
+                a(href="https://github.com/vigneshpa/chit/releases") GitHub 
+                | releases page. 
+                | Open the assets and download the version for your system.
+                | You can also host a web version on your server.
+                | If this page is delivered your server, login to open your app
+        .col-sm-12.col-lg-3
+          .card.fluid
+            .section.title
+              h3 Thanks to
+            .section.row.cols-lg-4.cols-sm-3
+              figure
+                img(src="/images/vuejs.png", alt="Vue")
+              figure
+                img(src="/images/vuejs.png", alt="Vue")
+              
     footer
       | Chit Management Systems | 
       a(href="https://github.com/vigneshpa/chit")

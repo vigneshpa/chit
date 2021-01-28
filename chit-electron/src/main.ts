@@ -22,7 +22,7 @@ console.log("\n\n");
 
 process.on('unhandledRejection', (reason, p) => {
   console.error('\n\nAPP CRASH:\nUnhandled Promise Rejection at:', p, 'reason:', reason);
-  process.exit(1);
+  //process.exit(1);
 });
 console.log("Loading configurations and environment variables . . .");
 import config from "./config";
@@ -38,10 +38,21 @@ import { writeFile } from "fs";
 
 import { Dbmgmt, Ipchost } from "chitcore";
 import IpciMain from "./IpciMain";
+
+
 const dbFile: string = config.databaseFile?.isCustom ? config.databaseFile.location : join(app.getPath("userData"), "/main.db");
 const dbmgmt: Dbmgmt = new Dbmgmt({ type: "sqlite", database: dbFile });
 const ipciMain = new IpciMain(ipcMain);
 
+
+//Hot reloading
+
+if(config.isDevelopement){
+  require('electron-reload')([__dirname, __dirname+"/"+config.vueApp]);
+}
+
+
+//Platform Functions
 const pf: pfPromisified = {
   showMessageBox: async (options) => { return (await dialog.showMessageBox(options)).response },
   showOpenDialog: (options) => dialog.showOpenDialog(options),
@@ -90,6 +101,8 @@ if (config.theme === "system") {
 }
 console.log("Darkmode:", darkmode);
 
+
+//On ready
 app.on("ready", async launchInfo => {
   console.log("Got ready signal");
   await update();
@@ -113,6 +126,7 @@ app.on("ready", async launchInfo => {
 });
 
 ipcMain.on("splash-ready", async _event => {
+  if(splash?.isDestroyed())return;
   console.log("Splash is ready");
   splash?.webContents.send("log", "Connecting to the database");
   await dbmgmt.connect()

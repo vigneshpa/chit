@@ -42,8 +42,6 @@ try {
     global.config = JSON.parse((readFileSync(configPath)).toString());
 }
 global.config.isDevelopement = isDevelopement;
-if (isDevelopement)
-    global.config.vueApp = "./chit-renderer/app/renderer";
 global.config.configPath = configPath;
 console.log(global.config);
 
