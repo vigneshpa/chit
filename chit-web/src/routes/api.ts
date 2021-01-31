@@ -38,7 +38,7 @@ router.get("/login", (req, res, next) => res.status(200).json("LOGGED_IN"));
 router.get("/logout", function (req, res, next) {
   req.session.destroy((err) => {
     if (err) throw err;
-    res.status(200).json("LOGGED_OUT");
+    res.redirect(303, "/");
   });
 });
 
@@ -67,7 +67,7 @@ router.ws("/dbmgmt", async function (ws, req) {
   const options: DbmgmtOptions = (process.env.DATABASE_URL) ?
     {
       type: "postgres",
-      name: (Math.random()*(10**10))+"",
+      name: (Math.random() * (10 ** 10)) + "",
       url: process.env.DATABASE_URL,
       ssl: ((process.env?.DISABLE_PG_SSL !== "true") ?
         { rejectUnauthorized: false }
