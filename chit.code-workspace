@@ -22,7 +22,7 @@
 				"runOptions": {
 					"runOn": "folderOpen"
 				},
-				"command": "gnome-terminal --tab -e 'sh -c \"cd chit-core; npm run watch;exec zsh\"' --tab -e 'sh -c \"cd chit-renderer; npm run watch;exec zsh\"'"
+				"command": "gnome-terminal --tab -e 'sh -c \"cd chit-core; npm run watch\"' --tab -e 'sh -c \"cd chit-renderer; npm run watch\"' --tab -e 'sh -c \"cd chit-web; npm run dev;\"' "
 			}
 		]
 	},
