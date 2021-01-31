@@ -14,6 +14,10 @@ Everyone is permited to use and distribute copies of this software
 - Beautiful Google Material Design UI
 
 ## Involving in developement
+>This is just information to developers who want to modify this software for their needs.
+Suggestions and bug reports are welcomed but you can't contribute to this project.
+If you want to do so just fork it and you must follow the GPL-3.0 conditions.
+
 This software is completely written in TypeScripit ( with some vanilla JS) using [Vue](https://vuejs.org) ( with [vuetify](https://vuetifyjs.com) ), [Electron](https://electronjs.org/) and [Express](https://expressjs.com/) frameworks for the desktop app and web app.
 
 [Electron Builder](https://www.electron.build) is used in this software to build the cross-platform executables. [TypeORM](https://typeorm.io/) Object Relation Modeller is used to model and store data.
