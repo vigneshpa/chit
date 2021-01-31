@@ -33,13 +33,16 @@
     "@types/express": "^4.17.9",
     "@types/express-session": "^1.17.3",
     "@types/express-ws": "^3.0.0",
+    "@types/localtunnel": "^2.0.0",
     "@types/morgan": "^1.9.2",
     "@types/multer": "^1.4.5",
     "@types/node": "^14.14.14",
+    "@types/nodemon": "^1.19.0",
     "@types/sqlite3": "^3.1.6",
     "@types/uuid": "^8.3.0",
     "@types/ws": "^7.4.0",
     "express-pug-static": "^1.0.0",
+    "localtunnel": "^2.0.1",
     "rollup": "^2.36.1",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.0.3"
@@ -48,7 +51,7 @@
     "start": "cd dist && DATABASE_URL='postgres://postgres:podf@localhost:5432/chit' DISABLE_PG_SSL='true' node server.js",
     "start:sqlite": "cd dist && node server.js",
     "build": "ts-node build.ts",
-    "dev": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & (cd dev && (nodemon server.js)) & wait",
+    "dev": "ts-node dev.ts",
     "dev:browser": "trap \"exit\" INT TERM ERR;trap \"kill 0\" EXIT;tsc -w & (cd dev && (nodemon server.js)) & npx rollup -c -w & wait"
   },
   "keywords": [
