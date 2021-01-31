@@ -7,6 +7,7 @@ declare global {
     interface Window {
         ipcirenderer: IpciRenderer;
         config: Configuration;
+        isBrowser:boolean;
     }
 }
 window.config = config;
@@ -23,5 +24,6 @@ const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
 ipchost.init();
 ipciRenderer.init({});
 window.ipcirenderer = ipciRenderer;
+window.isBrowser = true;
 
 console.log("Finished loading browser support libraries ");
