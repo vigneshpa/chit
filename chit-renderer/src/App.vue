@@ -1,38 +1,52 @@
 <template lang="pug">
 v-app#1_app
+  v-dialog(v-model="confirmO.visible" max-width="500")
+    v-card
+      v-card-title {{confirmO.title}}
+      v-card-text {{confirmO.message}}
+      v-card-actions
+        v-spacer
+        v-btn(@click="confirmO.handle(false)") Cancel
+        v-btn(@click="confirmO.handle(true)" color="primary") OK
+
   v-dialog(v-model="form.visible" max-width="500")
     chit-form(v-if="form.visible" :type="form.type" :close="()=>form.visible = false")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
-      router-link(
-          v-for="item, index in this.$router.options.routes",
-          v-bind:key="index",
-          :to="item.path",
-          v-slot="{ href, navigate, isActive}"
-          )
-        v-list-item(
-          :active="isActive",
-          :href="href",
-          @click="navigate;drawer = null"
+      v-list-item(
+        v-for="item in $router.options.routes",
+        v-bind:key="item.path",
+        :to="item.path",
+        active-class="router-link-active",
+        exact
         )
-          v-list-item-action(v-if="item.meta.icon")
-            v-icon {{ item.meta.icon }}
-          v-list-item-content
-            v-list-item-title {{ item.name }}
+        v-list-item-action(v-if="item.meta.icon")
+          v-icon {{ item.meta.icon }}
+        v-list-item-content
+          v-list-item-title {{ item.name }}
+      v-list-item(
+        @click="confim('Are you sure want to logout?', 'Logout').then(val => {if(val)window.location.href = '/api/logout';})"
+        v-if="isBrowser"
+        bottom
+        )
+        v-list-item-action
+          v-icon mdi-power
+        v-list-item-content
+          v-list-item-title Log Out
 
   v-app-bar(
     app,
     clipped-left,
     color="blue",
     dark
-  )
+    )
     v-progress-linear(
       :active="appLoading"
       indeterminate
       bottom
       absolute
       color="white"
-    )
+      )
     v-app-bar-nav-icon(@click.stop="drawer = !drawer")
     v-toolbar-title {{ pageTitle }}
     v-spacer
@@ -74,7 +88,7 @@ export default Vue.extend({
     source: String,
   },
   data: () => ({
-    drawer: null as boolean | null,
+    drawer: true as boolean,
     config: window.config,
     addList: [
       {
@@ -95,6 +109,16 @@ export default Vue.extend({
       type: "" as FormType,
       visible: false,
     },
+    isBrowser: window?.isBrowser,
+    confirmO: {
+      visible: false as boolean,
+      title: "Confirm" as string,
+      message: "" as string,
+      handle(value: boolean) {
+        this.visible = false;
+      },
+    },
+    window
   }),
   computed: {
     pageTitle() {
@@ -122,6 +146,17 @@ export default Vue.extend({
       this.form.type = form;
       this.form.visible = true;
     },
+    confim(message: string, title?: string) {
+      return new Promise( (resolve:(value:boolean)=>void) => {
+        this.confirmO.message = message;
+        this.confirmO.title = title || "Confirm";
+        this.confirmO.handle = (value)=>{
+          this.confirmO.visible = false;
+          resolve(value);
+        };
+        this.confirmO.visible = true;
+      });
+    },
   },
   components: {
     "chit-form": () => import("@/components/chit-form.vue"),
@@ -143,5 +178,8 @@ console.log("Sent ping to the renderer.");
 <style>
 html {
   overflow: auto;
+}
+.v-navigation-drawer {
+  will-change: initial;
 }
 </style>
