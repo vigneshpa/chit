@@ -3,9 +3,6 @@
   "version": "0.1.1",
   "description": "Chit MonoRepo",
   "main": "null",
-  "scripts": {
-    "onstart": "gnome-terminal --tab -e 'sh -c \"cd chit-core; npm run watch;exec zsh\"' --tab -e 'sh -c \"cd chit-renderer; npm run watch;exec zsh\"'"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vigneshpa/chit.git"
