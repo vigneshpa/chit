@@ -4,7 +4,6 @@
   "description": "## About this Software",
   "main": "dist/server.js",
   "dependencies": {
-    "@types/pg-format": "^1.0.1",
     "chitcore": "file:../chit-core",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
@@ -22,6 +21,7 @@
     "pug": "^3.0.0"
   },
   "devDependencies": {
+    "@types/pg-format": "^1.0.1",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.1",
