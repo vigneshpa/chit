@@ -16,27 +16,9 @@ const build = async () => {
         bt.logi("Cleaning current build");
         await bt.clean(buildDir);
 
-        //Building renderer
-        bt.log("Building renderer");
-        if (!process.argv.includes("--skip-renderer"))
-            await bt.exec("npx", ["vue-cli-service", "build"], { cwd: "../chit-renderer" });
-
-        //Copying Renderer
-        bt.logi("Copying renderer files");
-        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/app");
-
-        // Building frontend JS
-        bt.logi("Building browser support files");
-        await bt.exec('npx', ['rollup', '-c']);
-
-        // Copy front-end files
-        bt.logi("Copying front-end files")
-        await bt.copy('./src/public', buildDir+'/public');
-        await bt.copy('./src/views', buildDir+'/views');
-
-        //Building pug static files
-        bt.logi("Building pug static files");
-        await bt.exec("pug", ["./src/static", "-o", buildDir+"/public"]);
+        // Copy config files
+        bt.logi("Copying configuration files");
+        await bt.copy('./src/prod.env', buildDir+'/.env');
 
         //Building chit common libraries
         bt.logi("Building common libraries");
@@ -49,9 +31,33 @@ const build = async () => {
             cwd:".."
         }, ["chit-core/lib", "chit-core/package.json"]).pipe(createWriteStream(buildDir+"/chit-core.tar.gz"));
 
-        // Copy config files
-        bt.logi("Copying configuration files");
-        await bt.copy('./src/prod.env', buildDir+'/.env');
+        //Building renderer
+        bt.log("Building renderer");
+        if (!process.argv.includes("--skip-renderer"))
+            await bt.exec("npx", ["vue-cli-service", "build"], { cwd: "../chit-renderer" });
+
+        //Copying Renderer
+        bt.logi("Copying renderer files");
+        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/app");
+        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/pwa");
+
+        // Building frontend JS
+        bt.logi("Building browser support files");
+        await bt.exec('npx', ['rollup', '-c']);
+
+        //Building pwa
+        bt.logi("building pwa");
+        bt.exec("npm", ["run", "build"], {cwd:"../chit-pwa"});
+
+        //Building pug static files
+        bt.logi("Building pug static files");
+        await bt.exec("pug", ["./src/static", "-o", buildDir+"/public"]);
+
+        // Copy front-end files
+        bt.logi("Copying front-end files")
+        await bt.copy('./src/public', buildDir+'/public');
+        await bt.copy('./src/views', buildDir+'/views');
+        await bt.copy('../chit-pwa/dist', buildDir+"/public/pwa/resources");
 
         //Copying users info
         bt.logi("Copying users info");

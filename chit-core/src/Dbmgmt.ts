@@ -5,7 +5,7 @@ import Chit from "./entites/Chit";
 import User from "./entites/User";
 import GroupTemplate from "./entites/GroupTemplate";
 import ChitTemplate from "./entites/ChitTemplate";
-import { group } from "console";
+import { SqljsConnectionOptions } from "typeorm/driver/sqljs/SqljsConnectionOptions";
 declare global {
     type DbmgmtOptions = {
         type: "postgres";
@@ -18,7 +18,7 @@ declare global {
     } | {
         type: "sqlite";
         database: string;
-    };
+    } | SqljsConnectionOptions;
     type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?: boolean }
         | { query: "createUser", name: string, phone: string, address?: string, ret?: UserD }
         | { query: "checkBatch", batch: string, month: RangeOf2<1, 12>, year: number, ret?: boolean }
@@ -56,6 +56,7 @@ export default class Dbmgmt implements DbmgmtInterface {
 
     private connection?: Connection;
     async connect() {
+        createConnection({type:"sqljs"})
         this.connection = await createConnection(this.options);
         this.repos = {
             user: this.connection.getRepository(User),
