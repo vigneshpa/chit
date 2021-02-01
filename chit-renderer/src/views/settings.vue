@@ -1,77 +1,67 @@
 <template lang="pug">
-v-container#settings(fluid)
-  v-card
-    v-card-title Settings
-    v-divider
-    v-tabs(:vertical="$vuetify.breakpoint.mdAndUp")
-      v-tab
-        | Theme
-        v-icon(right) mdi-palette
-      v-tab
-        | Data
-        v-icon(right) mdi-database-lock
-      v-tab
+v-container(fluid)#settings
+ v-row
+  v-col(cols="12" xs="12" sm="12" md="6" lg="4")
+    v-card
+      v-card-title
+        v-icon(left) mdi-palette
+        | Color Scheme
+      v-divider
+      v-card-text
+        v-switch(v-model="darkModeFollowSystem", label="Follow system")
+        v-expand-transition
+          v-radio-group(
+            v-model="customColorScheme",
+            :disabled="darkModeFollowSystem",
+            v-if="!darkModeFollowSystem",
+            label="Choose color scheme"
+          )
+            v-radio(label="light", value="light")
+            v-radio(label="dark", value="dark")
+  v-col(cols="12" xs="12" sm="12" md="6" lg="4")
+    v-card
+      v-card-title
+        v-icon(left) mdi-database-lock
+        | Database file
+      v-divider
+      v-card-text
+        v-switch(
+          label="Use app's default location to store data",
+          v-model="dbFileUseAppLocation"
+        )
+        v-expand-transition
+          v-text-field(
+            :disabled="dbFileUseAppLocation",
+            readonly,
+            label="Database file Location",
+            v-model="dbFileLocation",
+            @click="chooseDBfile"
+          )
+  v-col(cols="12" xs="12" sm="12" md="6" lg="4")
+    v-card
+      v-card-title
+        v-icon(left) mdi-update
         | Updates
-        v-icon(right) mdi-update
-      v-tab
-        | Other
-      v-tab-item
-        v-card(flat)
-          v-card-title
-            v-icon(left) mdi-palette
-            | Color Scheme
-          v-card-text
-            v-switch(v-model="darkModeFollowSystem", label="Follow system")
-            v-expand-transition
-              v-radio-group(
-                v-model="customColorScheme",
-                :disabled="darkModeFollowSystem",
-                v-if="!darkModeFollowSystem",
-                label="Choose color scheme"
-              )
-                v-radio(label="light", value="light")
-                v-radio(label="dark", value="dark")
-      v-tab-item
-        v-card(flat)
-          v-card-title
-            v-icon(left) mdi-database-lock
-            | Database file
-          v-card-text
-            v-switch(
-              label="Use app's default location to store data",
-              v-model="dbFileUseAppLocation"
-            )
-            v-expand-transition
-              v-text-field(
-                :disabled="dbFileUseAppLocation",
-                readonly,
-                label="Database file Location",
-                v-model="dbFileLocation",
-                @click="chooseDBfile"
-              )
-      v-tab-item
-        v-card(flat)
-          v-card-title
-            v-icon(left) mdi-update
-            | Updates
-          v-card-text
-            v-switch(
-              label="Check for updates Automaticaly",
-              v-model="updateAutomaticCheck"
-            )
-            v-switch(
-              label="Download updates Automaticaly",
-              v-model="updateAutomaticDownload"
-            )
-      v-tab-item
-        v-card(flat)
-          v-card-title
-           | Other Settings
-          v-card-text
-            v-text-field(
-              lable = "Time Locale"
-              v-model="locale"
-            )
+      v-divider
+      v-card-text
+        v-switch(
+          label="Check for updates Automaticaly",
+          v-model="updateAutomaticCheck"
+        )
+        v-switch(
+          label="Download updates Automaticaly",
+          v-model="updateAutomaticDownload"
+        )
+  v-col(cols="12" xs="12" sm="12" md="6" lg="4")
+    v-card
+      v-card-title
+        | Other Settings
+      v-divider
+      v-card-text
+        v-text-field(
+          lable = "Time Locale"
+          v-model="locale"
+        )
           
 </template>
 <script lang="ts">
@@ -88,7 +78,7 @@ export default Vue.extend({
       dbFileLocation: this.config.databaseFile.location,
       updateAutomaticCheck: this.config.updates.autoCheck,
       updateAutomaticDownload: this.config.updates.autoDownload,
-      locale:this.config.locale
+      locale: this.config.locale,
     };
   },
   watch: {
@@ -148,7 +138,10 @@ export default Vue.extend({
         defaultPath: this.config.databaseFile.location,
         filters: [{ name: "SQLite Database", extensions: ["db"] }],
       };
-      const ret = await window.ipcirenderer.callMethod("showOpenDialog", options);
+      const ret = await window.ipcirenderer.callMethod(
+        "showOpenDialog",
+        options
+      );
       if (!ret.canceled) {
         this.dbFileLocation = ret.filePaths.join("");
       }

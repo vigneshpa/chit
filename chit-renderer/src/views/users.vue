@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid class="text-center")
+v-container(fluid)
   v-dialog(v-model="userDetails.visible")
     user-details(:uuid="userDetails.uuid")
   v-overlay(v-if="loading" absolute)
@@ -85,12 +85,7 @@ export default Vue.extend({
       page: 1 as number,
       itemsPerPage: 4 as number,
       sortBy: "Name" as string,
-      sortByKeys: [
-        "Name",
-        "Phone",
-        "Address",
-        "Joined At",
-      ] as string[],
+      sortByKeys: ["Name", "Phone", "Address", "Joined At"] as string[],
       keys: {
         Name: "name",
         Phone: "phone",

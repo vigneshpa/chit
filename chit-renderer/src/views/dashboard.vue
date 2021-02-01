@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container#dashboard(fluid)
+v-container(fluid)
   | Dashboard goes here.
   v-img(src="@/assets/logo.png", width="500")
   v-img(src="@/assets/logo.png", width="500")

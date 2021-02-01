@@ -1,5 +1,5 @@
 <template lang="pug">
-v-container(fluid class="text-center")
+  v-container(fluid)#groups
     v-overlay(v-if="loading" absolute)
       v-progress-circular(indeterminate style="padding:20px;margin:20px;")
     v-data-iterator(
@@ -20,7 +20,7 @@ v-container(fluid class="text-center")
             prepend-inner-icon="mdi-magnify",
             label="Search"
           )
-          template(if="$vuetify.breakpoint.mdAndUp")
+          template(v-if="$vuetify.breakpoint.mdAndUp")
             v-spacer
             v-select(
               v-model="sortBy",
