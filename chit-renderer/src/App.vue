@@ -57,8 +57,8 @@ v-app#1_app
 
       v-list
         v-list-item(
-          v-for="item in addList",
-          v-bind:key="item.key",
+          v-for="item, index in addList",
+          v-bind:key="index",
           @click="openForm(item.form)"
         )
           v-list-item-action(v-if="item.icon")
@@ -93,16 +93,17 @@ export default Vue.extend({
     addList: [
       {
         title: "Add User",
-        key: 1,
         form: "addUser",
         icon: "mdi-account-plus",
       },
       {
-        title: "Add Group",
-        key: 2,
+        title: "Create Group Template",
         form: "addGroup",
         icon: "mdi-account-multiple-plus",
       },
+      {
+        title: "Create a Chit",
+      }
     ],
     appLoading: true,
     form: {

@@ -63,21 +63,25 @@ v-card.mx-auto(max-width="500")
               :readonly="disableInputs",
               @keyup.enter="window.document.getElementById('add').click()"
             )
+            v-checkbox(
+              v-model="paidInitial"
+              label="Paid initial amount"
+            )
           v-divider
           v-expand-transition
             v-list(
               v-if="memberModel",
               width="312",
-              style="position: absolute; z-index: 1",
+              style="position: absolute; z-index: 10",
               elevation="5"
             )
               v-list-item(
-                v-for="(field, key) in memberModel",
+                v-for="(key, name) in memberModelKeys",
                 :key="key + 'userDetail'"
               )
                 v-list-item-content
-                  v-list-item-title(v-text="field")
-                  v-list-item-subtitle(v-text="key")
+                  v-list-item-title(v-text="memberModel[key]")
+                  v-list-item-subtitle(v-text="name")
               v-list-item
                 v-btn(
                   :disabled="!memberModel",
@@ -93,32 +97,18 @@ v-card.mx-auto(max-width="500")
             )
               | Add
               v-icon mdi-plus
-        div(style="height: 304px; overflow: auto")
-          v-subheader Members of the new group:
-          v-expand-transition
-            v-list
-              v-fab-transition(group)
-                v-list-item(
-                  v-for="member in members",
-                  :key="member.info.uuid + 'memberDetail'",
-                  @click="empty"
-                )
-                  v-list-item-content(:title="member.info.phone + '\\n' + member.info.address") {{ member.info.name }}
-                  v-chip(v-text="member.noOfChits")
-                  v-list-item-action(
-                    @click="removeMember(member)",
-                    v-if="!disableInputs"
-                  )
-                    v-icon mdi-close-circle
+        v-expand-transition
+          v-card(style="max-height: 304px; overflow: auto")
+            v-subheader Members of the new group template:
+            members-list(:members="members" :disableInputs="disableInputs" :removeMember="removeMember") 
         span.caption.grey--text.text--darken-1
-          | Please add members for this group. Total no of chits must be 20.
+          | Please add members for this group template. Total no of chits must be less than 20.
           br
           | {{ totalChits }} alloted {{ 20 - totalChits }} remaining.
       v-progress-linear(:value="totalChits * 5")
     v-window-item(:value="4")
       v-card-text
-        span The details of the new Group are:
-        br
+        span The details of the new Group Template are:
         br
         v-list
           v-subheader Month
@@ -132,17 +122,7 @@ v-card.mx-auto(max-width="500")
               v-icon mdi-alphabetical-variant
             v-list-item-title {{ batch }}
           v-subheader Members
-          v-list-group(prepend-icon="mdi-account-group", no-action)
-            template(v-slot:activator)
-              v-list-item-content
-                v-list-item-title {{ members.length }} Members
-            v-list-item(
-              v-for="member in members",
-              :key="member.info.uuid + 'memberFinal'",
-              @click="empty"
-            )
-              v-list-item-content(v-text="member.info.name" :title="member.info.phone + '\\n' + member.info.address")
-              v-chip(v-text="member.noOfChits")
+          members-list(:members="members")
         br
         span Please check the details and click finish.
   v-divider
@@ -157,7 +137,7 @@ v-card.mx-auto(max-width="500")
       v-if="step !== 4",
       color="primary",
       @click="stepForward",
-      :disabled="disableButtons || (step === 3 && totalChits !== 20)"
+      :disabled="disableButtons"
     ) Next
     v-btn(
       v-if="step === 4",
@@ -194,6 +174,11 @@ export default Vue.extend({
       success: false as boolean,
       skipValidation: false as boolean,
       window: window,
+      paidInitial:false as boolean,
+      memberModelKeys:{
+        "Phone":"phone",
+        "Address":"address"
+      } as {[name:string]:keyof UserD}
     };
   },
   computed: {
@@ -207,7 +192,7 @@ export default Vue.extend({
     currentTitle() {
       switch (this.step) {
         case 1:
-          return "Create Group";
+          return "Create Group Template";
         case 2:
           return "Batch Name";
         case 3:
@@ -265,6 +250,7 @@ export default Vue.extend({
         this.members.push({
           info: removed[0],
           noOfChits: parseFloat(this.noOfChits),
+          paidInitial:this.paidInitial
         });
         this.memberModel = null;
         this.noOfChits = null;
@@ -344,8 +330,6 @@ export default Vue.extend({
           }
           break;
         case 3:
-          if (!this.members) return fn(false);
-          if (this.totalChits !== 20) return fn(false);
           return fn(true);
           break;
       }
@@ -363,10 +347,11 @@ export default Vue.extend({
         finalMembers.push({
           uuid: member.info.uuid,
           noOfChits: member.noOfChits,
+          paidInitial:member.paidInitial
         });
       });
       const data = await this.window.ipcirenderer.callMethod("dbQuery", {
-        query: "createGroup",
+        query: "createGroupTemplate",
         month: this.month,
         batch: this.batch,
         year: this.year,
@@ -374,9 +359,9 @@ export default Vue.extend({
       });
       if (data) {
         window.ipcirenderer.callMethod("showMessageBox", {
-          message: "Group created SUCCESSFULLY !",
+          message: "Group Template created SUCCESSFULLY !",
           type: "info",
-          title: "Created New Group!",
+          title: "Created New Group Template!",
           detail: data.toString(),
         } as ChitMessageBoxOptions);
         this.success = true;
@@ -392,7 +377,9 @@ export default Vue.extend({
       }
     },
   },
-  components: {},
+  components: {
+    "members-list":()=>import("@/components/members-list.vue")
+  },
   mounted() {
     window.document.title = "Create Group";
   },
@@ -402,5 +389,6 @@ export default Vue.extend({
 interface members {
   info: UserD;
   noOfChits: number;
+  paidInitial:boolean;
 }
 </script>

@@ -3,6 +3,7 @@ v-container(fluid class="text-center")
     v-overlay(v-if="loading" absolute)
       v-progress-circular(indeterminate style="padding:20px;margin:20px;")
     v-data-iterator(
+      v-if="!loading",
       :items="groups",
       :search="search",
       :sort-by="keys[sortBy]",

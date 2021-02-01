@@ -12,5 +12,4 @@ nodemon({
     ignore: ["./src/*.js"]
 });
 
-import * as lt from "localtunnel";
-lt(3000, {subdomain:"chitapp"});
+bt.exec("npx", ["lt", "--port", "3000", "--subdomain", "chitapp"]);

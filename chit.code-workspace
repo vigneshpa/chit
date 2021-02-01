@@ -12,6 +12,7 @@
 		"files.exclude": {
 			"**/node_modules": true
 		},
+		"editor.tabSize": 2,
 	},
 	"tasks": {
 		"version": "2.0.0",

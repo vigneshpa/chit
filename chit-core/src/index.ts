@@ -29,7 +29,7 @@ declare global {
          * THIS IS ONLY FOR CREATION OF GROUP
          * array of members' uuid(s) and noOfChits
          */
-        members?: { uuid: string; noOfChits: number; }[];
+        members?: { uuid: string; noOfChits: number; paidInitial:boolean; }[];
     }
     interface PaymentD extends ModelD {
         ispaid: boolean;

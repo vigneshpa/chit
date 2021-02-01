@@ -12,16 +12,16 @@ export default class Chit extends Model {
 
   @JoinColumn()
   @ManyToOne(type => Group, Group => Group.chits)
-  group: Group;
-
+  readonly group: Group;
+/* 
   @Column("integer", {nullable:false})
   readonly month: RangeOf2<1, 12>;
 
   @Column({nullable:false})
-  readonly year: number;
+  readonly year: number; */
 
   @Column({ nullable: false })
-  noOfChits: number;
+  readonly noOfChits: number;
 
   @OneToMany(type => Payment, Payment => Payment.chit, { cascade: true })
   readonly payments: Payment[];

@@ -3,6 +3,9 @@ import Payment from "./entites/Payment";
 import Group from "./entites/Group";
 import Chit from "./entites/Chit";
 import User from "./entites/User";
+import GroupTemplate from "./entites/GroupTemplate";
+import ChitTemplate from "./entites/ChitTemplate";
+import { group } from "console";
 declare global {
     type DbmgmtOptions = {
         type: "postgres";
@@ -19,7 +22,8 @@ declare global {
     type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?: boolean }
         | { query: "createUser", name: string, phone: string, address?: string, ret?: UserD }
         | { query: "checkBatch", batch: string, month: RangeOf2<1, 12>, year: number, ret?: boolean }
-        | { query: "createGroup", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number }[], ret?: GroupD }
+        | { query: "createGroup", grouptUUID:string, ret?: GroupD }
+        | { query: "createGroupTemplate", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number, paidInitial:boolean }[], ret?: GroupTemplate }
         | { query: "listGroups", ret?: GroupD[] }
         | { query: "listUsers", ret?: UserD[] }
         | { query: "userDetails", uuid: string, ret?: UserD };
@@ -35,10 +39,12 @@ interface ORMRepos {
     chit: Repository<Chit>;
     group: Repository<Group>;
     payment: Repository<Payment>;
+    groupTemplate:Repository<GroupTemplate>;
+    chitTemplate:Repository<ChitTemplate>;
     [entity: string]: Repository<any>;
 }
 export default class Dbmgmt implements DbmgmtInterface {
-    static readonly entities = [User, Chit, Group, Payment];
+    static readonly entities = [User, Chit, Group, Payment, ChitTemplate, GroupTemplate];
     private options: ConnectionOptions;
     constructor(options: DbmgmtOptions) {
         this.options = {
@@ -56,6 +62,8 @@ export default class Dbmgmt implements DbmgmtInterface {
             chit: this.connection.getRepository(Chit),
             group: this.connection.getRepository(Group),
             payment: this.connection.getRepository(Payment),
+            groupTemplate:this.connection.getRepository(GroupTemplate),
+            chitTemplate:this.connection.getRepository(ChitTemplate),
         }
         console.log("Database connection opened" + this.options?.name?" for connection id "+this.options.name:"" );
     }
@@ -100,12 +108,14 @@ export default class Dbmgmt implements DbmgmtInterface {
 
             //async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }>
             case "createGroup": {
-                const { year, month, batch, members } = args;
-                let result: GroupD = null;
-                let gName: string = `${year}-${month}-${batch}`;
+                const { grouptUUID } = args;
+                const groupt = await this.repos.groupTemplate.findOne({uuid:grouptUUID}, {relations:["ChitTemplate", "User"]});
+                if(groupt)throw new Error("Invalid group");
+                const {year, month, batch} = groupt;
+                const gName: string = `${year}-${month}-${batch}`;
                 let total = 0;
-                for (const member of members) {
-                    total += member.noOfChits;
+                for (const chit of groupt.chits) {
+                    total += chit.noOfChits;
                 }
                 if (total !== 20) {
                     throw new Error("Total number of chits is not equal to 20");
@@ -113,12 +123,12 @@ export default class Dbmgmt implements DbmgmtInterface {
 
                 //Creating group Object
                 const group = new Group({ name: gName, batch, month, year, chits: [] });
-                for (const member of members) {
-                    const user = await this.repos.user.findOne({ uuid: member.uuid });
-                    if (!user) throw new Error("Invalid member got from the renderer");
-                    const chit = new Chit({ user, group, noOfChits: member.noOfChits, payments: [], month, year, });
+                for (const chitt of groupt.chits) {
+                    const user = chitt.user;
+                    if (!user) throw new Error("Invalid member got from the template");
+                    const chit = new Chit({ user, group, noOfChits: chitt.noOfChits, payments: []});
                     for (let i = 1; i <= 20; i++) {
-                        chit.payments.push(new Payment({ chit, ispaid: false, imonth: i as RangeOf2<1, 20> }));
+                        chit.payments.push(new Payment({ chit, ispaid: (chitt.paidInitial && i===1), imonth: i as RangeOf2<1, 20> }));
                     }
                     group.chits.push(chit);
                 }
@@ -128,7 +138,7 @@ export default class Dbmgmt implements DbmgmtInterface {
                     await manager.save(group);
                 });
 
-                result = await this.repos.group.findOne({ name: gName });
+                const result = await this.repos.group.findOne({ name: gName });
                 if (!result) throw new Error("Created group does not exists in database.");
                 return result;
             }
@@ -147,6 +157,29 @@ export default class Dbmgmt implements DbmgmtInterface {
                 const uuid: string = args.uuid;
                 let userDetails = await this.repos.user.findOne({ uuid });
                 return userDetails;
+            }
+
+            case "createGroupTemplate":{
+                const { year, month, batch, members } = args;
+                let result: GroupTemplate = null;
+
+                //Creating group Object
+                const groupt = new GroupTemplate({ batch, month, year, chits: [] });
+                for (const member of members) {
+                    const user = await this.repos.user.findOne({ uuid: member.uuid });
+                    if (!user) throw new Error("Invalid member got for creation of Group Template");
+                    const chit = new ChitTemplate({ user, groupt, noOfChits: member.noOfChits, month, year, paidInitial:member.paidInitial });
+                    groupt.chits.push(chit);
+                }
+
+                //Starting transaction
+                await this.repos.groupTemplate.manager.transaction(async manager => {
+                    await manager.save(groupt);
+                });
+
+                result = await this.repos.groupTemplate.findOne({batch, month, year});
+                if (!result) throw new Error("Created group does not exists in database.");
+                return result;
             }
         }
     }

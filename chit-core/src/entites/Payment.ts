@@ -11,7 +11,7 @@ export default class Payment extends Model {
     @JoinColumn()
     readonly chit: Chit;
 
-    @Column("integer")
+    @Column("integer", {nullable:false})
     readonly imonth: RangeOf2<1, 20>;
 
     @Column({nullable:false})
