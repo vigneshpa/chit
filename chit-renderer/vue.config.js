@@ -12,6 +12,10 @@ module.exports = {
     },
   },
 
+  pwa:{
+    name:"Chit App"
+  },
+
   transpileDependencies: ["vuetify"],
   productionSourceMap: false,
 };
