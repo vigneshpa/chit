@@ -6,11 +6,8 @@
     "target": "ES2019",
     "module": "CommonJS",
     "lib": [
+      "ESNext",
       "ES2020",
-      "ES2020.bigint",
-      "ES2020.string",
-      "ES2020.symbol.wellknown",
-      "ES2020.Promise",
       "ES2019",
       "ES6",
       "ES5"

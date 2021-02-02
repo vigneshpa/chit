@@ -1,10 +1,5 @@
 import { Connection, ConnectionOptions, createConnection, Repository } from "typeorm";
-import Payment from "./entites/Payment";
-import Group from "./entites/Group";
-import Chit from "./entites/Chit";
-import User from "./entites/User";
-import GroupTemplate from "./entites/GroupTemplate";
-import ChitTemplate from "./entites/ChitTemplate";
+import {Payment, Group, Chit, User, GroupTemplate, ChitTemplate} from "./Entites";
 import { SqljsConnectionOptions } from "typeorm/driver/sqljs/SqljsConnectionOptions";
 declare global {
     type DbmgmtOptions = {
