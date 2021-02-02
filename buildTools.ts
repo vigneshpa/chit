@@ -31,7 +31,7 @@ function exec(
     options = options?options:{};
     options.stdio = options.stdio?options.stdio:"inherit";
     let execprs = cp.spawn(command,args, options);
-    execprs.on("exit", (code, signal) => {
+    execprs.on("close", (code, signal) => {
       let color = "dim";
       if (code === 0) {
         color = "green";
