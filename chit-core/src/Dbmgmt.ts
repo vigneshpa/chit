@@ -13,8 +13,8 @@ declare global {
         ssl?: {
             rejectUnauthorized: false
         };
-        schema:string;
-        name:string;
+        schema: string;
+        name: string;
     } | {
         type: "sqlite";
         database: string;
@@ -22,8 +22,8 @@ declare global {
     type DbmgmtQueryArgs = { query: "checkPhone", phone: string, ret?: boolean }
         | { query: "createUser", name: string, phone: string, address?: string, ret?: UserD }
         | { query: "checkBatch", batch: string, month: RangeOf2<1, 12>, year: number, ret?: boolean }
-        | { query: "createGroup", grouptUUID:string, ret?: GroupD }
-        | { query: "createGroupTemplate", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number, paidInitial:boolean }[], ret?: GroupTemplate }
+        | { query: "createGroup", grouptUUID: string, ret?: GroupD }
+        | { query: "createGroupTemplate", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number, paidInitial: boolean }[], ret?: GroupTemplate }
         | { query: "listGroups", ret?: GroupD[] }
         | { query: "listUsers", ret?: UserD[] }
         | { query: "userDetails", uuid: string, ret?: UserD };
@@ -39,8 +39,8 @@ interface ORMRepos {
     chit: Repository<Chit>;
     group: Repository<Group>;
     payment: Repository<Payment>;
-    groupTemplate:Repository<GroupTemplate>;
-    chitTemplate:Repository<ChitTemplate>;
+    groupTemplate: Repository<GroupTemplate>;
+    chitTemplate: Repository<ChitTemplate>;
     [entity: string]: Repository<any>;
 }
 export default class Dbmgmt implements DbmgmtInterface {
@@ -50,32 +50,44 @@ export default class Dbmgmt implements DbmgmtInterface {
         this.options = {
             entities: Dbmgmt.entities,
             ...options,
-            synchronize:true
+            synchronize: true
         };
     }
 
     private connection?: Connection;
+    private connected: boolean = false;
     async connect() {
-        createConnection({type:"sqljs"})
+        if(this.connected) throw new Error("Reusing old dbdmgmt object is illegal destory it");
         this.connection = await createConnection(this.options);
         this.repos = {
             user: this.connection.getRepository(User),
             chit: this.connection.getRepository(Chit),
             group: this.connection.getRepository(Group),
             payment: this.connection.getRepository(Payment),
-            groupTemplate:this.connection.getRepository(GroupTemplate),
-            chitTemplate:this.connection.getRepository(ChitTemplate),
+            groupTemplate: this.connection.getRepository(GroupTemplate),
+            chitTemplate: this.connection.getRepository(ChitTemplate),
         }
-        console.log("Database connection opened" + this.options?.name?" for connection id "+this.options.name:"" );
+        console.log("Database connection opened" + this.options?.name ? " for connection id " + this.options.name : "");
+        this.connected = true;
+        this.runOnConnect.forEach(fn=>fn());
     }
     async close() {
         if (this.connection?.isConnected) await this.connection.close();
         console.log("Database connection closed")
     }
     private repos?: ORMRepos;
+    private runOnConnect: (() => void)[] = [];
+    private delayedRunDquery(args: DbmgmtQueryArgs): ReturnType<Dbmgmt["runQuery"]> {
+        if (this.connected) {
+            return this.runQuery(args);
+        } else
+            return new Promise(resolve => this.runOnConnect.push(async () => {
+                resolve(await this.runQuery(args));
+            }));
+    }
     public async runQuery(args: DbmgmtQueryArgs): Promise<DbmgmtQueryArgs["ret"]> {
-        if (!(this.repos && this.connection)) throw new Error("Running a query before connecting is invalid");
         console.log("DBMGMT: Recived message to run query", args);
+        if (!(this.repos?.chit && this.connection && this.connected)) return await this.delayedRunDquery(args);
         switch (args.query) {
 
             case "checkPhone": {
@@ -110,9 +122,9 @@ export default class Dbmgmt implements DbmgmtInterface {
             //async createGroup(year: number, month: number, batch: string, members: { UID: number, no_of_chits: number }[]): Promise<{ success: boolean; result: createGroupFields }>
             case "createGroup": {
                 const { grouptUUID } = args;
-                const groupt = await this.repos.groupTemplate.findOne({uuid:grouptUUID}, {relations:["ChitTemplate", "User"]});
-                if(groupt)throw new Error("Invalid group");
-                const {year, month, batch} = groupt;
+                const groupt = await this.repos.groupTemplate.findOne({ uuid: grouptUUID }, { relations: ["ChitTemplate", "User"] });
+                if (groupt) throw new Error("Invalid group");
+                const { year, month, batch } = groupt;
                 const gName: string = `${year}-${month}-${batch}`;
                 let total = 0;
                 for (const chit of groupt.chits) {
@@ -127,9 +139,9 @@ export default class Dbmgmt implements DbmgmtInterface {
                 for (const chitt of groupt.chits) {
                     const user = chitt.user;
                     if (!user) throw new Error("Invalid member got from the template");
-                    const chit = new Chit({ user, group, noOfChits: chitt.noOfChits, payments: []});
+                    const chit = new Chit({ user, group, noOfChits: chitt.noOfChits, payments: [] });
                     for (let i = 1; i <= 20; i++) {
-                        chit.payments.push(new Payment({ chit, ispaid: (chitt.paidInitial && i===1), imonth: i as RangeOf2<1, 20> }));
+                        chit.payments.push(new Payment({ chit, ispaid: (chitt.paidInitial && i === 1), imonth: i as RangeOf2<1, 20> }));
                     }
                     group.chits.push(chit);
                 }
@@ -160,7 +172,7 @@ export default class Dbmgmt implements DbmgmtInterface {
                 return userDetails;
             }
 
-            case "createGroupTemplate":{
+            case "createGroupTemplate": {
                 const { year, month, batch, members } = args;
                 let result: GroupTemplate = null;
 
@@ -169,7 +181,7 @@ export default class Dbmgmt implements DbmgmtInterface {
                 for (const member of members) {
                     const user = await this.repos.user.findOne({ uuid: member.uuid });
                     if (!user) throw new Error("Invalid member got for creation of Group Template");
-                    const chit = new ChitTemplate({ user, groupt, noOfChits: member.noOfChits, month, year, paidInitial:member.paidInitial });
+                    const chit = new ChitTemplate({ user, groupt, noOfChits: member.noOfChits, month, year, paidInitial: member.paidInitial });
                     groupt.chits.push(chit);
                 }
 
@@ -178,7 +190,7 @@ export default class Dbmgmt implements DbmgmtInterface {
                     await manager.save(groupt);
                 });
 
-                result = await this.repos.groupTemplate.findOne({batch, month, year});
+                result = await this.repos.groupTemplate.findOne({ batch, month, year });
                 if (!result) throw new Error("Created group does not exists in database.");
                 return result;
             }

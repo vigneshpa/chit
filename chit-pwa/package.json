@@ -4,7 +4,7 @@
    "description": "",
    "main": "index.js",
    "scripts": {
-      "build": "npx webpack --mode production && cp -r ./node_modules/sql.js/dist ./dist/sqljs"
+      "build": "npx webpack --mode production"
    },
    "keywords": [
       "chit",
@@ -20,6 +20,8 @@
       "sql.js": "^1.4.0"
    },
    "devDependencies": {
+      "clean-webpack-plugin": "^3.0.0",
+      "copy-webpack-plugin": "^7.0.0",
       "ts-loader": "^8.0.14",
       "ts-node": "3.3.0",
       "typescript": "^4.1.3",

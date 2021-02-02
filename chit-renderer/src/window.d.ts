@@ -8,6 +8,7 @@ declare global {
         vuetify:Vuetify;
         config:Configuration;
         openExternal:(url:string)=>Void;
-        isBrowser:boolean;
+        isOnline?:boolean;
+        isPWA?:boolean;
     }
 }

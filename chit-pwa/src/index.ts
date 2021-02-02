@@ -1,13 +1,19 @@
+window.localforage =  require("localforage");
+window.initSqlJs = require("sql.js");
+
+
 import { Ipchost, Dbmgmt } from "chitcore";
 import { default as config, updateConfig } from "./config";
 import { ipciMain, ipciRenderer } from "./Ipci";
-import "localforage";
 
 declare global {
     interface Window {
         ipcirenderer: IpciRenderer;
         config: Configuration;
-        isBrowser:boolean;
+        isOnline:boolean;
+        isPWA:boolean;
+        localforage:any;
+        initSqlJs:any;
     }
 }
 window.config = config;
@@ -29,6 +35,7 @@ const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
 ipchost.init();
 ipciRenderer.init({});
 window.ipcirenderer = ipciRenderer;
-window.isBrowser = true;
+window.isOnline = false;
+window.isPWA = true;
 
 console.log("Finished loading browser support libraries ");

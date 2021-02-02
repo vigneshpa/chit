@@ -1,7 +1,9 @@
-var path = require("path");
-var webpack = require("webpack");
+const path = require("path");
+const webpack = require("webpack");
+const CopyPlugin = require("copy-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-module.exports = {
+module.exports = (config, env) => ({
   entry: "./src/index.ts",
   output: {
     filename: "browserSupport.js",
@@ -20,8 +22,14 @@ module.exports = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new webpack.NormalModuleReplacementPlugin(/typeorm$/, function (result) {
       result.request = result.request.replace(/typeorm/, "typeorm/browser");
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: "node_modules/sql.js/dist/sql-wasm.wasm", to: "./" },
+      ],
     }),
   ],
   resolve: {
@@ -31,6 +39,6 @@ module.exports = {
       tls: false,
       crypto: false,
     },
-    extensions: [".ts", ".js", ".json", ".wasm"],
+    extensions: [".ts", ".js", ".json"],
   },
-};
+});

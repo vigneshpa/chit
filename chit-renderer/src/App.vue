@@ -26,7 +26,7 @@ v-app#1_app
           v-list-item-title {{ item.name }}
       v-list-item(
         @click="confim('Are you sure want to logout?', 'Logout').then(val => {if(val)window.location.href = '/api/logout';})"
-        v-if="isBrowser"
+        v-if="isOnline"
         bottom
         )
         v-list-item-action
@@ -110,7 +110,7 @@ export default Vue.extend({
       type: "" as FormType,
       visible: false,
     },
-    isBrowser: window?.isBrowser,
+    isOnline: window?.isOnline,
     confirmO: {
       visible: false as boolean,
       title: "Confirm" as string,
