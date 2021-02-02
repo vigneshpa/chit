@@ -8,6 +8,7 @@ declare global {
         ipcirenderer: IpciRenderer;
         config: Configuration;
         isOnline:boolean;
+        isPWA:boolean;
     }
 }
 window.config = config;
@@ -25,5 +26,6 @@ ipchost.init();
 ipciRenderer.init({});
 window.ipcirenderer = ipciRenderer;
 window.isOnline = true;
+window.isPWA = false;
 
 console.log("Finished loading browser support libraries ");

@@ -3,7 +3,7 @@ import vuetify from "@/plugins/vuetify";
 import App from './App.vue';
 import router from './router';
 
-if(window?.isPWA)import("./registerServiceWorker");
+if(window?.isPWA && !window?.isOnline)import("./registerServiceWorker");
 
 Vue.config.productionTip = false;
 
