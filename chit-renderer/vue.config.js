@@ -1,3 +1,4 @@
+const { v4 } = require("uuid");
 module.exports = {
   //Test comment
   outputDir: "./app/renderer/",
@@ -15,22 +16,16 @@ module.exports = {
   pwa: {
     name: "Chit App",
     workboxOptions: {
-      additionalManifestEntries: [
-        {
-          revision: Math.floor(Math.random()*(10**10))+"",
-          url: "resources/browserSupport.js",
-        },
-        {
-          revision: Math.floor(Math.random()*(10**10))+"",
-          url: "resources/common.css",
-        },
-        {
-          revision: Math.floor(Math.random()*(10**10))+"",
-          url: "resources/sql-wasm.wasm",
-        },
-        {
-          revision: Math.floor(Math.random()*(10**10))+"",
-          url: "resources/worker.js",
+      manifestTransforms: [
+        originalManifest => {
+          const manifest = originalManifest.concat([
+            { url: "resources/browserSupport.js", revision: v4() },
+            { url: "resources/sql-wasm.wasm", revision: v4() },
+            { url: "resources/worker.js", revision: v4() },
+          ]);
+          // Optionally, set warning messages.
+          const warnings = [];
+          return { manifest, warnings };
         },
       ],
     },
