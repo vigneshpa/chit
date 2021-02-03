@@ -21,7 +21,7 @@ const pf:pfPromisified = {
     showOpenDialog: async options => prompt(options.toString()) as unknown as ChitOpenDialogReturnValue,
     updateConfig: async newConfig => updateConfig(newConfig),
 }
-const ipchost = new Ipchost(ipciMain, dbmgmt, pf, config);
+const ipchost = new Ipchost(ipciMain, dbmgmt, pf);
 ipchost.init();
 ipciRenderer.init({});
 window.ipcirenderer = ipciRenderer;

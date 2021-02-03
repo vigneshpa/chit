@@ -1,8 +1,10 @@
 export default class IpciRendererPWA implements IpciRenderer {
   handlers: IpciRenderer["handlers"];
   worker: Worker;
-  constructor(wkr: Worker) {
+  pf:pfPromisified;
+  constructor(wkr: Worker, pf:pfPromisified) {
     this.worker = wkr;
+    this.pf = pf;
   }
   init(handlers: IpciRenderer["handlers"]) {
     this.handlers = handlers;
@@ -21,7 +23,8 @@ export default class IpciRendererPWA implements IpciRenderer {
       }
     })
   };
-  async callMethod(method: keyof IpciMain["handlers"], args?: any) {
+  callMethod(method: keyof IpciMain["handlers"], args?: any) {
+    if(this.pf.hasOwnProperty(method))return this.pf[method](args);
     return new Promise((resolve:(ret:any)=>void) => {
       const methodID = Math.floor(Math.random() * (10 ** 10));
       this.worker.postMessage({

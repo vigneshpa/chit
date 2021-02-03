@@ -12,12 +12,10 @@ export default class Ipchost {
     ipc: IpciMain;
     dbmgmt: DbmgmtInterface;
     pf: pfPromisified;
-    config:Configuration
-    constructor(ipciMain: IpciMain, dbmgmt: DbmgmtInterface, pf: pfPromisified, config:Configuration) {
+    constructor(ipciMain: IpciMain, dbmgmt: DbmgmtInterface, pf: pfPromisified) {
         this.ipc = ipciMain;
         this.dbmgmt = dbmgmt;
         this.pf = pf;
-        this.config = config;
     }
     init() {
         const handler: IpciMain["handlers"] = {

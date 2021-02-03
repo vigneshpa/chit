@@ -17,9 +17,8 @@
   },
   "exclude": [
       "src/index.ts",
-      "src/Ipci.ts",
+      "src/IpciRenderer.ts",
       "src/config.ts",
-      "src/VirtualDbmgmt.ts"
   ],
   "include": [
       "src/*"
