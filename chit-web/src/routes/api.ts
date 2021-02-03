@@ -67,7 +67,7 @@ router.ws("/dbmgmt", async function (ws, req) {
   const options: DbmgmtOptions = (process.env.DATABASE_URL) ?
     {
       type: "postgres",
-      name: (Math.random() * (10 ** 10)) + "",
+      name: Math.floor(Math.random() * (10 ** 10)) + "",
       url: process.env.DATABASE_URL,
       ssl: ((process.env?.DISABLE_PG_SSL !== "true") ?
         { rejectUnauthorized: false }
