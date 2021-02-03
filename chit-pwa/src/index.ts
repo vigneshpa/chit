@@ -8,8 +8,6 @@ declare global {
         config: Configuration;
         isOnline: boolean;
         isPWA: boolean;
-        localforage: any;
-        initSqlJs: any;
     }
 }
 window.config = config;

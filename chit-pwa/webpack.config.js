@@ -40,6 +40,10 @@ module.exports = (config, env) => [
           __dirname,
           "node_modules/sql.js/dist/sql-wasm.js"
         ),
+        "window.localforage": resolve(
+          __dirname,
+          "node_modules/localforage/dist/localforage.min.js"
+        ),
       }),
     ],
   },

@@ -1,4 +1,11 @@
-import {Dbmgmt, Ipchost} from "chitcore";
+declare global {
+  interface WorkerGlobalScope {
+    window: WorkerGlobalScope;
+  }
+}
+self.window = self;
+
+import { Dbmgmt, Ipchost } from "chitcore";
 import IpciMainPWA from "./IpciMain.worker";
 const main = new IpciMainPWA();
 const pf = {} as pfPromisified;
