@@ -22,6 +22,7 @@ const build = async () => {
 
         //Building chit common libraries
         bt.logi("Building common libraries");
+        if (!process.argv.includes("--skip-core"))
         await bt.exec("npm", ["run", "compile"], { cwd: "../chit-core" });
 
         //copying chit common libraries
@@ -43,11 +44,13 @@ const build = async () => {
 
         // Building frontend JS
         bt.logi("Building browser support files");
+        if (!process.argv.includes("--skip-bs"))
         await bt.exec('npx', ['rollup', '-c']);
 
         //Building pwa
         bt.logi("building pwa");
-        bt.exec("npm", ["run", "build"], {cwd:"../chit-pwa"});
+        if (!process.argv.includes("--skip-pwa"))
+        bt.exec("npx", ["webpack", "--mode", "production"], {cwd:"../chit-pwa"});
 
         //Building pug static files
         bt.logi("Building pug static files");

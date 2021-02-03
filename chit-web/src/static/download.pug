@@ -1,0 +1,27 @@
+doctype html
+html(lang="en")
+
+  head
+    meta(charset="UTF-8")
+    link(rel="stylesheet" href="/stylesheets/mini.min.css")
+    link(rel="stylesheet" href="/stylesheets/common.css")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Login
+    style.
+      footer, fieldset div {
+        text-align: center;
+      }
+      form{
+        max-width:500px;
+        margin:auto;
+        margin-top:50px;
+      }
+  body
+    header.sticky.row
+      a.logo.fluid.col-sm-7(href="/") Chit App
+      a.button.col-sm(href="/login.html")
+        span.icon-user
+        |Login
+    a.button(href="/pwa") Progressive Web App
+    footer
+      |Chit Management System

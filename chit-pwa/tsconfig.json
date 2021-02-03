@@ -1,20 +1,27 @@
 {
-    "compilerOptions": {
-        "strict": false,
-        "target": "ES2020",
-        "rootDir": "src",
-        "module": "ES6",
-        "outDir": "dist",
-        "lib": [
-            "ES2020",
-            "ES6",
-            "DOM"
-        ],
-        "removeComments": true,
-        "inlineSourceMap": false,
-        "moduleResolution": "Node",
-    },
-    "include": [
-        "./src/*",
-    ]
+  "compilerOptions": {
+    "strict": false,
+    "target": "ES2020",
+    "rootDir": "src",
+    "module": "ES6",
+    "outDir": "dist",
+    "lib": [
+      "ES2020",
+      "ES6",
+      "WebWorker",
+      "WebWorker.ImportScripts"
+    ],
+    "removeComments": true,
+    "inlineSourceMap": false,
+    "moduleResolution": "Node",
+  },
+  "exclude": [
+      "src/index.ts",
+      "src/Ipci.ts",
+      "src/config.ts",
+      "src/VirtualDbmgmt.ts"
+  ],
+  "include": [
+      "src/*"
+  ]
 }
