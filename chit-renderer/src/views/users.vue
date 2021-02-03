@@ -1,7 +1,7 @@
 <template lang="pug">
 v-container(fluid)
-  v-dialog(v-model="userDetails.visible")
-    user-details(:uuid="userDetails.uuid")
+  v-dialog(v-model="userDetails.visible" max-width="800")
+    user-details(v-if="userDetails.visible" :uuid="userDetails.uuid")
   v-overlay(v-if="loading" absolute)
     v-progress-circular(indeterminate style="padding:20px;margin:20px;")
   v-data-iterator(
@@ -70,7 +70,6 @@ v-container(fluid)
 </template>
 <script lang="ts">
 import Vue from "vue";
-import UserDetails from "@/components/UserDetails.vue";
 import moment from "moment";
 moment.locale("en-in");
 export default Vue.extend({
@@ -108,7 +107,7 @@ export default Vue.extend({
     };
   },
   components: {
-    "user-details": UserDetails,
+    "user-details": () => import("@/components/UserDetails.vue"),
   },
   computed: {
     numberOfPages(): number {

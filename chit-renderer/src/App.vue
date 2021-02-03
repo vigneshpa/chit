@@ -9,8 +9,10 @@ v-app#1_app
         v-btn(@click="confirmO.handle(false)") Cancel
         v-btn(@click="confirmO.handle(true)" color="primary") OK
 
-  v-dialog(v-model="form.visible" max-width="500")
-    chit-form(v-if="form.visible" :type="form.type" :close="()=>form.visible = false")
+  v-dialog(v-model="form.visible" v-if="form.visible" max-width="500")
+    create-chit(v-if="form.type==='addChit'" :close="form.close")
+    create-user(v-if="form.type==='addUser'" :close="form.close")
+    create-group(v-else-if="form.type==='addGroup'", :close="form.close")
   v-navigation-drawer(v-model="drawer", app, clipped)
     v-list(dense)
       v-list-item(
@@ -102,12 +104,16 @@ export default Vue.extend({
       },
       {
         title: "Create a Chit",
-      }
+        icon: "mdi-newspaper-plus",
+      },
     ],
     appLoading: true,
     form: {
       type: "" as FormType,
       visible: false,
+      close() {
+        this.visible = false;
+      },
     },
     isOnline: window?.isOnline,
     confirmO: {
@@ -118,7 +124,7 @@ export default Vue.extend({
         this.visible = false;
       },
     },
-    window
+    window,
   }),
   computed: {
     pageTitle() {
@@ -147,10 +153,10 @@ export default Vue.extend({
       this.form.visible = true;
     },
     confim(message: string, title?: string) {
-      return new Promise( (resolve:(value:boolean)=>void) => {
+      return new Promise((resolve: (value: boolean) => void) => {
         this.confirmO.message = message;
         this.confirmO.title = title || "Confirm";
-        this.confirmO.handle = (value)=>{
+        this.confirmO.handle = (value) => {
           this.confirmO.visible = false;
           resolve(value);
         };
@@ -159,7 +165,9 @@ export default Vue.extend({
     },
   },
   components: {
-    "chit-form": () => import("@/components/chit-form.vue"),
+    "create-chit": () => import("@/components/CreateChit.vue"),
+    "create-group":() => import("@/components/CreateGroup.vue"),
+    "create-user": () => import("@/components/CreateUser.vue")
   },
   mounted() {
     this.$router.beforeEach((to, from, next) => {

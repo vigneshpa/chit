@@ -1,5 +1,5 @@
 import { Connection, ConnectionOptions, createConnection, Repository } from "typeorm";
-import {Payment, Group, Chit, User, GroupTemplate, ChitTemplate} from "./Entites";
+import { Payment, Group, Chit, User, GroupTemplate, ChitTemplate } from "./Entites";
 import { SqljsConnectionOptions } from "typeorm/driver/sqljs/SqljsConnectionOptions";
 declare global {
     type DbmgmtOptions = {
@@ -21,7 +21,8 @@ declare global {
         | { query: "createGroupTemplate", year: number, month: RangeOf2<1, 12>, batch: string, members: { uuid: string, noOfChits: number, paidInitial: boolean }[], ret?: GroupTemplate }
         | { query: "listGroups", ret?: GroupD[] }
         | { query: "listUsers", ret?: UserD[] }
-        | { query: "userDetails", uuid: string, ret?: UserD };
+        | { query: "userDetails", uuid: string, ret?: UserD }
+        | { query: "groupDetails", uuid: string, ret?: GroupD };
     interface DbmgmtInterface {
         constructor: Function;
         connect: () => Promise<void>;
@@ -52,7 +53,7 @@ export default class Dbmgmt implements DbmgmtInterface {
     private connection?: Connection;
     private connected: boolean = false;
     async connect() {
-        if(this.connected) throw new Error("Reusing old dbdmgmt object is illegal destory it");
+        if (this.connected) throw new Error("Reusing old dbdmgmt object is illegal destory it");
         this.connection = await createConnection(this.options);
         this.repos = {
             user: this.connection.getRepository(User),
@@ -64,7 +65,7 @@ export default class Dbmgmt implements DbmgmtInterface {
         }
         console.log("Database connection opened" + this.options?.name ? " for connection id " + this.options.name : "");
         this.connected = true;
-        this.runOnConnect.forEach(fn=>fn());
+        this.runOnConnect.forEach(fn => fn());
     }
     async close() {
         if (this.connection?.isConnected) await this.connection.close();
@@ -162,9 +163,13 @@ export default class Dbmgmt implements DbmgmtInterface {
             }
             //async userDetails(UID: number): Promise<userInfoExtended>
             case "userDetails": {
-                const uuid: string = args.uuid;
-                let userDetails = await this.repos.user.findOne({ uuid });
-                return userDetails;
+                const uuid = args.uuid;
+                return await this.repos.user.findOne({ uuid });
+            }
+
+            case "groupDetails": {
+                const uuid = args.uuid;
+                return await this.repos.group.findOne({ uuid });
             }
 
             case "createGroupTemplate": {

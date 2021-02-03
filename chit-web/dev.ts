@@ -12,4 +12,4 @@ nodemon({
     ignore: ["./src/*.js"]
 });
 
-bt.exec("npx", ["lt", "--port", "3000", "--subdomain", "chitapp"]);
+//bt.exec("npx", ["lt", "--port", "3000", "--subdomain", "chitapp"]);
