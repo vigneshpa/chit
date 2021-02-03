@@ -67,8 +67,7 @@ v-app#1_app
             v-list-item-title {{ item.title }}
 
   v-main
-    v-expand-transition
-      router-view
+    router-view
 
   v-footer(app, dense)
     span {{ config.databaseFile.location }}
