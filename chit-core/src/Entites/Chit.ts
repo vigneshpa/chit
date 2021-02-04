@@ -1,5 +1,7 @@
 import { Entity, JoinColumn, ManyToOne, Column, OneToMany } from "typeorm";
-import { User, Group, Payment } from "../Entites";
+import Payment from "./Payment";
+import Group from "./Group";
+import User from "./User";
 import Model from "./Model";
 
 @Entity()

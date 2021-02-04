@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Column } from "typeorm";
-import { User, GroupTemplate } from "../Entites";
+import GroupTemplate from "./GroupTemplate";
+import User from "./User";
 
 @Entity()
 export default class ChitTemplate {

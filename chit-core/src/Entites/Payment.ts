@@ -1,12 +1,13 @@
 import { Entity, ManyToOne, JoinColumn, Column } from "typeorm";
-import { Chit, User } from "../Entites";
+import Chit from "./Chit";
+import User from "./User";
 import Model from "./Model";
 
 @Entity()
 export default class Payment extends Model {
 
-  @ManyToOne(type => Chit, Chit => Chit.payments)
   @JoinColumn()
+  @ManyToOne(type => Chit, Chit => Chit.payments)
   readonly chit: Chit;
 
   @Column("integer", { nullable: false })

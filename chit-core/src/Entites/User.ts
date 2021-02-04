@@ -1,5 +1,5 @@
 import { Entity, Column, OneToMany } from "typeorm";
-import { Chit } from "../Entites";
+import Chit from "./Chit";
 import Model from "./Model";
 
 @Entity()

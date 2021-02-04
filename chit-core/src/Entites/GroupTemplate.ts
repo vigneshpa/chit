@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from "typeorm";
-import { ChitTemplate } from "../Entites";
+import ChitTemplate from "./ChitTemplate";
 import { v4 as uuid } from "uuid"
 
 @Entity()

@@ -21,7 +21,13 @@ module.exports = (config, env) => [
       },
     },
     module: {
-      rules: [{ test: /\.ts$/, use: ["ts-loader"] }],
+      rules: [
+        { test: /\.ts$/, use: ["ts-loader"] },
+        {
+          test: /\.js$/,
+          enforce: "pre",
+          use: ["source-map-loader"],
+        }],
     },
     plugins: [
       new webpack.NormalModuleReplacementPlugin(/typeorm$/, function (result) {
@@ -78,6 +84,11 @@ module.exports = (config, env) => [
             },
           ],
         },
+        {
+          test: /\.js$/,
+          enforce: "pre",
+          use: ["source-map-loader"],
+        }
       ],
     },
     plugins: [new CleanWebpackPlugin()],
