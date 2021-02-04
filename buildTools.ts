@@ -4,22 +4,22 @@ import * as fs from "fs-extra";
 import * as chalk from "chalk";
 import { join } from "path";
 
-const timestamps:{
-  [key:string]:number
+const timestamps: {
+  [key: string]: number
 } = {};
 
-function start(){
+function start() {
   console.time("Completed building in ");
   log("Starting Build Process");
 }
 
-function end(){
+function end() {
   console.timeEnd("Completed building in ");
 }
 
 function exec(
   command: string,
-  args?:string[],
+  args?: string[],
   options?: {
     encoding?: "buffer";
   } & cp.SpawnOptions
@@ -27,10 +27,10 @@ function exec(
   return new Promise((resolve, reject) => {
 
 
-    log(chalk.dim("Executing " + command));
-    options = options?options:{};
-    options.stdio = options.stdio?options.stdio:"inherit";
-    let execprs = cp.spawn(command,args, options);
+    log(chalk.dim(`Executing ${command}`));
+    options = options ? options : {};
+    options.stdio = options.stdio ? options.stdio : "inherit";
+    let execprs = cp.spawn(command, args, options);
     execprs.on("close", (code, signal) => {
       let color = "dim";
       if (code === 0) {
@@ -39,9 +39,7 @@ function exec(
         color = "redBright";
       }
       log(
-        chalk[color](
-          "Process exited with code " + code + " and signal " + signal
-        )
+        chalk[color](`Process exited with code ${code} and signal ${signal}`)
       );
       if (code !== 0)
         throw new Error(
@@ -56,18 +54,18 @@ function exec(
 async function clean(dir: string) {
   log(chalk.redBright(`Emptying ${dir} directory`));
   let hasGit = await fs.pathExists(join(dir, ".git"));
-  if(hasGit){
+  if (hasGit) {
     log(chalk.dim("Found .git backing up it"));
     await fs.move(join(dir, ".git"), "./tmp/.git");
   }
   await fs.remove(dir);
   await fs.mkdirp(dir);
-  if(hasGit){
+  if (hasGit) {
     await fs.move("./tmp/.git", join(dir, ".git"));
   }
 }
 function copy(src: string, dest: string, options?: fs.CopyOptions) {
-  log(chalk.yellow(`Copying `)+chalk.white(src)+chalk.yellow(` to `)+chalk.white(`${dest}`));
+  log(chalk.yellow(`Copying `) + chalk.white(src) + chalk.yellow(` to `) + chalk.white(`${dest}`));
   return fs.copy(src, dest, options);
 }
 
@@ -78,4 +76,4 @@ function logi(text: string) {
 function log(...args: any[]) {
   console.log(...args);
 }
-export default { exec, clean, copy, log, logi, start, end, fs};
+export default { exec, clean, copy, log, logi, start, end, fs };

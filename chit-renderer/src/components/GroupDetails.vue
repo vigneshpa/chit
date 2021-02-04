@@ -50,7 +50,7 @@ export default Vue.extend({
   props: ["uuid"],
   methods: {
     async fetchdata() {
-      console.log("Getting " + this.uuid + "'s group data");
+      console.log(`Getting ${this.uuid}'s group data`);
       this.details = <GroupD>await window.ipcirenderer.callMethod("dbQuery", {
         query: "groupDetails",
         uuid: this.uuid,

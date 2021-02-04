@@ -221,9 +221,9 @@ export default Vue.extend({
         case 1:
           return "Add User";
         case 2:
-          return "Phone Number of " + this.name;
+          return `Phone Number of ${this.name}`;
         case 3:
-          return "Address of " + this.name;
+          return `Address of ${this.name}`;
         case 4:
           return "Final";
       }

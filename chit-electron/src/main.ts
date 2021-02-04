@@ -47,8 +47,8 @@ const ipciMain = new IpciMain(ipcMain);
 
 //Hot reloading
 
-if(config.isDevelopement){
-  require('electron-reload')([__dirname, __dirname+"/"+config.vueApp]);
+if (config.isDevelopement) {
+  require('electron-reload')([__dirname, `${__dirname}/${config.vueApp}`]);
 }
 
 
@@ -126,7 +126,7 @@ app.on("ready", async launchInfo => {
 });
 
 ipcMain.on("splash-ready", async _event => {
-  if(splash?.isDestroyed())return;
+  if (splash?.isDestroyed()) return;
   console.log("Splash is ready");
   splash?.webContents.send("log", "Connecting to the database");
   await dbmgmt.connect()
@@ -136,7 +136,7 @@ ipcMain.on("splash-ready", async _event => {
   await loadMain();
 });
 
-ipcMain.handle("getConfig", ev=>{
+ipcMain.handle("getConfig", ev => {
   return config;
 })
 
@@ -190,7 +190,7 @@ async function loadMain() {
       }, 2000);
     });
     splash?.webContents.send("log", "Executing vue.js framework");
-    await mainWindow.loadFile(__dirname+"/"+config.vueApp + "/index.html");
+    await mainWindow.loadFile(`${__dirname}/${config.vueApp}/index.html`);
     if (config.isDevelopement) mainWindow.webContents.openDevTools();
   } else {
     mainWindow.focus();

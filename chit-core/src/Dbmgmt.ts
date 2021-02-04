@@ -63,7 +63,7 @@ export default class Dbmgmt implements DbmgmtInterface {
             groupTemplate: this.connection.getRepository(GroupTemplate),
             chitTemplate: this.connection.getRepository(ChitTemplate),
         }
-        console.log("Database connection opened" + this.options?.name ? " for connection id " + this.options.name : "");
+        console.log(`Database connection opened for connection id ${this.connection.name}`);
         this.connected = true;
         this.runOnConnect.forEach(fn => fn());
     }

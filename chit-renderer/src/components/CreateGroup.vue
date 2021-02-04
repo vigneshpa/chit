@@ -174,11 +174,11 @@ export default Vue.extend({
       success: false as boolean,
       skipValidation: false as boolean,
       window: window,
-      paidInitial:false as boolean,
-      memberModelKeys:{
-        "Phone":"phone",
-        "Address":"address"
-      } as {[name:string]:keyof UserD}
+      paidInitial: false as boolean,
+      memberModelKeys: {
+        Phone: "phone",
+        Address: "address",
+      } as { [name: string]: keyof UserD },
     };
   },
   computed: {
@@ -196,7 +196,7 @@ export default Vue.extend({
         case 2:
           return "Batch Name";
         case 3:
-          return "Add members for " + this.batch + " batch";
+          return `Add members for ${this.batch} batch`;
         case 4:
           return "Final";
       }
@@ -223,7 +223,7 @@ export default Vue.extend({
         "November",
         "December",
       ];
-      return month[date.getMonth()] + ", " + date.getFullYear();
+      return `${month[date.getMonth()]}, ${date.getFullYear()}`;
     },
   },
   watch: {
@@ -250,7 +250,7 @@ export default Vue.extend({
         this.members.push({
           info: removed[0],
           noOfChits: parseFloat(this.noOfChits),
-          paidInitial:this.paidInitial
+          paidInitial: this.paidInitial,
         });
         this.memberModel = null;
         this.noOfChits = null;
@@ -347,7 +347,7 @@ export default Vue.extend({
         finalMembers.push({
           uuid: member.info.uuid,
           noOfChits: member.noOfChits,
-          paidInitial:member.paidInitial
+          paidInitial: member.paidInitial,
         });
       });
       const data = await this.window.ipcirenderer.callMethod("dbQuery", {
@@ -378,7 +378,7 @@ export default Vue.extend({
     },
   },
   components: {
-    "members-list":()=>import("@/components/members-list.vue")
+    "members-list": () => import("@/components/members-list.vue"),
   },
   mounted() {
     window.document.title = "Create Group";
@@ -389,6 +389,6 @@ export default Vue.extend({
 interface members {
   info: UserD;
   noOfChits: number;
-  paidInitial:boolean;
+  paidInitial: boolean;
 }
 </script>
