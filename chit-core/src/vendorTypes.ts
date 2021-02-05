@@ -1,51 +1,6 @@
 declare global {
   type Await<T> = T extends PromiseLike<infer U> ? U : T;
   type RangeOf2<From extends number, To extends number> = Exclude<RangeOf<To>, RangeOf<From>> | From;
-  interface ChitMessageBoxOptions {
-    type?: string;
-    buttons?: string[];
-    defaultId?: number;
-    title?: string;
-    message: string;
-    detail?: string;
-    checkboxLabel?: string;
-    checkboxChecked?: boolean;
-    icon?: any;
-    cancelId?: number;
-    noLink?: boolean;
-    normalizeAccessKeys?: boolean;
-  }
-  interface ChitOpenDialogOptions {
-    title?: string;
-    defaultPath?: string;
-    buttonLabel?: string;
-    filters?: {
-      extensions: string[];
-      name: string;
-    }[];
-    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
-    message?: string;
-    securityScopedBookmarks?: boolean;
-  }
-  interface ChitOpenDialogReturnValue {
-    /**
-     * whether or not the dialog was canceled.
-     */
-    canceled: boolean;
-    /**
-     * An array of file paths chosen by the user. If the dialog is cancelled this will
-     * be an empty array.
-     */
-    filePaths: string[];
-    /**
-     * An array matching the `filePaths` array of base64 encoded strings which contains
-     * security scoped bookmark data. `securityScopedBookmarks` must be enabled for
-     * this to be populated. (For return values, see table here.)
-     *
-     * @platform darwin,mas
-     */
-    bookmarks?: string[];
-  }
 
   // UNION TO INTERSECTION
   type UnionToIntersection<U> = (

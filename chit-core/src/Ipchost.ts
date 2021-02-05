@@ -1,9 +1,14 @@
 declare global {
+    interface ChitMessageBoxOptions{
+        title?:string;
+        message:string;
+        type?:"info"|"error";
+        detail?:string;
+    }
     type PlatformFunctions = {
         updateConfig: (newConfig: Configuration) => void;
         ping: () => void;
-        showMessageBox: (options: ChitMessageBoxOptions) => number;
-        showOpenDialog: (options: ChitOpenDialogOptions) => ChitOpenDialogReturnValue;
+        //This can be handled with window.open but it is kept for electron
         openExternal: (url: string) => void;
     }
     type pfPromisified = { [K in keyof PlatformFunctions]: (...p: Parameters<PlatformFunctions[K]>) => Promise<ReturnType<PlatformFunctions[K]>> }

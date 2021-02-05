@@ -27,6 +27,7 @@ declare global {
         chits: ChitD[];
         /**
          * THIS IS ONLY FOR CREATION OF GROUP
+         * Don't use it data retival
          * array of members' uuid(s) and noOfChits
          */
         members?: { uuid: string; noOfChits: number; paidInitial:boolean; }[];
@@ -52,16 +53,6 @@ declare global {
     interface Configuration {
         isDevelopement: boolean;
         theme: ('system' | 'dark' | 'light');
-        configPath: string;
-        databaseFile: {
-            isCustom?: boolean;
-            location?: string;
-        },
-        updates: {
-            autoCheck: boolean;
-            autoDownload: boolean;
-        },
-        vueApp: string;
         locale: string;
     }
 }

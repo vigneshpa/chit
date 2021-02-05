@@ -14,7 +14,7 @@
     ],
     "moduleResolution": "Node",
     "declaration": true,
-    "declarationDir": "lib",
+    "declarationDir": "lib/cjs",
     "removeComments": false,
     "allowSyntheticDefaultImports": false,
     "inlineSourceMap": false,
