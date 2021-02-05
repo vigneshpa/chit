@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+console.log(`Hello, Welcome to Chit Management System Build wizard.
+This will guide you to setup the developement envirunment for chit management system.
+This is intended to be used by developers, But if you dont want to build and just want to use the app head over https://chit.github.io`);

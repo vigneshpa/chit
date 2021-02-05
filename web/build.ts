@@ -4,7 +4,7 @@
 import { createWriteStream, readFile as readFileP, writeFile as writeFileP } from "fs";
 import { promisify } from "util";
 const readFile = promisify(readFileP), writeFile = promisify(writeFileP);
-import bt from "../buildTools";
+import bt from "./buildTools";
 import * as tar from "tar";
 const buildDir = "./dist";
 const build = async () => {

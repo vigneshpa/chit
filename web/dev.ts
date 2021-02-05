@@ -1,5 +1,5 @@
 import { join } from "path";
-import bt from "../buildTools";
+import bt from "./buildTools";
 
 bt.exec("tsc", ["-w"], { cwd: __dirname });
 
