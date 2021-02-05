@@ -23,14 +23,14 @@ const build = async () => {
         //Building chit common libraries
         bt.logi("Building common libraries");
         if (!process.argv.includes("--skip-core"))
-        await bt.exec("npm", ["run", "compile"], { cwd: "../chit-core" });
+        await bt.exec("npm", ["run", "compile"], { cwd: "../core" });
 
         //copying chit common libraries
         bt.logi("Copying Common libs");
         tar.create({
             gzip:true,
             cwd:".."
-        }, ["chit-core/lib", "chit-core/package.json"]).pipe(createWriteStream(buildDir+"/chit-core.tar.gz"));
+        }, ["core/lib", "core/package.json"]).pipe(createWriteStream(buildDir+"/core.tar.gz"));
 
         //Building renderer
         bt.log("Building renderer");
@@ -71,7 +71,7 @@ const build = async () => {
         delete pkg.devDependencies;
         if(pkg.dependencies.sqlite3)delete pkg.dependencies.sqlite3
         pkg.scripts = { start: "node server.js" };
-        pkg.dependencies["chitcore"] = "file:./chit-core.tar.gz";
+        pkg.dependencies["chitcore"] = "file:./core.tar.gz";
         await writeFile(buildDir+"/package.json", JSON.stringify(pkg));
 
         //Compiling TypeScript

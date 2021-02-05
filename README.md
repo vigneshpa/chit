@@ -31,10 +31,10 @@ cd chit
 
 ## Software structure
    This software has four sub parts or modules(npm).
-1. Core(chit-core)
-2. Renderer(chit-renderer)
-3. Electron(chit-electron)
-4. Web(Chit-web)
+1. Core
+2. Renderer
+3. Electron
+4. Web
 
 The Core is a platform agonostic common library which has common TypeDefinitions and DataBase ORM interfaces
 

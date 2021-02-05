@@ -4,7 +4,7 @@
   "description": "## About this Software",
   "main": "dist/server.js",
   "dependencies": {
-    "chitcore": "file:../chit-core",
+    "chitcore": "file:../core",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "debug": "^4.3.1",

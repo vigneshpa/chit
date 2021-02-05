@@ -14,7 +14,7 @@
    "author": "vignesh <vignesh-p@outlook.com>",
    "license": "GPL-3.0",
    "dependencies": {
-      "chitcore": "file:../chit-core",
+      "chitcore": "file:../core",
       "localforage": "^1.9.0",
       "reflect-metadata": "^0.1.10",
       "sql.js": "^1.4.0"
