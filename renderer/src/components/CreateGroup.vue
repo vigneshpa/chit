@@ -358,7 +358,7 @@ export default Vue.extend({
         members: finalMembers,
       });
       if (data) {
-        window.ipcirenderer.callMethod("showMessageBox", {
+        window.showMessageBox({
           message: "Group Template created SUCCESSFULLY !",
           type: "info",
           title: "Created New Group Template!",
@@ -366,7 +366,7 @@ export default Vue.extend({
         } as ChitMessageBoxOptions);
         this.success = true;
       } else {
-        window.ipcirenderer.callMethod("showMessageBox", {
+        window.showMessageBox({
           message:
             "Some error occoured during the creation of Group\nTry checking batch name.",
           type: "error",

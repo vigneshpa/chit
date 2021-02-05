@@ -72,7 +72,6 @@ v-app#1_app
     router-view
 
   v-footer(app, dense)
-    span {{ config.databaseFile.location }}
     v-spacer
     span
       a(@click="openGithub")
@@ -175,6 +174,7 @@ export default Vue.extend({
       next();
     });
     this.$router.afterEach((to, from) => (this.appLoading = false));
+    this.window.showMessageBox = options=>this.confim(options.message, options.title);
   },
 });
 

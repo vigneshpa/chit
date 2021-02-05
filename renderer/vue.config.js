@@ -1,7 +1,7 @@
 const { v4 } = require("uuid");
 module.exports = {
   //Test comment
-  outputDir: "./app/renderer/",
+  outputDir: "./app/",
 
   publicPath: "./",
 

@@ -9,18 +9,15 @@ import * as http from "http";
 const app = express();
 const server = http.createServer(app);
 const appWS = expressws(app, server).app;
-const rendererPath = path.join(__dirname, process.env.RENDERER_PATH || '../../chit-renderer/app/renderer');
-process.env.RENDERER_PATH = rendererPath;
+process.env.RENDERER_PATH = path.join(__dirname, process.env.RENDERER_PATH || '../../chit-renderer/app/renderer');
+process.env.PWA_PATH = path.join(__dirname, process.env.PWA_PATH || "../../chit-pwa/app");
 import router from "./routes";
 import sessionParser from "./sessionParser";
 class App {
-    rendererPath: string;
     app: expressws.Application;
     server: http.Server;
     sessionParser: express.RequestHandler;
     constructor() {
-
-        this.rendererPath = rendererPath;
         this.sessionParser = sessionParser;
 
         //Adding app and server instance

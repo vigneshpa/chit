@@ -39,8 +39,7 @@ const build = async () => {
 
         //Copying Renderer
         bt.logi("Copying renderer files");
-        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/app");
-        await bt.copy("../chit-renderer/app/renderer", buildDir+"/public/pwa");
+        await bt.copy("../chit-renderer/app", buildDir+"/public/app");
 
         // Building frontend JS
         bt.logi("Building browser support files");
@@ -60,7 +59,7 @@ const build = async () => {
         bt.logi("Copying front-end files")
         await bt.copy('./src/public', buildDir+'/public');
         await bt.copy('./src/views', buildDir+'/views');
-        await bt.copy('../chit-pwa/dist', buildDir+"/public/pwa/resources");
+        await bt.copy('../chit-pwa/app', buildDir+"/public/pwa");
 
         //Copying users info
         bt.logi("Copying users info");

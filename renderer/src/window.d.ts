@@ -10,5 +10,6 @@ declare global {
         openExternal:(url:string)=>Void;
         isOnline?:boolean;
         isPWA?:boolean;
+        showMessageBox:(options:ChitMessageBoxOptions)=>void;
     }
 }

@@ -55,8 +55,10 @@ if (process.env.USE_PROXY_FOR_RENDERER === 'true') {
         creq.end();
     });
 } else if (process.env.NODE_ENV !== "production") {
-    console.log("Serving renderer from ", process.env.RENDERER_PATH);
+    console.log("Serving app from ", process.env.RENDERER_PATH);
     router.use("/app", estatic(process.env.RENDERER_PATH));
+    console.log("Serving pwa from ", process.env.PWA_PATH);
+    router.use("/pwa", estatic(process.env.PWA_PATH));
 }
 
 export default router;

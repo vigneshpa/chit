@@ -196,7 +196,7 @@ export default Vue.extend({
         address: this.address,
       });
       if (data) {
-            window.ipcirenderer.callMethod("showMessageBox", {
+            window.showMessageBox({
               message: "User created SUCCESSFULLY !",
               type: "info",
               title: "Created New User!",
@@ -204,7 +204,7 @@ export default Vue.extend({
             } as ChitMessageBoxOptions);
             this.success = true;
           } else {
-            window.ipcirenderer.callMethod("showMessageBox", {
+            window.showMessageBox({
               message:
                 "Some error occoured during the creation of User\nTry checking phone number.",
               type: "error",
