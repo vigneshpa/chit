@@ -49,7 +49,7 @@ If you use VSCode for developement just allow automatic folder tasks to start th
 
 ### Starting developement server for Web
 ```
-cd chit-web
+cd web
 npm run dev
 ```
 ### Electron developement
@@ -71,7 +71,7 @@ npx electron .
 Disable syncronise in connection options to prevent any dataloss in production updates.
 
 ### Building the Express App
-To build the express app just cd into the chit-web directory and run
+To build the express app just cd into the web directory and run
 ```
 npm run build
 ```

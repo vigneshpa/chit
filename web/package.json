@@ -67,10 +67,10 @@
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/vigneshpa/chit-web.git"
+    "url": "git://github.com/vigneshpa/web.git"
   },
   "bugs": {
-    "url": "https://github.com/vigneshpa/chit-web/issues"
+    "url": "https://github.com/vigneshpa/web/issues"
   },
-  "homepage": "https://github.com/vigneshpa/chit-web#readme"
+  "homepage": "https://github.com/vigneshpa/web#readme"
 }

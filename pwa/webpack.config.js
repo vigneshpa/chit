@@ -42,7 +42,7 @@ module.exports = (config, env) => (
             to: "./resources/",
           },
           {
-            from: resolve(__dirname, "../chit-renderer/app"),
+            from: resolve(__dirname, "../renderer/app"),
             to: "./"
           }
         ],

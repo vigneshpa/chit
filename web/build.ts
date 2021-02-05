@@ -35,11 +35,11 @@ const build = async () => {
         //Building renderer
         bt.log("Building renderer");
         if (!process.argv.includes("--skip-renderer"))
-            await bt.exec("npx", ["vue-cli-service", "build"], { cwd: "../chit-renderer" });
+            await bt.exec("npx", ["vue-cli-service", "build"], { cwd: "../renderer" });
 
         //Copying Renderer
         bt.logi("Copying renderer files");
-        await bt.copy("../chit-renderer/app", buildDir+"/public/app");
+        await bt.copy("../renderer/app", buildDir+"/public/app");
 
         // Building frontend JS
         bt.logi("Building browser support files");
@@ -49,7 +49,7 @@ const build = async () => {
         //Building pwa
         bt.logi("building pwa");
         if (!process.argv.includes("--skip-pwa"))
-        bt.exec("npx", ["webpack", "--mode", "production"], {cwd:"../chit-pwa"});
+        bt.exec("npx", ["webpack", "--mode", "production"], {cwd:"../pwa"});
 
         //Building pug static files
         bt.logi("Building pug static files");
@@ -59,7 +59,7 @@ const build = async () => {
         bt.logi("Copying front-end files")
         await bt.copy('./src/public', buildDir+'/public');
         await bt.copy('./src/views', buildDir+'/views');
-        await bt.copy('../chit-pwa/app', buildDir+"/public/pwa");
+        await bt.copy('../pwa/app', buildDir+"/public/pwa");
 
         //Copying users info
         bt.logi("Copying users info");
