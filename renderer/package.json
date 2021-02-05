@@ -1,8 +1,7 @@
 {
-  "name": "ChitApp",
+  "name": "chitrenderer",
   "version": "0.1.0",
   "private": true,
-  "author": "Vignesh",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -53,5 +52,14 @@
       "node 12"
     ]
   },
-  "license": "GPL-3.0"
+  "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vigneshpa/chit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vigneshpa/chit/issues"
+  },
+  "homepage": "https://github.com/vigneshpa/chit#readme"
 }

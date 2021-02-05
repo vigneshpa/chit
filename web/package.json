@@ -59,18 +59,18 @@
     "web",
     "chitweb"
   ],
-  "author": "vigneshpa",
   "engines": {
     "node": "^15.3.0",
     "vscode": "^1.22.0"
   },
+  "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/vigneshpa/web.git"
+    "url": "git://github.com/vigneshpa/chit.git"
   },
   "bugs": {
-    "url": "https://github.com/vigneshpa/web/issues"
+    "url": "https://github.com/vigneshpa/chit/issues"
   },
-  "homepage": "https://github.com/vigneshpa/web#readme"
+  "homepage": "https://github.com/vigneshpa/chit#readme"
 }
