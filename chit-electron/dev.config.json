@@ -1,1 +1,0 @@
-{"isDevelopement":true,"theme":"system","updates":{"autoCheck":true,"autoDownload":false},"configPath":"./dev.config.json","databaseFile":{"location":"/home/vignesh/.config/chit/main.db","isCustom":true},"vueApp":"./../../chit-renderer/app/renderer"}

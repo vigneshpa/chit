@@ -10,9 +10,8 @@ module.exports = {
       ipcrenderer: {
         root: "ipcrenderer",
       },
-    },
+    }
   },
-
   pwa: {
     name: "Chit App",
     workboxOptions: {
@@ -32,5 +31,5 @@ module.exports = {
   },
 
   transpileDependencies: ["vuetify"],
-  productionSourceMap: false,
+  productionSourceMap: false
 };

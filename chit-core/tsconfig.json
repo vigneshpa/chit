@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "lib",
+    "outDir": "lib/cjs",
     //"outFile":"lib/chitCommon.js",
     "strict": true,
     "target": "ES2019",

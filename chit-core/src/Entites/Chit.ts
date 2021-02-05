@@ -14,12 +14,6 @@ export default class Chit extends Model {
   @JoinColumn()
   @ManyToOne(type => Group, Group => Group.chits)
   readonly group: Group;
-  /* 
-    @Column("integer", {nullable:false})
-    readonly month: RangeOf2<1, 12>;
-  
-    @Column({nullable:false})
-    readonly year: number; */
 
   @Column({ nullable: false })
   readonly noOfChits: number;
