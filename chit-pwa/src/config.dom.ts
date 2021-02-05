@@ -1,13 +1,6 @@
 let config: Configuration = {
   isDevelopement: false,
   theme: "system",
-  databaseFile: {},
-  configPath: "",
-  updates: {
-    autoCheck: true,
-    autoDownload: false
-  },
-  vueApp: null,
   locale:"en-in"
 };
 let ls = localStorage.getItem('config');

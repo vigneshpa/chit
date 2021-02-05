@@ -11,4 +11,4 @@ chit-electron/dist/builder-effective-config.yaml
 chit-electron/dist
 chit-electron/app
 chit-electron/electron-builder.yml
-chit-pwa/dist
+chit-pwa/app

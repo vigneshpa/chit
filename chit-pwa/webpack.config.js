@@ -3,12 +3,12 @@ const webpack = require("webpack");
 const CopyPlugin = require("copy-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-module.exports = (config, env) => [
+module.exports = (config, env) => (
   {
-    entry: "./src/index.worker.ts",
+    entry: {"worker.js":"./src/index.worker.ts", "browserSupport.js":"./src/index.dom.ts"},
     output: {
-      filename: "worker.js",
-      path: resolve(__dirname, "dist"),
+      filename: "resources/[name]",
+      path: resolve(__dirname, "app"),
     },
     devtool: "source-map",
     resolve: {
@@ -22,7 +22,8 @@ module.exports = (config, env) => [
     },
     module: {
       rules: [
-        { test: /\.ts$/, use: ["ts-loader"] },
+        { test: /\.worker\.ts$/, use: [{ loader: "ts-loader", options: { configFile: "tsconfig.json" } }] },
+        { test: /\.dom\.ts$/, use: [{ loader: "ts-loader", options: { configFile: "tsconfig.dom.json" } }] },
         {
           test: /\.js$/,
           enforce: "pre",
@@ -30,6 +31,7 @@ module.exports = (config, env) => [
         }],
     },
     plugins: [
+      new CleanWebpackPlugin(),
       new webpack.NormalModuleReplacementPlugin(/typeorm$/, function (result) {
         result.request = result.request.replace(/typeorm/, "typeorm/browser");
       }),
@@ -37,8 +39,12 @@ module.exports = (config, env) => [
         patterns: [
           {
             from: resolve(__dirname, "node_modules/sql.js/dist/sql-wasm.wasm"),
-            to: "./",
+            to: "./resources/",
           },
+          {
+            from: resolve(__dirname, "../chit-renderer/app"),
+            to: "./"
+          }
         ],
       }),
       new webpack.ProvidePlugin({
@@ -52,45 +58,4 @@ module.exports = (config, env) => [
         ),
       }),
     ],
-  },
-  {
-    entry: "./src/index.ts",
-    output: {
-      filename: "browserSupport.js",
-      path: resolve(__dirname, "dist"),
-    },
-    devtool: "source-map",
-    resolve: {
-      extensions: [".ts", ".js", ".json"],
-      fallback: {
-        fs: false,
-        path: false,
-        tls: false,
-        crypto: false,
-        typeorm: false,
-        chitcore: false,
-      },
-    },
-    module: {
-      rules: [
-        {
-          test: /\.ts$/,
-          use: [
-            {
-              loader: "ts-loader",
-              options: {
-                configFile: "tsconfig.dom.json",
-              },
-            },
-          ],
-        },
-        {
-          test: /\.js$/,
-          enforce: "pre",
-          use: ["source-map-loader"],
-        }
-      ],
-    },
-    plugins: [new CleanWebpackPlugin()],
-  },
-];
+  });

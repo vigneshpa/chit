@@ -15,11 +15,6 @@
         "moduleResolution": "Node",
     },
     "include": [
-        "src/index.ts",
-        "src/IpciRenderer.ts",
-        "src/config.ts",
-    ],
-    "exclude": [
-        "src/**.worker.ts"
+        "src/*.dom.ts",
     ]
 }

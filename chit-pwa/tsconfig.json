@@ -15,12 +15,7 @@
     "inlineSourceMap": false,
     "moduleResolution": "Node",
   },
-  "exclude": [
-      "src/index.ts",
-      "src/IpciRenderer.ts",
-      "src/config.ts",
-  ],
   "include": [
-      "src/*"
+      "src/*.worker.ts"
   ]
 }
