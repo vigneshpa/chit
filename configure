@@ -5,18 +5,18 @@ This is intended to be used by developers, But if you dont want to build and jus
 const childp = require("child_process");
 const npm_modules = ["./core", "./renderer", "./web", "./pwa"];
 (async e => {
-    console.log("Installing npm module depedencies");
-    for (npm_module of npm_modules) {
-        console.log("installing deps for " + npm_module);
-        await exec("npm", ["install"], { cwd: npm_module });
-    }
-    console.log("Finished installing deps");
-    console.log("\n\n\nCreating web account\nPlease enter the details");
-    const username = await input("Username:");
-    const pass_test = await input("Password(testing):");
-    const pass_prod = await input("Password(production):");
-    console.log({username, pass_test, pass_prod});
-    process.exit(e);
+  console.log("Installing npm module depedencies");
+  for (npm_module of npm_modules) {
+    console.log("installing deps for " + npm_module);
+    await exec("npm", ["install"], { cwd: npm_module });
+  }
+  console.log("Finished installing deps");
+  console.log("\n\n\nCreating web account\nPlease enter the details");
+  const username = await input("Username:");
+  const pass_test = await input("Password(testing):");
+  const pass_prod = await input("Password(production):");
+  console.log({ username, pass_test, pass_prod });
+  process.exit(e);
 })(0);
 
 
@@ -28,40 +28,40 @@ const npm_modules = ["./core", "./renderer", "./web", "./pwa"];
 
 
 function exec(command, args, options) {
-    return new Promise((resolve, reject) => {
-        options = options ? options : {};
-        options.stdio = options.stdio ? options.stdio : "inherit";
-        let execprs = childp.spawn(command, args, options);
-        execprs.on("close", (code, signal) => {
-            let color = "dim";
-            if (code === 0) {
-                color = "green";
-            } else {
-                color = "redBright";
-            }
-            console.log(
-                `Process exited with code ${code} and signal ${signal}`
-            );
-            if (code !== 0)
-                throw new Error(
-                    `Process ${command} exitted with code ${code} and signal ${signal}`
-                );
-            resolve(code);
+  return new Promise((resolve, reject) => {
+    options = options ? options : {};
+    options.stdio = options.stdio ? options.stdio : "inherit";
+    let execprs = childp.spawn(command, args, options);
+    execprs.on("close", (code, signal) => {
+      let color = "dim";
+      if (code === 0) {
+        color = "green";
+      } else {
+        color = "redBright";
+      }
+      console.log(
+        `Process exited with code ${code} and signal ${signal}`
+      );
+      if (code !== 0)
+        throw new Error(
+          `Process ${command} exitted with code ${code} and signal ${signal}`
+        );
+      resolve(code);
 
 
-        });
     });
+  });
 }
 const readline = require('readline');
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
 });
 function input(str) {
-    return new Promise((resolve, reject) => {
-        const onLine = value => resolve(value);
-        rl.on('line', onLine);
-        console.log(str);
-    });
+  return new Promise((resolve, reject) => {
+    const onLine = value => resolve(value);
+    rl.on('line', onLine);
+    console.log(str);
+  });
 }
