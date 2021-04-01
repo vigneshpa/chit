@@ -13,3 +13,4 @@ electron/dist
 electron/app
 electron/electron-builder.yml
 pwa/app
+pwa/src/apiCredentials.json
