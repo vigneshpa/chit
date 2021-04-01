@@ -23,7 +23,7 @@
 				"runOptions": {
 					"runOn": "folderOpen"
 				},
-				"command": "gnome-terminal --tab -e 'sh -c \"cd core; npm run watch\"' --tab -e 'sh -c \"cd renderer; npm run watch\"' --tab -e 'sh -c \"cd web; npm run dev;\"' "
+				"command": "gnome-terminal --tab -e 'sh -c \"cd core; yarn watch\"' --tab -e 'sh -c \"cd renderer; yarn watch\"' --tab -e 'sh -c \"cd web; yarn dev;\"' "
 			}
 		]
 	},

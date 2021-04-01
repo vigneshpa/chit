@@ -28,7 +28,7 @@ const build = async () => {
         //Building chit common libraries
         bt.logi("Building common libraries");
         if (!process.argv.includes("--skip-core"))
-            await bt.exec("npm", ["run", "compile"], { cwd: "../core" });
+            await bt.exec("yarn", ["compile"], { cwd: "../core" });
 
         //copying chit common libraries
         bt.logi("Copying Common libs");
