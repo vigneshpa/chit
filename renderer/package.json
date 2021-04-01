@@ -27,7 +27,6 @@
     "@vue/cli-plugin-typescript": "4.5.12",
     "@vue/cli-plugin-vuex": "4.5.12",
     "@vue/cli-service": "4.5.12",
-    "chitcore": "file:../core",
     "node-forge": "0.10.0",
     "pug-plain-loader": "1.1.0",
     "source-map-loader": "2.0.0",

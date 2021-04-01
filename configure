@@ -10,10 +10,13 @@ if (existsSync("./web/src/users.prod.json")) {
   process.exit(0);
 }
 (async e => {
+  console.log("Linking chit core");
+  await exec("yarn", ["link"], {cwd: "./core"});
   console.log("Installing npm module depedencies");
-  for (npm_module of npm_modules) {
+  for (let npm_module of npm_modules) {
     console.log("installing deps for " + npm_module);
     await exec("yarn", ["install"], { cwd: npm_module });
+    if(npm_module !== "./core")await exec("yarn", ["link", "chitcore"], {cwd:npm_module});
   }
   console.log("Finished installing deps");
   console.log("\n\n\nCreating web account\nPlease enter the details");

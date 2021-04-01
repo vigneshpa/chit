@@ -12,7 +12,6 @@
       "sqljs"
    ],
    "dependencies": {
-      "chitcore": "file:../core",
       "localforage": "^1.9.0",
       "sql.js": "^1.4.0"
    },
