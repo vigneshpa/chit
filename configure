@@ -13,7 +13,7 @@ if (existsSync("./web/src/users.prod.json")) {
   console.log("Installing npm module depedencies");
   for (npm_module of npm_modules) {
     console.log("installing deps for " + npm_module);
-    await exec("npm", ["install"], { cwd: npm_module });
+    await exec("yarn", ["install"], { cwd: npm_module });
   }
   console.log("Finished installing deps");
   console.log("\n\n\nCreating web account\nPlease enter the details");
