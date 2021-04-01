@@ -67,7 +67,6 @@
     "chitweb"
   ],
   "engines": {
-    "node": "^12.0.0",
     "vscode": "^1.22.0"
   },
   "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
