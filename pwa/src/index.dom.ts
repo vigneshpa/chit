@@ -1,6 +1,3 @@
-import "@types/gapi";
-import "@types/gapi.auth2";
-import "@types/gapi.client.drive";
 declare global {
     interface Window {
         ipcirenderer: IpciRenderer;
@@ -32,5 +29,5 @@ window.ipcirenderer = new IpciRendererPWA(wkr, pf);
 window.ipcirenderer.init({});
 window.isOnline = false;
 window.isPWA = true;
-import "./drivebackup.dom";
+// import "./drivebackup.dom";
 console.log("Finished loading browser support libraries ");

@@ -1,3 +1,6 @@
+/* import "@types/gapi";
+import "@types/gapi.auth2";
+import "@types/gapi.client.drive";
 import apiCredentials from "./apiCredentials.json";
 import localforage from "localforage";
 window.handleClientLoad =
@@ -28,7 +31,8 @@ window.handleClientLoad =
     }
     function saveBackup(data) {
 
-      window.gapi.client.request({path:""
+      window.gapi.client.request({
+        path: ""
       })
 
       // window.gapi.client.drive.files.create({
@@ -51,4 +55,4 @@ window.handleClientLoad =
       // });
 
     }
-  }
+  } */
