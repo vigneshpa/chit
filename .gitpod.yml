@@ -4,5 +4,3 @@ tasks:
   - before: npm install -g yarn
     init: ./configure
     command: 'cd core && yarn watch'
-    command: 'cd renderer && yarn watch'
-    command: 'cd web && yarn dev'
