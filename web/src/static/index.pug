@@ -2,7 +2,9 @@ doctype html
 html(lang="en")
   head
     meta(charset="UTF-8")
-    meta(name="google-site-verification" content="kfjS61Hat28JQl8ZPz0VU1a6jewKjbXJEnBKryTmfxI")
+    - if(env?.NODE_ENV === "production")
+      -let gsv = env.GOOGLE_SITE_VERIFICATION;
+      meta(name="google-site-verification" content=gsv)
     link(rel="stylesheet" href="/stylesheets/mini.min.css")
     link(rel="stylesheet" href="/stylesheets/common.css")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")

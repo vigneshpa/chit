@@ -4,13 +4,8 @@
         "strict": false,
         "target": "ES2019",
         "module": "CommonJS",
-        "rootDir": "src",
         "lib": [
             "ES2020",
-            "ES2020.bigint",
-            "ES2020.string",
-            "ES2020.symbol.wellknown",
-            "ES2020.Promise",
             "ES6"
         ],
         "removeComments": false,

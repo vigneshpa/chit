@@ -4,6 +4,7 @@
   "description": "## About this Software",
   "main": "dist/server.js",
   "dependencies": {
+    "@types/pug": "^2.0.4",
     "chitcore": "file:../core",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
@@ -18,7 +19,8 @@
     "nodemon": "^2.0.7",
     "pg": "^8.5.1",
     "pg-format": "^1.0.4",
-    "pug": "^3.0.0"
+    "pug": "^3.0.0",
+    "tar": "^6.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
