@@ -1,5 +1,5 @@
 image: gitpod/workspace-full
 
 tasks:
-  - init: ./configure
+  - init: npm install -g yarn && ./configure
     command: 'echo "TODO: Replace with command to start project"'
