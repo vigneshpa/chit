@@ -1,7 +1,8 @@
 image: gitpod/workspace-full
 
 tasks:
-  - init: 'npm install -g yarn && ./configure'
+  - before: npm install -g yarn
+    init: ./configure
     command: 'cd core && yarn watch'
     command: 'cd renderer && yarn watch'
     command: 'cd web && yarn dev'
