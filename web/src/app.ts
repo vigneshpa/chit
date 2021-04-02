@@ -9,7 +9,7 @@ import * as http from "http";
 const app = express();
 const server = http.createServer(app);
 const appWS = expressws(app, server).app;
-process.env.RENDERER_PATH = path.join(__dirname, process.env.RENDERER_PATH || '../../renderer/app/renderer');
+process.env.RENDERER_PATH = path.join(__dirname, process.env.RENDERER_PATH || '../../renderer/app');
 process.env.PWA_PATH = path.join(__dirname, process.env.PWA_PATH || "../../pwa/app");
 import router from "./routes";
 import sessionParser from "./sessionParser";
