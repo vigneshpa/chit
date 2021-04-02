@@ -83,6 +83,14 @@ v-app#1_app
 <script lang="ts">
 import Vue from "vue";
 type FormType = "addUser" | "addGroup";
+
+const formM = {
+  type: "" as FormType,
+  visible: false,
+  close: () => {
+    formM.visible = false;
+  },
+};
 export default Vue.extend({
   props: {
     source: String,
@@ -107,13 +115,7 @@ export default Vue.extend({
       },
     ],
     appLoading: true,
-    form: {
-      type: "" as FormType,
-      visible: false,
-      close() {
-        this.visible = false;
-      },
-    },
+    form:formM,
     isOnline: window?.isOnline,
     confirmO: {
       visible: false as boolean,
@@ -165,8 +167,8 @@ export default Vue.extend({
   },
   components: {
     "create-chit": () => import("@/components/CreateChit.vue"),
-    "create-group":() => import("@/components/CreateGroup.vue"),
-    "create-user": () => import("@/components/CreateUser.vue")
+    "create-group": () => import("@/components/CreateGroup.vue"),
+    "create-user": () => import("@/components/CreateUser.vue"),
   },
   mounted() {
     this.$router.beforeEach((to, from, next) => {
@@ -174,7 +176,8 @@ export default Vue.extend({
       next();
     });
     this.$router.afterEach((to, from) => (this.appLoading = false));
-    this.window.showMessageBox = options=>this.confim(options.message, options.title);
+    this.window.showMessageBox = (options) =>
+      this.confim(options.message, options.title);
   },
 });
 

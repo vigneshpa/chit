@@ -29,6 +29,14 @@ const routes: Array<RouteConfig> = [
     }
   },
   {
+    path: "/templates",
+    name: "Templates",
+    component: () => import('@/views/templates.vue'),
+    meta: {
+      icon: "mdi-newspaper",
+    }
+  },
+  {
     path: "/settings",
     name: "Settings",
     component: () => import('@/views/settings.vue'),
