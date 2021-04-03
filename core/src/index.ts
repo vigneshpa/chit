@@ -19,12 +19,29 @@ declare global {
         payments: PaymentD[];
         wonAtMonth: RangeOf2<1, 20>;
     }
+    interface ChitTD{
+        uuid:string;
+        user: UserD;
+        noOfChits: number;
+        groupt: GroupTD;
+        month:RangeOf2<1, 12>;
+        year:number;
+        paidInitial:boolean;
+    }
     interface GroupD extends ModelD {
         name: string;
         batch: string;
         month: RangeOf2<1, 12>;
         year: number;
         chits: ChitD[];
+    }
+    interface GroupTD {
+        uuid:string;
+        name: string;
+        batch: string;
+        month: RangeOf2<1, 12>;
+        year: number;
+        chits: ChitTD[];
         /**
          * THIS IS ONLY FOR CREATION OF GROUP
          * Don't use it data retival

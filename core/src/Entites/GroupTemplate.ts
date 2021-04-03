@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BeforeInsert, AfterLoad } from "typeorm";
 import ChitTemplate from "./ChitTemplate";
 import { v4 as uuid } from "uuid"
 
@@ -32,7 +32,9 @@ export default class GroupTemplate {
     Object.assign(this, base);
   }
 
-  get name() {
-    return this.year + this.month + this.batch;
+  name:string;
+  @AfterLoad()
+  private nameCreate() {
+    this.name = this.year + "-" + this.month + "-" + this.batch;
   }
 }

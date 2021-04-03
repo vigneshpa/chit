@@ -342,7 +342,7 @@ export default Vue.extend({
       this.submited = true;
       this.disableInputs = true;
       this.skipValidation = true;
-      const finalMembers: GroupD["members"] = [];
+      const finalMembers: GroupTD["members"] = [];
       this.members.forEach((member) => {
         finalMembers.push({
           uuid: member.info.uuid,

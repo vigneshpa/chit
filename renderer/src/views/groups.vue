@@ -54,7 +54,7 @@ v-container(fluid)
               span {{ item.name }}
               v-spacer
               v-btn(text @click="groupDetails.uuid = item.uuid; groupDetails.visible=true")
-                v-icon mdi-newspaper
+                v-icon mdi-account-group
             v-divider
             v-list(dense)
               v-list-item(

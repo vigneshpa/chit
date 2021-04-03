@@ -181,7 +181,7 @@ export default Vue.extend({
   },
   components: {
     "create-chit": () => import("@/components/CreateChit.vue"),
-    "create-group": () => import("@/components/CreateGroup.vue"),
+    "create-group": () => import("@/components/CreateGroupTemplate.vue"),
     "create-user": () => import("@/components/CreateUser.vue"),
   },
   mounted() {

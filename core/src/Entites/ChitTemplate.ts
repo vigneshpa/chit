@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, JoinColumn, ManyToOne, Column, BeforeInsert } from "typeorm";
 import GroupTemplate from "./GroupTemplate";
+import { v4 as uuid } from "uuid";
 import User from "./User";
 
 @Entity()
@@ -27,6 +28,14 @@ export default class ChitTemplate {
 
   @Column({ nullable: false })
   readonly noOfChits: number;
+
+  @Column({ type: 'uuid', unique: true })
+  readonly uuid: string;
+
+  @BeforeInsert()
+  private createUuid() {
+    (this.uuid as GroupTemplate["uuid"]) = uuid();
+  }
 
   constructor(base?: Partial<ChitTemplate>) {
     Object.assign(this, base);

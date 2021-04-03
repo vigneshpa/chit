@@ -54,7 +54,7 @@ v-container(fluid)
               span {{ item.name }}
               v-spacer
               v-btn(text @click="groupDetails.uuid = item.uuid; groupDetails.visible=true")
-                v-icon mdi-account-group
+                v-icon mdi-newspaper
             v-divider
             v-list(dense)
               v-list-item(
@@ -75,7 +75,7 @@ moment.locale("en-in");
 export default Vue.extend({
   data() {
     return {
-      groups: [] as GroupD[],
+      groups: [] as GroupTD[],
       loading: false as boolean,
       itemsPerPageArray: [4, 8, 12] as number[],
       search: "" as string,
@@ -136,8 +136,8 @@ export default Vue.extend({
   },
   async mounted() {
     this.loading = true;
-    this.groups = <GroupD[]>(
-      await window.ipcirenderer.callMethod("dbQuery", { query: "listGroups" })
+    this.groups = <GroupTD[]>(
+      await window.ipcirenderer.callMethod("dbQuery", { query: "listGroupTemplates" })
     );
     this.loading = false;
   },
