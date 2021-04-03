@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     cached () {
       console.log('Content has been cached for offline use.')
+      window.showAlert("cached");
     },
     updatefound () {
       console.log('New content is downloading.')
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV === 'production') {
     },
     offline () {
       console.log('No internet connection found. App is running in offline mode.')
+      window.showAlert("offline");
     },
     error (error) {
       console.error('Error during service worker registration:', error)

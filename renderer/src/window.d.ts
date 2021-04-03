@@ -11,5 +11,6 @@ declare global {
         isOnline?:boolean;
         isPWA?:boolean;
         showMessageBox:(options:ChitMessageBoxOptions)=>void;
+        showAlert:(alr:("cached"|"offline"))=>void;
     }
 }

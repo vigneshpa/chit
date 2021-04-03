@@ -19,6 +19,7 @@ v-app#1_app
         v-for="item in $router.options.routes",
         v-bind:key="item.path",
         :to="item.path",
+        @click="drawer = null"
         active-class="router-link-active",
         exact
         )
@@ -69,6 +70,18 @@ v-app#1_app
             v-list-item-title {{ item.title }}
 
   v-main
+    v-alert(
+      type="success",
+      dismissible,
+      v-model="alerts.cached",
+      transition="scale-transition"
+    ) App is ready to be installed and can be used offline.
+    v-alert(
+      type="warning",
+      dismissible,
+      v-model="alerts.offline",
+      transition="scale-transition"
+    ) Cannot check for updates! You are offline.
     router-view
 
   v-footer(app, dense)
@@ -115,7 +128,7 @@ export default Vue.extend({
       },
     ],
     appLoading: true,
-    form:formM,
+    form: formM,
     isOnline: window?.isOnline,
     confirmO: {
       visible: false as boolean,
@@ -126,6 +139,7 @@ export default Vue.extend({
       },
     },
     window,
+    alerts: { cached: false, offline: false },
   }),
   computed: {
     pageTitle() {
@@ -178,6 +192,7 @@ export default Vue.extend({
     this.$router.afterEach((to, from) => (this.appLoading = false));
     this.window.showMessageBox = (options) =>
       this.confim(options.message, options.title);
+    this.window.showAlert = (alr) => (this.alerts[alr] = true);
   },
 });
 
