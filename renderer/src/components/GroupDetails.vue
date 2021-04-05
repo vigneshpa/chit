@@ -35,7 +35,7 @@ export default Vue.extend({
         chits: [],
         uuid: "",
         members: [],
-      } as GroupD,
+      }as unknown as GroupD,
       month:""
     };
   },

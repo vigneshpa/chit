@@ -2,7 +2,7 @@ import { Connection, ConnectionOptions, createConnection, Repository } from "typ
 import * as Entites from "./Entites";
 import Entype from "./Entites";
 import { SqljsConnectionOptions } from "typeorm/driver/sqljs/SqljsConnectionOptions";
-import Actions from "./Actions";
+import {default as Actions, DbmgmtQueryArgs} from "./Actions";
 declare global {
     type DbmgmtOptions = {
         type: "postgres";

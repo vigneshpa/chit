@@ -19,7 +19,7 @@ declare global {
 
 const { User, Group, Chit, Payment, GroupTemplate, ChitTemplate } = Entites;
 
-
+export {DbmgmtQueryArgs};
 export default class Actions {
 
   private repos: ORMRepos;
