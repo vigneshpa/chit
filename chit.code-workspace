@@ -18,12 +18,28 @@
 		"version": "2.0.0",
 		"tasks": [
 			{
-				"label": "Start Watchers",
+				"label": "Start Core Watcher",
 				"type": "shell",
 				"runOptions": {
 					"runOn": "folderOpen"
 				},
-				"command": "gnome-terminal --tab -e 'sh -c \"cd core; yarn watch\"' --tab -e 'sh -c \"cd renderer; yarn watch\"' --tab -e 'sh -c \"cd web; yarn dev;\"' "
+				"command": "cd core ; yarn watch"
+			},
+			{
+				"label": "Start Renderer Watcher",
+				"type": "shell",
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
+				"command": "cd renderer ; yarn watch"
+			},
+			{
+				"label": "Start Devlopement Server",
+				"type": "shell",
+				"runOptions": {
+					"runOn": "folderOpen"
+				},
+				"command": "cd web ; yarn dev"
 			}
 		]
 	},
