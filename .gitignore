@@ -1,17 +1,3 @@
 node_modules
 package-lock.json
 yarn.lock
-pages
-core/lib
-renderer/app
-web/dist
-web/dev/**/*.js
-web/src/prod.env
-web/src/public/app/resources/browserSupport.js
-web/src/users.prod.json
-electron/dist/builder-effective-config.yaml
-electron/dist
-electron/app
-electron/electron-builder.yml
-pwa/app
-pwa/src/apiCredentials.json
