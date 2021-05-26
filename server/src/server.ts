@@ -1,6 +1,7 @@
 import debug from "debug";
 debug("test:server");
-
+import { config } from "dotenv";
+config({ path: "./.env" });
 import App from "./app";
 
 const port = normalizePort(process.env.PORT || 3000);
@@ -34,7 +35,7 @@ function normalizePort(val: any): number | boolean {
     return false;
 }
 
-function onError(error:any): void {
+function onError(error: any): void {
     if (error.syscall !== 'listen') {
         throw error;
     }
@@ -59,7 +60,7 @@ function onError(error:any): void {
 }
 
 function onListening() {
-    let addr:any = server.address();
+    let addr: any = server.address();
     let bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;

@@ -35,7 +35,7 @@ if (existsSync("./server/src/users.prod.json")) {
   console.log("\n\n\nCreating web account\nPlease enter the details");
   const username = await input("Username:              is 'admin' for testing");
   const pass = await input("Password:              is 'test' for testing");
-  const secret = await input("Session Secret:        is '6hu7ijijjnw392j28n&Y&(YYB' for testing");
+  const secret = await input("Session Secret:        is 'sf546s5f65f6s2f62sd6f26sd2f6sd2f6s' for testing");
   const googlesv = await input("Google site verification code:      (optional)");
   const prod_env = `
   SESSION_SECRET = '${secret}'
