@@ -6,6 +6,8 @@
         "lib": [
             "esnext"
         ],
-        "esModuleInterop": true
+        "declaration": true,
+        "esModuleInterop": false,
+        "rootDir": "src"
     }
 }
