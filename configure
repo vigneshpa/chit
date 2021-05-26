@@ -1,0 +1,92 @@
+#!/usr/bin/env node
+console.log(`Hello!
+
+/*******
+This software comes with absolutely no warrenty - refer GPL-3.0 in LICENSE.md
+*******/
+
+This will guide you to setup the developement envirunment for chit management system.
+This is intended to be used by developers or to host servers, But if you dont want to build and just want to use the app head over https://chitapp.github.io\n\n`);
+const readline = require('readline');
+const childp = require("child_process");
+const { writeFileSync, existsSync } = require("fs");
+const bcrypt = require("./server/node_modules/bcrypt");
+const npm_modules = ["server"];
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
+
+
+if (existsSync("./server/src/users.prod.json")) {
+  console.log("looks like you have already configured this repo");
+  process.exit(0);
+}
+
+//Async config IIFE
+(async e => {
+  if ((await input("This configuration step needs yarn to be installed on your system globally\nDo you want to continue (Yes/No):")).toLowerCase() !== "yes") { console.log("OK!\nExitting Configurator"); return process.exit(0); };
+  for (let npm_module of npm_modules) {
+    console.log("installing deps for " + npm_module);
+    await exec("yarn", ["install"], { cwd: npm_module });
+  }
+  console.log("Finished installing deps");
+  console.log("\n\n\nCreating web account\nPlease enter the details");
+  const username = await input("Username:              is 'admin' for testing");
+  const pass = await input("Password:              is 'test' for testing");
+  const secret = await input("Session Secret:        is '6hu7ijijjnw392j28n&Y&(YYB' for testing");
+  const googlesv = await input("Google site verification code:      (optional)");
+  const prod_env = `
+  SESSION_SECRET = '${secret}'
+  NODE_ENV = 'production'
+  GOOGLE_SITE_VERIFICATION = '${googlesv}'`;
+  writeFileSync("./server/src/prod.env", prod_env);
+  users_prod_json = {};
+  users_prod_json[username] = bcrypt.hashSync(pass, 11);
+  console.log("Writing files");
+  writeFileSync("./server/src/users.prod.json", JSON.stringify(users_prod_json));
+  console.log("Done!")
+  process.exit(e);
+})(0);
+
+
+
+
+
+
+
+
+
+function exec(command, args, options, rescb, rejcb) {
+  return new Promise((resolve, reject) => {
+    options = options ? options : {};
+    options.stdio = options.stdio ? options.stdio : "inherit";
+    let execprs = childp.spawn(command, args, options);
+    execprs.on("close", (code, signal) => {
+      let color = "dim";
+      if (code === 0) {
+        color = "green";
+      } else {
+        color = "redBright";
+      }
+      console.log(
+        `Process exited with code ${code} and signal ${signal}`
+      );
+      if (code !== 0)
+        reject(Error(
+          `Process ${command} exitted with code ${code} and signal ${signal}`
+        ));
+      resolve(code);
+
+
+    });
+  }).then(rescb, rejcb);
+}
+function input(str) {
+  return new Promise((resolve, reject) => {
+    const onLine = value => resolve(value);
+    rl.on('line', onLine);
+    console.log(str);
+  });
+}
