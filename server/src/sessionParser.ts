@@ -1,5 +1,4 @@
 import * as session from "express-session";
-import {PrismaClient} from "@prisma/client";
 const CreateMemStore = require("memorystore")
 const MemStore = CreateMemStore(session);
 declare module 'express-session' {
@@ -7,7 +6,6 @@ declare module 'express-session' {
     user: {
       loggedIn: boolean;
       name?:string;
-      client?:PrismaClient;
     }
   }
 }

@@ -1,0 +1,47 @@
+schema {
+  query: Query
+  mutation:Mutation
+}
+type Query {
+  user: [User!]!
+}
+type Mutation{
+}
+type User {
+  uuid:String
+  name:String
+  createdAt:String
+  updatedAt:String
+  phone:String
+  address:String
+  chits:Chit[]
+}
+type Group {
+  uuid:String
+  createdAt:String
+  updatedAt:String
+  batch:String
+  month:Int
+  year:Int
+  chits:Chit[]
+}
+type Chit {
+  uuid:String
+  createdAt:String
+  updatedAt:String
+  user:User
+  userId:String
+  group:Group
+  groupId:String
+  noOfChits:Float
+  payments:Payment[]
+  withdrawalMonth:Int
+}
+type Payment{
+  uuid:String
+  createdAt:String
+  chit:Chit
+  chitId:String
+  imonth:Int
+  ispaid:Boolean
+}

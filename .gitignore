@@ -4,3 +4,4 @@ yarn.lock
 dist
 *.prod.json
 prod.env
+server/prisma/migrations

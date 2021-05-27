@@ -31,7 +31,7 @@ const build = async () => {
         bt.logi("Building pug static files");
         const files = await readdir("./src/static/");
         for (const file of files) {
-            const pugstr = pug.render((await readFile("./src/static/"+file)).toString(), { env: process.env });
+            const pugstr = pug.render((await readFile("./src/static/" + file)).toString(), { env: process.env });
             writeFile(join(buildDir, "/public", file.replace(/\.pug$/, ".html")), pugstr);
         };
 
@@ -49,7 +49,7 @@ const build = async () => {
         pkg.main = "server.js";
         delete pkg.devDependencies;
         if (pkg.dependencies.sqlite3) delete pkg.dependencies.sqlite3
-        pkg.scripts = { start: "node server.js" };
+        pkg.scripts = { start: "node server.js", generate: "npx prisma generate" };
         await writeFile(buildDir + "/package.json", JSON.stringify(pkg));
 
         //Compiling TypeScript
@@ -62,7 +62,7 @@ const build = async () => {
 
         //copying prisma schema
         bt.logi("Copying prisma ORM schema");
-        await bt.copy("./prisma/schema.prisma", buildDir+"/schema.prisma");
+        await bt.copy("./prisma/schema.prisma", buildDir + "/schema.prisma");
 
         bt.end();
 
