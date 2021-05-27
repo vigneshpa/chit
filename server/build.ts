@@ -57,7 +57,12 @@ const build = async () => {
         await bt.exec('tsc', ['--build', 'tsconfig.json']);
 
         //Create db directory
+        bt.logi("Creating db directory")
         await bt.fs.ensureFile(buildDir + "/db/placeholder");
+
+        //copying prisma schema
+        bt.logi("Copying prisma ORM schema");
+        await bt.copy("./prisma/schema.prisma", buildDir+"/schema.prisma");
 
         bt.end();
 

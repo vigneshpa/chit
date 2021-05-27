@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
+        "sourceMap": false,
         "outDir": "dist",
         "strict": true,
         "lib": [
             "esnext"
         ],
-        "declaration": true,
+        "declaration": false,
+        "removeComments": true,
+        "inlineSourceMap": false,
         "esModuleInterop": false,
     },
     "include": ["src/**/*"],
