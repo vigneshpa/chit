@@ -1,6 +1,6 @@
 schema {
-  query: Query
-  mutation:Mutation
+  query: Query!
+  mutation:Mutation!
 }
 type Query {
   user:[User!]!
@@ -8,7 +8,7 @@ type Query {
   chit:[Chit]!
 }
 type Mutation{
-  createUser(input:UserInput):User
+  createUser(input:UserInput):User!
 }
 type User {
   uuid:String!
