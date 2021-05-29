@@ -13,8 +13,13 @@ router-view#view(:class="{ shrinked: drawer && !mobile }")
 import { defineComponent, ref } from "vue";
 export default defineComponent({
   setup() {
-    const drawer = ref(false);
     const mobile = ref(false);
+    const resizeHandler = () => {
+      mobile.value = window.innerWidth < 960;
+    };
+    window.onresize = resizeHandler;
+    resizeHandler();
+    const drawer = ref(!mobile.value);
     return { drawer, mobile };
   }
 });
@@ -23,26 +28,21 @@ export default defineComponent({
 <style lang="scss">
 @use "sass:math";
 
-
 //theme
-$primary:#303f9f;
-$primaryLight:#666ad1;
-$primaryDark:#001970;
-$secondary:#3949ab;
-$secondaryLight:#6f74dd;
-$secondaryDark:#00227b;
-$textOnPrimary:#ffffff;
-$textOnSecondary:#ffffff;
-
-//colors
+$primary: #303f9f;
+$primaryLight: #666ad1;
+$primaryDark: #001970;
+$secondary: #3949ab;
+$secondaryLight: #6f74dd;
+$secondaryDark: #00227b;
+$textOnPrimary: #ffffff;
+$textOnSecondary: #ffffff;
 $background: rgb(255, 255, 255);
-$highlighter: rgb(70, 70, 70);
-$navbg:rgb(164, 188, 231);
-$fontColor: rgb(68, 68, 68);
-$fontColor1: rgb(97, 68, 68);
+$textOnBackground: rgb(41, 41, 41);
+$highlighter: grey;
 $shadowColor: grey;
 
-$highlightWeight: 85;
+$highlightWeight: 80;
 
 //size
 $navSize: 60px;
@@ -55,7 +55,7 @@ $highlight: mix(rgba(255, 255, 255, 0), $highlighter, $highlightWeight);
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $fontColor;
+  color: $textOnBackground;
 }
 
 $nav1in3: math.div($navSize, 3);
@@ -67,7 +67,7 @@ $nav1in3: math.div($navSize, 3);
   right: 0px;
   width: 100%;
   box-sizing: border-box;
-  background-color: $navbg;
+  background-color: $primary;
   display: flex;
   box-shadow: 0px 0px 5px $shadowColor;
   justify-content: space-between;
@@ -76,7 +76,7 @@ $nav1in3: math.div($navSize, 3);
     line-height: $nav1in3;
     padding: $nav1in3 15px $nav1in3 15px;
     text-decoration: none;
-    color: $fontColor;
+    color: $textOnPrimary;
     transition: background-color 0.3s ease;
     user-select: none;
   }
@@ -102,6 +102,8 @@ $nav1in3: math.div($navSize, 3);
   overflow: auto;
   padding: 20px 0px 10px 0px;
 
+  font-size: 1.2em;
+
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -112,7 +114,7 @@ $nav1in3: math.div($navSize, 3);
     transform: translateX(-100%);
   }
   a {
-    color: $fontColor;
+    color: $textOnBackground;
     width: 100%;
     box-sizing: border-box;
     text-align: center;
@@ -125,8 +127,8 @@ $nav1in3: math.div($navSize, 3);
     }
 
     &.router-link-exact-active {
-      color: $fontColor1;
-      font-size: 1.3em;
+      font-weight: bold;
+      font-size: 1.1em;
     }
   }
 }

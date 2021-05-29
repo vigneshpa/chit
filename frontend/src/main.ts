@@ -4,4 +4,5 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-(<any>window).app = createApp(App).use(store).use(router).mount('#app')
+window.VueApp = createApp(App).use(store).use(router);
+window.app = window.VueApp.mount('#app');
