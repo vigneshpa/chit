@@ -23,6 +23,17 @@ export default defineComponent({
 <style lang="scss">
 @use "sass:math";
 
+
+//theme
+$primary:#303f9f;
+$primaryLight:#666ad1;
+$primaryDark:#001970;
+$secondary:#3949ab;
+$secondaryLight:#6f74dd;
+$secondaryDark:#00227b;
+$textOnPrimary:#ffffff;
+$textOnSecondary:#ffffff;
+
 //colors
 $background: rgb(255, 255, 255);
 $highlighter: rgb(70, 70, 70);
