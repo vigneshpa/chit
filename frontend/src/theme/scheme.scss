@@ -1,0 +1,26 @@
+@use "sass:math";
+
+//theme
+$primary: #303f9f;
+$primaryLight: #666ad1;
+$primaryDark: #001970;
+$secondary: #3949ab;
+$secondaryLight: #6f74dd;
+$secondaryDark: #00227b;
+$textOnPrimary: #ffffff;
+$textOnSecondary: #ffffff;
+$background: rgb(255, 255, 255);
+$textOnBackground: rgb(41, 41, 41);
+$highlighter: grey;
+$shadowColor: grey;
+
+$highlightWeight: 80;
+
+//size
+$navSize: 60px;
+$drawerWidth: 250px;
+
+//calculations
+$highlight: mix(rgba(255, 255, 255, 0), $highlighter, $highlightWeight);
+
+$nav1in3: math.div($navSize, 3);
