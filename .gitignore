@@ -5,3 +5,4 @@ dist
 *.prod.json
 prod.env
 server/prisma/migrations
+App.vue
