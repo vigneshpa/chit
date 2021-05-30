@@ -1,6 +1,6 @@
 <template lang="pug">
 .t-nav
-  a.material-icons(@click="this.$TTheme.store.drawer = !this.$TTheme.store.drawer") menu
+  a.material-icons(@click="this.$TTheme.store.drawer = !this.$TTheme.store.drawer" style="font-size:24px;") menu
   slot
 </template>
 <style lang="scss">
@@ -20,6 +20,7 @@
   span,
   a {
     line-height: scheme.$nav1in3;
+    font-size:1rem;
     padding: scheme.$nav1in3 15px scheme.$nav1in3 15px;
     text-decoration: none;
     color: scheme.$textOnPrimary;
@@ -27,7 +28,7 @@
     user-select: none;
   }
   span {
-    font-size: 1.1em;
+    font-size: 1.05rem;
   }
   a {
     cursor: pointer;

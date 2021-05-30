@@ -1,8 +1,11 @@
 <template lang="pug">
 .t-icon-text-container
-  span.t-icon(:class="{'material-icons':!outlined, 'material-icons-outlined':outlined}" v-text="icon")
+  span.t-icon(
+    :class="{ 'material-icons': !outlined, 'material-icons-outlined': outlined }",
+    v-text="icon"
+  )
   span.t-icon-text
-  slot
+    slot
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
@@ -12,10 +15,10 @@ export default defineComponent({
       type: String,
       required: false
     },
-    outlined:{
-      type:Boolean,
-      required:false,
-      default:false
+    outlined: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 });
@@ -23,14 +26,15 @@ export default defineComponent({
 <style lang="scss">
 @use "./scheme.scss" as scheme;
 .t-icon-text-container {
-  .t-icon{
-    display:inline-block;
-    width:24px;
-    height:24px;
-    color:scheme.$textOnBackgroundLight;
+  .t-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    color: scheme.$textOnBackgroundLight;
     margin-right: 10px;
   }
   .t-icon-text {
+    margin-top:0.16rem;
     display: inline-block;
   }
   display: flex;

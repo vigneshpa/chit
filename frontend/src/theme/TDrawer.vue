@@ -30,7 +30,7 @@ export default defineComponent({
   overflow: auto;
   padding: 20px 0px 10px 0px;
 
-  font-size: 1.2em;
+  font-size: 1.2rem;
 
   display: flex;
   flex-direction: column;
