@@ -1,12 +1,18 @@
 <template lang="pug">
+.drawer-cover(v-if="drawer && mobile" @click="drawer = false")
 .t-drawer(:class="{ hidden: !drawer }")
   slot
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, watch } from "vue";
 export default defineComponent({
   data() {
     return this.$TTheme.store;
+  },
+  watch:{
+    $route(to, from) {
+      this.drawer = !this.mobile;
+    }
   }
 });
 </script>
@@ -50,8 +56,15 @@ export default defineComponent({
 
     &.router-link-exact-active {
       font-weight: bold;
-      font-size: 1.1em;
     }
   }
+}
+.drawer-cover{
+  position:absolute;
+  top:scheme.$navSize;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:scheme.$highlight;
 }
 </style>

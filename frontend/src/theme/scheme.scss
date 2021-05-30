@@ -11,14 +11,15 @@ $textOnPrimary: #ffffff;
 $textOnSecondary: #ffffff;
 $background: rgb(255, 255, 255);
 $textOnBackground: rgb(41, 41, 41);
+$textOnBackgroundLight:rgb(85, 85, 85);
 $highlighter: grey;
 $shadowColor: grey;
 
 $highlightWeight: 80;
 
 //size
-$navSize: 60px;
-$drawerWidth: 250px;
+$navSize: 55px;
+$drawerWidth: 230px;
 
 //calculations
 $highlight: mix(rgba(255, 255, 255, 0), $highlighter, $highlightWeight);
