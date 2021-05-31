@@ -34,12 +34,15 @@ html(lang="en")
             input(type="password" id="password" placeholder="Password" name="pwd")
           div
             input.button.shadowed.primary(type="Submit" value="Login")
+            p
+              span.icon-info
+              | This action will embed cookes in your browser
     footer
       |Chit Management System
     script.
       fetch("/api/login").then(res=>res.text().then(value=>{
         if( res.status !== 401 && JSON.parse(value) === "LOGGED_IN"){
-          window.location.href = "/app";
+          window.location.href = "/app/";
         }
       }));
     script.
@@ -54,7 +57,7 @@ html(lang="en")
         let status = xhr.status;
         if (status === 200 && JSON.parse(response) === "LOGGED_IN") {
           //alert("Logged in succesfully!\n Redirecting to app");
-          window.location.href = "/app";
+          window.location.href = "/app/";
         } else if (status === 404) {
           //alert("Already logged in!\n Redirecting to app");
           window.location.href = "/app";

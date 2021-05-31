@@ -20,7 +20,7 @@ export default class App {
         this.app.use(logger('dev'));
 
         //Reditecting to secure if it is in oproduction
-        //if (process.env.NODE_ENV === 'production')
+        if (process.env.NODE_ENV === 'production')
         this.app.use((req, res, next) => {
             if (req.headers['x-forwarded-proto'] === 'http') {
                 res.redirect(307, `https://${req.hostname + req.originalUrl}`);

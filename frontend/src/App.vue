@@ -6,6 +6,8 @@ t-app
   t-drawer
     router-link(to="/")
       t-icon-text(icon="space_dashboard", outlined) Dashboard
+    router-link(to="/users")
+      t-icon-text(icon="people" outlined) Users
     router-link(to="/about")
       t-icon-text(icon="info", outlined) About
   t-nav

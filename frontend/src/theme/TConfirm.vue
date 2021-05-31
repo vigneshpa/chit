@@ -9,7 +9,7 @@ transition(name="t-fade")
 import { defineComponent } from "vue";
 export default defineComponent({
   mounted() {
-    this.$TTheme.store.confirm = true;
+    // this.$TTheme.store.confirm = true;
   }
 });
 </script>

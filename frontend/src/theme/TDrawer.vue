@@ -54,6 +54,9 @@ export default defineComponent({
     &:hover {
       background-color: scheme.$highlight;
     }
+    &:active{
+      background-color: scheme.$highlightDark;
+    }
 
     &.router-link-exact-active {
       font-weight: bold;
