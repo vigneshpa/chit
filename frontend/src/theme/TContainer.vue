@@ -6,7 +6,7 @@
 @use "./scheme.scss" as scheme;
 .t-container{
   margin-top: scheme.$navSize;
-  transition: all 0.3s ease;
+  transition: all scheme.$aniDuration ease;
   &.shrinked {
     margin-left: scheme.$drawerWidth;
   }

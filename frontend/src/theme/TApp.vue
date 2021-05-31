@@ -23,4 +23,13 @@ export default defineComponent({
   -moz-osx-font-smoothing: grayscale;
   color: scheme.$textOnBackground;
 }
+.t-fade-enter-active,
+.t-fade-leave-active {
+  transition: opacity scheme.$aniDuration ease;
+}
+
+.t-fade-enter-from,
+.t-fade-leave-to {
+  opacity: 0;
+}
 </style>

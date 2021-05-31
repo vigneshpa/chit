@@ -16,6 +16,9 @@ $highlighter: grey;
 $shadowColor: grey;
 
 $highlightWeight: 80;
+$coverWeight:50;
+
+$aniDuration:300ms;
 
 //size
 $navSize: 55px;
@@ -23,5 +26,6 @@ $drawerWidth: 230px;
 
 //calculations
 $highlight: mix(rgba(255, 255, 255, 0), $highlighter, $highlightWeight);
+$coverColor:mix(rgba(255, 255, 255, 0), $highlighter, $coverWeight);
 
 $nav1in3: math.div($navSize, 3);

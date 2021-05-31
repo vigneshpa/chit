@@ -1,5 +1,6 @@
 <template lang="pug">
-.drawer-cover(v-if="drawer && mobile" @click="drawer = false")
+transition(name="t-fade")
+  .drawer-cover(v-if="drawer && mobile", @click="drawer = false")
 .t-drawer(:class="{ hidden: !drawer }")
   slot
 </template>
@@ -9,7 +10,7 @@ export default defineComponent({
   data() {
     return this.$TTheme.store;
   },
-  watch:{
+  watch: {
     $route(to, from) {
       this.drawer = !this.mobile;
     }
@@ -37,7 +38,7 @@ export default defineComponent({
   flex-wrap: nowrap;
   justify-content: flex-start;
 
-  transition: all 0.3s ease;
+  transition: all scheme.$aniDuration ease;
   &.hidden {
     transform: translateX(-100%);
   }
@@ -48,7 +49,7 @@ export default defineComponent({
     text-align: center;
     text-decoration: none;
     padding: 10px;
-    transition: all 0.3s ease;
+    transition: all scheme.$aniDuration ease;
 
     &:hover {
       background-color: scheme.$highlight;
@@ -56,15 +57,16 @@ export default defineComponent({
 
     &.router-link-exact-active {
       font-weight: bold;
+      border-right: solid 0.3rem scheme.$primaryLight;
     }
   }
 }
-.drawer-cover{
-  position:absolute;
-  top:scheme.$navSize;
-  left:0;
-  right:0;
-  bottom:0;
-  background-color:scheme.$highlight;
+.drawer-cover {
+  position: absolute;
+  top: scheme.$navSize;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: scheme.$coverColor;
 }
 </style>

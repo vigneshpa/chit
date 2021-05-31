@@ -24,7 +24,7 @@
     padding: scheme.$nav1in3 15px scheme.$nav1in3 15px;
     text-decoration: none;
     color: scheme.$textOnPrimary;
-    transition: background-color 0.3s ease;
+    transition: background-color scheme.$aniDuration ease;
     user-select: none;
   }
   span {
