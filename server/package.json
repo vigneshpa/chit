@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "ts-node build.ts",
-    "dev": "cd src && ts-node-dev server.ts",
+    "dev": "nodemon",
     "start": "cd dist && node ."
   },
   "keywords": [
@@ -44,9 +44,9 @@
     "chalk": "^4.1.1",
     "express-pug-static": "^1.1.0",
     "fs-extra": "^10.0.0",
+    "nodemon": "^2.0.7",
     "prisma": "2.23.0",
     "ts-node": "^10.0.0",
-    "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4"
   }
 }
