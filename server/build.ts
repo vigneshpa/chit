@@ -40,10 +40,6 @@ const build = async () => {
         await bt.copy('./src/public', buildDir + '/public');
         await bt.copy('./src/views', buildDir + '/views');
 
-        //Copying users info
-        bt.logi("Copying users info");
-        await bt.copy("./src/users.prod.json", buildDir + "/users.json");
-
         //Modifiying package.json for production
         let pkg = JSON.parse((await readFile("./package.json")).toString());
         pkg.main = "server.js";
@@ -55,18 +51,6 @@ const build = async () => {
         //Compiling TypeScript
         bt.logi("Building server TypeScript files");
         await bt.exec('tsc', ['--build', 'tsconfig.json']);
-
-        //Create db directory
-        bt.logi("Creating db directory")
-        await bt.fs.ensureFile(buildDir + "/db/placeholder");
-
-        //copying prisma schema
-        bt.logi("Copying prisma ORM schema");
-        await bt.copy("./prisma/schema.prisma", buildDir + "/schema.prisma");
-
-        //copying graphql schema
-        bt.logi("Copying GraphQL schema");
-        await bt.copy("./src/graphql/schema.gql", buildDir + "/graphql/schema.gql");
 
         bt.end();
 
