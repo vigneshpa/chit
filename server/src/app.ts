@@ -31,7 +31,7 @@ export default class App {
         this.app.use(compression());
 
         //setting up view engine
-        this.app.set("views", process.env.NODE_ENV !== "production" ? "../src/views" : "./views");
+        this.app.set("views", "./views");
         this.app.set("view engine", "pug");
 
         //Setting up request parsers
