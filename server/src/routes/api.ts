@@ -1,25 +1,25 @@
 import { Router } from 'express';
 import * as multer from "multer";
-import { readFileSync } from 'fs';
-import { compare } from "bcrypt";
-import { graphqlHTTP } from "express-graphql";
-import { buildSchema, graphql } from "graphql";
-import Resolver from "../graphql/resolver";
 
 
-const users: { [user: string]: string } = JSON.parse((readFileSync("users.json")).toString());
-const schemastr = readFileSync(__dirname + "/../graphql/schema.gql").toString();
 const upload = multer();
 const router = Router();
 
-router.post("/login", upload.none(), async function (req, res, next) {
-  if (req.session.user?.loggedIn) {
-    next();
-    return;
-  }
+function authenticate(user: string, pass: string) {
 
-  if (users.hasOwnProperty(req.body.user) && (await compare(req.body.pwd, users[req.body.user]))) {
-    if (!req.body.user || typeof req.body.user !== "string") return console.log("Login error: logged in user is falsy or not string");
+  // User Authentication code goes here
+
+  return true;
+}
+
+
+
+
+router.post("/login", upload.none(), async function (req, res, next) {
+  if (req.session.user?.loggedIn) return next();
+  if (!req.body.user || typeof req.body.user !== "string") return next();
+  if (!req.body.pwd || typeof req.body.pwd !== "string") return next();
+  if (authenticate(req.body.user, req.body.pwd)) {
     req.session.user = {
       loggedIn: true,
       name: req.body.user
@@ -30,11 +30,8 @@ router.post("/login", upload.none(), async function (req, res, next) {
   }
 
 });
-router.use(function auth(req, res, next) {
-  if (req.session.user?.loggedIn) {
-    next();
-    return;
-  }
+router.use((req, res, next) => {
+  if (req.session.user?.loggedIn) return next();
   res.status(401).render("error", { code: 401, title: "Forbidden!", message: "You are not allowed here." });
 });
 
@@ -46,25 +43,6 @@ router.get("/logout", function (req, res, next) {
     res.redirect(303, "/");
   });
 });
-
-const schema = buildSchema(schemastr);
-const middlewareStore: { [key: string]: (req: any, res: any , next?:any)=> Promise<void> } = {};
-router.use("/graphql", (req, res, next) => {
-  if (!req.session.user?.name) return;
-  if (middlewareStore[req.session.user.name]) {
-    const resolver = new Resolver(req.session.user.name);
-    middlewareStore[req.session.user.name] = graphqlHTTP({ schema, graphiql: true, rootValue: resolver.root });
-  };
-  try {
-    middlewareStore[req.session.user.name](req, res, next);
-  } catch (e) {
-    next(e);
-  }
-});
-
-
-
-
 
 router.use((req, res, next) => next());
 export default router;

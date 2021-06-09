@@ -41,7 +41,6 @@ export default class App {
         //Injecting session parser
         this.app.use(this.sessionParser);
 
-
         //adding router
         this.app.use('/', router);
 
