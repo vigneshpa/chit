@@ -19,7 +19,7 @@ router.post("/login", upload.none(), async function (req, res, next) {
   }
 
   if (users.hasOwnProperty(req.body.user) && (await compare(req.body.pwd, users[req.body.user]))) {
-    if(!req.body.user||typeof req.body.user !=="string")return console.log("Login error: logged in user is falsy or not string");
+    if (!req.body.user || typeof req.body.user !== "string") return console.log("Login error: logged in user is falsy or not string");
     req.session.user = {
       loggedIn: true,
       name: req.body.user
@@ -48,12 +48,15 @@ router.get("/logout", function (req, res, next) {
 });
 
 const schema = buildSchema(schemastr);
+const middlewareStore: { [key: string]: (req: any, res: any , next?:any)=> Promise<void> } = {};
 router.use("/graphql", (req, res, next) => {
-  if(!req.session.user?.name)return;
-  const resolver = new Resolver(req.session.user.name);
-  const gql = graphqlHTTP({ schema, graphiql: true, rootValue: resolver.root });
+  if (!req.session.user?.name) return;
+  if (middlewareStore[req.session.user.name]) {
+    const resolver = new Resolver(req.session.user.name);
+    middlewareStore[req.session.user.name] = graphqlHTTP({ schema, graphiql: true, rootValue: resolver.root });
+  };
   try {
-    gql(req, res);
+    middlewareStore[req.session.user.name](req, res, next);
   } catch (e) {
     next(e);
   }

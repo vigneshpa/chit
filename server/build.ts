@@ -64,6 +64,10 @@ const build = async () => {
         bt.logi("Copying prisma ORM schema");
         await bt.copy("./prisma/schema.prisma", buildDir + "/schema.prisma");
 
+        //copying graphql schema
+        bt.logi("Copying GraphQL schema");
+        await bt.copy("./src/graphql/schema.gql", buildDir + "/graphql/schema.gql");
+
         bt.end();
 
     } catch (err) {

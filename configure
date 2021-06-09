@@ -11,7 +11,7 @@ const readline = require('readline');
 const childp = require("child_process");
 const { writeFileSync, existsSync } = require("fs");
 let bcrypt;
-const npm_modules = ["server"];
+const npm_modules = ["server", "frontend"];
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
