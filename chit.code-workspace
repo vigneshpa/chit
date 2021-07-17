@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"launch": {
+		"configurations": [
+			{
+				"command": "cd frontend && yarn serve",
+				"name": "Serve frontend",
+				"request": "launch",
+				"type": "node-terminal"
+			}
+		],
+		"compounds": []
+	}
+}
