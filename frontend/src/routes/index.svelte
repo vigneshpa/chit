@@ -5,6 +5,7 @@ Route(path="users/:id" component="{UsersId}")
 Route(path="about" component="{About}")
 </template>
 <script lang="ts">
+  import {fade as trans} from 'svelte/transition';
   import {Route} from 'svelte-routing';
   import Dashboard from './Dashboard.svelte';
   import Users from './Users.svelte';

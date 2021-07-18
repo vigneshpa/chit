@@ -2,7 +2,7 @@
 	import {Link, Router} from 'svelte-routing';
 	import {Container, Drawer, IconText, Nav, Confirm} from '@theme/';
 	import Routes from './routes/index.svelte';
-	let basepath = './';
+	let basepath = '/';
 </script>
 <template lang="pug">
 #app

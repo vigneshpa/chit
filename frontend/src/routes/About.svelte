@@ -1,3 +1,7 @@
+<script lang='ts'>
+  import {Page} from '@theme/';
+</script>
 <template lang="pug">
-  h4 About
+Page(heading='About')
+  p This a test content
 </template>
