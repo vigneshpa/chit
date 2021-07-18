@@ -21,6 +21,10 @@ module.exports = {
         },
       },
       {
+        test: /\.s[ac]ss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
@@ -39,6 +43,13 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@': resolve(__dirname, 'src'),
+      '@theme': resolve(__dirname, 'theme'),
+    },
+  },
   plugins: [
     new HtmlWebpackPlugin({
       inject: 'head',
@@ -53,9 +64,15 @@ module.exports = {
     path: resolve(__dirname, '../dist/public'),
     clean: true,
   },
+  optimization: {
+    minimize: true,
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
   devtool: 'source-map',
-  devServer:{
-    hot:true,
-    port:5000
-  }
+  devServer: {
+    hot: true,
+    port: 5000,
+  },
 };

@@ -1,12 +1,23 @@
-<template lang="pug">
-	p Hello {text}
-</template>
 <script lang="ts">
-	let text:string = 'world';
+	import {Link, Router} from 'svelte-routing';
+	import {Container, Drawer, IconText, Nav, Confirm} from '@theme/';
+	import Routes from './routes/index.svelte';
+	let basepath = './';
 </script>
-<style>
-	p {
-		color:white;
-		background-color:black;
-	}
-</style>
+<template lang="pug">
+#app
+	Router({basepath})
+		Container
+			Routes
+		Drawer
+			Link(to="/")
+				IconText(icon="space_dashboard", outlined) Dashboard
+			Link(to="/users")
+				IconText(icon="people" outlined) Users
+			Link(to="/about")
+				IconText(icon="info", outlined) About
+		Nav
+			span Chit Managemnet System
+			a(href="/api/logout") Logout
+		Confirm
+</template>

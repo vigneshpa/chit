@@ -1,16 +1,13 @@
-import App from './App.svelte';
-const app = new App({
-  target: document.body,
-  props: {
-    // we'll learn about props later
-    answer: 42,
-  },
-});
+import App from '@/App.svelte';
+import TTheme from '@theme/';
+
+const theme = new TTheme();
+const app = new App({target: window.document.body});
 window.app = app;
 
 
 declare global {
   interface Window {
-    app: any;
+    app: typeof app;
   }
 }
