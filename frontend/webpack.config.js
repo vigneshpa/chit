@@ -65,14 +65,13 @@ module.exports = {
     clean: true,
   },
   optimization: {
-    minimize: true,
     splitChunks: {
       chunks: 'all',
     },
   },
   devtool: 'source-map',
   devServer: {
-    hot: true,
+    hot: false,
     port: 5000,
   },
 };
