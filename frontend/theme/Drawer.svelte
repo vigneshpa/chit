@@ -1,17 +1,14 @@
 <template>
-  {#if store_mobile&&store_drawer}
-    <div class="drawer-cover" transition:fade on:click={()=>store.drawer.set(false)}></div>
+  {#if $store_mobile && $store_drawer}
+    <div class="drawer-cover" transition:fade on:click={()=>store_drawer.set(false)}></div>
   {/if}
-  <div class="t-drawer" class:hidden="{ !store_drawer }"><slot></slot></div>
+  <div class="t-drawer" class:hidden="{ !$store_drawer }"><slot></slot></div>
 </template>
 <script lang="ts">
-  import {fade, fly} from 'svelte/transition';
+  import {fade} from 'svelte/transition';
   if(!window.ttheme) new Error('Please initilze theme');
-  let store = window.ttheme.store;
-  let store_drawer:boolean;
-  store.drawer.subscribe(value=>store_drawer=value);
-  let store_mobile:boolean;
-  store.mobile.subscribe(value=>store_mobile=value);
+  let store_drawer = window.ttheme.store.drawer;
+  let store_mobile = window.ttheme.store.mobile;
 </script>
 <style lang="scss">
 @use "./scheme.scss" as scheme;

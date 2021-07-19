@@ -8,9 +8,8 @@
 </template>
 <script lang="ts">
   import { slide as trns } from 'svelte/transition';
-  let store_mobile:boolean = true;
-  window.ttheme.store.mobile.subscribe(value=>store_mobile=value);
-  window.ttheme.store.drawer.set(!store_mobile);
+  let store_mobile = window.ttheme.store.mobile;
+  window.ttheme.store.drawer.set(!$store_mobile);
   export let heading:string;
 </script>
 <style lang="scss">

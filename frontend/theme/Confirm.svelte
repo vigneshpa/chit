@@ -1,9 +1,9 @@
 <template>
-{#if store_confirm}
+{#if $store_confirm}
   <div class="t-confirm">
     <div class="t-confirm-cover">
       <div class="t-confirm-box">
-        <button on:click={()=>store.confirm.set(false)}>
+        <button on:click={()=>store_confirm.set(false)}>
           Close
         </button>
       </div>
@@ -13,10 +13,8 @@
 </template>
 <script lang="ts">
   if(!window.ttheme) new Error('Please initilze theme');
-  let store = window.ttheme.store;
-  // store.confirm.set(true);
-  let store_confirm:boolean;
-  store.confirm.subscribe( value => store_confirm=value );
+  let store_confirm = window.ttheme.store.confirm;
+  // Sconfirm.set(true);
 </script>
 <style lang="scss">
 @use "./scheme.scss";

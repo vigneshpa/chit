@@ -1,15 +1,13 @@
 <template>
 <!-- svelte-ignore a11y-missing-attribute -->
 <div class="t-nav">
-  <a on:click={()=>store.drawer.set(!drawer_val)} class="material-icons" style="font-size:24px;">menu</a>
+  <a on:click={()=>store_drawer.set(!$store_drawer)} class="material-icons" style="font-size:24px;">menu</a>
   <slot></slot>
 </div>
 </template>
 <script lang="ts">
   if(!window.ttheme) new Error('Please initilze theme');
-  let store = window.ttheme.store;
-  let drawer_val:boolean;
-  store.drawer.subscribe( value => {drawer_val = value} );
+  let store_drawer = window.ttheme.store.drawer;
 </script>
 <style lang="scss">
 @use "./scheme.scss" as scheme;
