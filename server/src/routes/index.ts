@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== 'production')
     })
   );
 
-// Mounting renderer
+// Mounting renderer if specified
 if (process.env.NODE_ENV !== 'production' && process.env.RENDERER_PATH) {
   const renderer: string = process.env.RENDERER_PATH;
   console.log('Serving app from ', renderer);
