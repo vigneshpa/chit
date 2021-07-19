@@ -1,7 +1,9 @@
-<script lang='ts'>
-  import {Page} from '@theme/';
+<script lang="ts">
+  import { Page } from '@theme/';
 </script>
-<template lang="pug">
-Page(heading='About')
-  p This a test content
+
+<template>
+  <Page heading="About">
+    <p>This a test content</p>
+  </Page>
 </template>

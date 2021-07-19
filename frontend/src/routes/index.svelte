@@ -1,30 +1,38 @@
-<template>
-  <svelte:component this={pageComp}/>
-  {#if isLoading}
-    <Loading info={pageStr}/>
-  {/if}
-</template>
 <script lang="ts">
-  import navaid from 'navaid';
-  let router = navaid();
-  import {Loading} from '@theme/';
-  let pageStr = '';
-  let params:any = {};
-  let pageComp = Loading;
-  let isLoading = true;
-  const lp = (ldr:()=>Promise<any>)=>(
-    async (parms:any)=>{
-      params = parms;
+  let route_params = window.route.params;
+  let pageComp: any;
 
-      isLoading = true;
-      pageComp = (await ldr()).default;
-      isLoading = false;
+  const lp = (path: string, ldr: () => Promise<any>) =>
+    [
+      path,
+      async params => {
+        window.route.params.set(params);
+        window.route.isLoading.set(true);
+
+        pageComp = (await ldr()).default;
+        window.route.pageStr.set(path);
+        window.route.isLoading.set(false);
+      },
+    ] as [string, (params: any) => Promise<void>];
+
+  const routes: { [path: string]: () => Promise<typeof import('*.svelte')> } = {
+    '/dashboard': () => import('./Dashboard.svelte'),
+    '/users': () => import('./Users.svelte'),
+    '/users/:user': () => import('./UsersInfo.svelte'),
+    '/about': () => import('./About.svelte'),
+    '/groups/': () => import('./Group.svelte'),
+  };
+
+  for (const path in routes) {
+    if (Object.prototype.hasOwnProperty.call(routes, path)) {
+      const args = lp(path, routes[path]);
+      window.route.router.on(...args);
     }
-  );
-  router
-  .on('/',          lp(()=>import('./Dashboard.svelte')))
-  .on('/users',     lp(()=>import('./Users.svelte')))
-  .on('/users/:id', lp(()=>import('./UsersInfo.svelte')))
-  .on('/about',     lp(()=>import('./About.svelte')))
-  .listen();
+  }
+  window.route.router.on('/', params => window.route.router.route('/dashboard'));
+  window.route.router.listen();
 </script>
+
+<template>
+  <svelte:component this={pageComp} {route_params} />
+</template>

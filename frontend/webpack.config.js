@@ -63,6 +63,7 @@ module.exports = {
     assetModuleFilename: 'assets/[name].[hash][ext][query]',
     path: resolve(__dirname, '../dist/public'),
     clean: true,
+    publicPath: '/',
   },
   optimization: {
     splitChunks: {
@@ -73,5 +74,6 @@ module.exports = {
   devServer: {
     hot: false,
     port: 5000,
+    historyApiFallback: true,
   },
 };

@@ -4,7 +4,11 @@
 			"path": "."
 		}
 	],
-	"settings": {},
+	"settings": {
+		"[svelte]": {
+			"editor.defaultFormatter": "svelte.svelte-vscode"
+		}
+	},
 	"launch": {
 		"configurations": [
 			{

@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <Page heading="Users">
+  <Page heading="Groups">
     <p>This a test content</p>
   </Page>
 </template>
