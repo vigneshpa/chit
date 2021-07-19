@@ -1,3 +1,5 @@
+const bURL = process.env.BASE_URL || '/app';
+window.bURL = bURL;
 // Loading theme
 import TTheme from '@theme/';
 
@@ -10,7 +12,7 @@ import { writable } from 'svelte/store';
 import type { Writable } from 'svelte/store';
 
 window.route = {
-  router: navaid('/app'),
+  router: navaid(bURL),
   pageStr: writable(''),
   params: writable({}),
   isLoading: writable(true),
@@ -24,11 +26,33 @@ window.app = app;
 
 declare global {
   interface Window {
+    /**
+     * Base url for the app
+     */
+    bURL: string;
+    /**
+     * App instance
+     */
     app: typeof app;
+    /**
+     * Information about current route
+     */
     route: {
+      /**
+       * NavAid router instance
+       */
       router: Router;
+      /**
+       * Current page
+       */
       pageStr: Writable<string>;
+      /**
+       * Parameters of the page
+       */
       params: Writable<any>;
+      /**
+       * Wheather the page is loading
+       */
       isLoading: Writable<boolean>;
     };
   }

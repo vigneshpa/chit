@@ -1,6 +1,10 @@
 const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SveltePreprocess = require('svelte-preprocess');
+const { EnvironmentPlugin } = require('webpack');
+
+process.env.BASE_URL = process.env?.BASE_URL || '/app';
+process.env.DIST_PATH = process.env?.DIST_PATH || '../server/dist/public/app';
 
 module.exports = {
   entry: { app: resolve(__dirname, 'src/App.ts') },
@@ -51,6 +55,7 @@ module.exports = {
     },
   },
   plugins: [
+    new EnvironmentPlugin(['BASE_URL']),
     new HtmlWebpackPlugin({
       inject: 'head',
       scriptLoading: 'defer',
@@ -61,9 +66,9 @@ module.exports = {
   output: {
     filename: 'assets/[name].[chunkhash].js',
     assetModuleFilename: 'assets/[name].[hash][ext][query]',
-    path: resolve(__dirname, '../dist/public'),
+    path: resolve(__dirname, process.env.DIST_PATH),
     clean: true,
-    publicPath: '/',
+    publicPath: process.env.BASE_URL + '/',
   },
   optimization: {
     splitChunks: {

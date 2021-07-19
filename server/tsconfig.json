@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "sourceMap": false,
+        "target": "ES2019",
+        "outDir": "./dist",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "strict": true,
+        "lib": [
+            "esnext"
+        ],
+        "declaration": false,
+        "removeComments": true,
+        "inlineSourceMap": false,
+        "esModuleInterop": false,
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "src/public/**/*"
+    ]
+}

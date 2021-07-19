@@ -1,12 +1,13 @@
 <script lang="ts">
   import { Container, Drawer, IconText, Nav, Confirm } from '@theme/';
-  import Router from './routes/index.svelte';
+  import Router from './routes/Router.svelte';
+  const bURL = window.bURL;
   let route_loading = window.route.isLoading;
   let drawer_links = [
-    { href: '/app/dashboard', text: 'Dashboard', icon: 'space_dashboard', icon_noutlined: false },
-    { href: '/app/users', text: 'Users', icon: 'people' },
-    { href: '/app/groups', text: 'Groups', icon: 'groups' },
-    { href: '/app/about', text: 'About', icon: 'info' },
+    { href: bURL + '/dashboard', text: 'Dashboard', icon: 'space_dashboard', icon_noutlined: false },
+    { href: bURL + '/users', text: 'Users', icon: 'people' },
+    { href: bURL + '/groups', text: 'Groups', icon: 'groups' },
+    { href: bURL + '/about', text: 'About', icon: 'info' },
   ];
   let route_pageStr: string = '';
   window.route.pageStr.subscribe(val => (route_pageStr = val));
@@ -20,7 +21,7 @@
 
     <Drawer>
       {#each drawer_links as lnk}
-        <a href={lnk.href} class:linkactive={('/app' + route_pageStr).startsWith(lnk.href)}>
+        <a href={lnk.href} class:linkactive={(bURL + route_pageStr).startsWith(lnk.href)}>
           <IconText icon={lnk.icon} outlined={!lnk.icon_noutlined}>{lnk.text}</IconText>
         </a>
       {/each}

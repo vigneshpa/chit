@@ -1,0 +1,84 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    - if(env?.NODE_ENV === "production")
+      -let gsv = env.GOOGLE_SITE_VERIFICATION;
+      meta(name="google-site-verification" content=gsv)
+    link(rel="stylesheet" href="/stylesheets/mini.min.css")
+    link(rel="stylesheet" href="/stylesheets/common.css")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Chit
+  body
+    header.sticky.row
+      span.logo.fluid.col-sm-4 Chit App
+      a.button.col-sm(href="/download.html") Download
+      a.button.col-sm(href="/login.html")
+        span.icon-user
+        |Login
+    .container.spacify-rows
+      .row
+        .col-sm-12.col-md-8.pad-card
+          .section.title
+            h3 What is Chit App?  🤨
+          .section
+            p.
+              Chit App is a business software for Chit Funds.
+            blockquote(cite="https://en.wikipedia.org/wiki/Chit_fund").
+              A chit fund is a type of rotating savings and credit association system.
+              Chit fund schemes may be organized by financial institutions, or informally among friends, relatives, or neighbours.
+              In some variations of chit funds, the savings are for a specific purpose. Chit funds are often microfinance organizations.
+        .col-sm-8.col-md-3.col-sm-first.margin-center
+          figure
+            img(src="/images/undraw_Business_analytics_re_tfh3.svg")
+      .row
+        .col-sm-12.col-md-8.pad-card
+          .section.title
+            h3 How much does it cost?  💸
+          .section
+            h4 It is free!
+            p
+              | Chit App is not just free, it's more than that.
+              br
+              b Chit App is a OpenSoruce Software
+              |  and Available under GPL-3.0 Licence
+              | If you have any suggestions or need to report a bug, feel free to create an issue in 
+              a(href="https://github.com/vigneshpa/chit/issues") GitHub 
+              | issues page.
+            blockquote(cite="Linus Torvalds").
+              In real open source, you have the right to control your own destiny.
+        .col-sm-8.col-md-3.col-sm-first.col-md-last.margin-center
+          figure
+            img(src="/images/undraw_open_source_1qxw.svg")
+      .row
+        .col-sm-12.col-md-8.pad-card
+          .section.title
+            h3 Where can I get this App?
+          .section
+            p
+              | You can Download this app in 
+              a(href="/download.html") Downloads 
+              | page or in our 
+              a(href="https://github.com/vigneshpa/chit/releases") GitHub 
+              | releases page. 
+              | Open the assets and download the version for your system.
+              | You can also host a web version on your server.
+              | If this page is delivered your server, login to open your app
+        .col-sm-8.col-md-3.col-sm-first.margin-center
+          figure
+            img(src="/images/undraw_my_files_swob.svg")
+      div
+        .card.fluid
+          .section.title
+            h3 Thanks to
+          .section.row.cols-sm-3
+            figure
+              img(src="/images/vuejs.png" alt="Vue")
+            figure
+              img(src="/images/vuetify.webp" alt="Vuetify")
+
+    footer
+      | Chit Management Systems | 
+      a(href="https://github.com/vigneshpa/chit")
+        span.icon-link
+        |GitHub

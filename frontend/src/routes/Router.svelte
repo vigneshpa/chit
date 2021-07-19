@@ -29,7 +29,7 @@
       window.route.router.on(...args);
     }
   }
-  window.route.router.on('/', params => window.route.router.route('/dashboard'));
+  window.route.router.on('/', () => window.route.router.route('/dashboard'));
   window.route.router.listen();
 </script>
 
