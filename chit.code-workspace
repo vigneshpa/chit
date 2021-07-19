@@ -7,7 +7,25 @@
 	"settings": {
 		"[svelte]": {
 			"editor.defaultFormatter": "svelte.svelte-vscode"
-		}
+		},
+		"editor.tabSize": 2,
+		"liveServer.settings.multiRootWorkspaceName": "Source",
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"[javascript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"editor.formatOnSave": true,
+		"editor.formatOnSaveMode": "modifications",
+		"prettier.trailingComma": "es5",
+		"prettier.tabWidth": 2,
+		"prettier.semi": true,
+		"prettier.singleQuote": true,
+		"prettier.arrowParens": "avoid",
+		"prettier.printWidth": 150,
+		"prettier.resolveGlobalModules": true
 	},
 	"launch": {
 		"configurations": [
