@@ -51,6 +51,7 @@ export default class App {
 
     // Handle 500
     this.app.use(function (error: Error, req: any, res: any, next: any) {
+      console.error(error);
       res
         .status(500)
         .render('error', { code: 500, title: 'Sorry!', message: 'Some unrecoverable error happened.Please contact us.', details: inspect(error) });
