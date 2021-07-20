@@ -1,47 +1,63 @@
 import { Router } from 'express';
-import * as multer from "multer";
-
+import * as multer from 'multer';
+import Core from 'core';
 
 const upload = multer();
 const router = Router();
 
 function authenticate(user: string, pass: string) {
-
   // User Authentication code goes here
 
   return true;
 }
 
-
-
-
-router.post("/login", upload.none(), async function (req, res, next) {
+// Login handler
+router.post('/login', upload.none(), async (req, res, next) => {
   if (req.session.user?.loggedIn) return next();
-  if (!req.body.user || typeof req.body.user !== "string") return next();
-  if (!req.body.pwd || typeof req.body.pwd !== "string") return next();
+  if (!req.body.user || typeof req.body.user !== 'string') return next();
+  if (!req.body.pwd || typeof req.body.pwd !== 'string') return next();
   if (authenticate(req.body.user, req.body.pwd)) {
     req.session.user = {
       loggedIn: true,
-      name: req.body.user
+      name: req.body.user,
     };
-    res.status(200).json("LOGGED_IN");
+    res.status(200).json('LOGGED_IN');
   } else {
-    res.status(401).json("LOGIN_FAILED");
+    res.status(401).json('LOGIN_FAILED');
   }
-
 });
+
+// Forbidden region
 router.use((req, res, next) => {
   if (req.session.user?.loggedIn) return next();
-  res.status(401).render("error", { code: 401, title: "Forbidden!", message: "You are not allowed here." });
+  res.status(401).render('error', { code: 401, title: 'Forbidden!', message: 'You are not allowed here.' });
 });
 
-router.get("/login", (req, res, next) => res.status(200).json("LOGGED_IN"));
+router.get('/login', (req, res, next) => res.status(200).json('LOGGED_IN'));
 
-router.get("/logout", function (req, res, next) {
-  req.session.destroy((err) => {
-    if (err) throw err;
-    res.redirect(303, "/");
+router.get('/logout', (req, res, next) => {
+  req.session.destroy(err => {
+    if (err) {
+      next(err);
+    } else res.redirect(303, '/');
   });
+});
+
+// User specific handlers
+
+router.post('/action', async (req, res, next) => {
+  try {
+    const action: any = req.body.action;
+    const params: any = req.body.params;
+    const core = new Core();
+    console.log('Connecting to ', process.env.DATABASE_URL);
+    await core.connect({ type: 'postgres', url: process.env.DATABASE_URL, schema: req.session.user?.name || 'test' });
+    const resBody = await (<any>core.actions)[action](...params);
+    await core.close();
+    res.json(resBody);
+  } catch (e) {
+    next(e);
+  }
 });
 
 router.use((req, res, next) => next());
