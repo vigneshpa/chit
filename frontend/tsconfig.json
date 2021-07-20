@@ -6,6 +6,7 @@
     "esModuleInterop": false,
     "baseUrl": ".",
     "moduleResolution": "node",
+    "importsNotUsedAsValues": "error",
     "sourceMap": true,
     "paths": {
       "@/*": [
