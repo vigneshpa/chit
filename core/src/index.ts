@@ -11,7 +11,7 @@ export default class Core {
 
   async connect(options: ConnectionOptions) {
     if (this.isConnected) throw new Error('This instance is already connected');
-    this.connection = await createConnection({ ...options, entities: Object.values(Entites) });
+    this.connection = await createConnection({ ...options, entities: Object.values(Entites), synchronize:true });
     this.isConnected = true;
     this.loadActions();
   }

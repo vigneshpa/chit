@@ -19,7 +19,7 @@ export default class Chit extends Model {
   value!: number;
 
   @OneToMany(type => Payment, Payment => Payment.chit, { cascade: true })
-  payments: Payment[] = [];
+  payments!: Payment[];
 
   @Column({ type: 'integer', nullable: true })
   wonAtMonth: RangeOf2<1, 20> | null = null;

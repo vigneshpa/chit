@@ -14,5 +14,5 @@ export default class User extends Model {
   address!: string;
 
   @OneToMany(type => Chit, Chit => Chit.user)
-  chits: Chit[] = [];
+  chits!: Chit[];
 }

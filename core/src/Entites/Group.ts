@@ -24,7 +24,7 @@ export default class Group extends Model {
   isActive: boolean = false;
 
   @OneToMany(type => Chit, Chit => Chit.group, { cascade: true })
-  chits: Chit[] = [];
+  chits!: Chit[];
 
   /**
    * This method tests all the chits and activates
