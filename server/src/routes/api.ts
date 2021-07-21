@@ -47,6 +47,7 @@ router.get('/logout', (req, res, next) => {
 // User specific handlers
 
 router.post('/action', async (req, res, next) => {
+  if (typeof req.body.action !== 'string') res.status(400).render('error', { code: 400, title: 'Cannot handle the request', message: '' });
   const action: any = req.body.action;
   const params: any = req.body.params;
   const schema: string = req.session.user?.name || 'test';
@@ -64,8 +65,8 @@ router.post('/action', async (req, res, next) => {
     await core.close();
     res.json(decycle(resBody));
   } catch (e) {
-    next(e);
     await core.close();
+    next(e);
   }
 });
 

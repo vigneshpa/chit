@@ -23,13 +23,19 @@
   .page {
     margin: 0px;
     padding: 10px;
-    & .top {
+    .top {
       color: $textOnBackground;
-      font-size: 1.5em;
+      .heading {
+        font-size: 1.5em;
+      }
       border-bottom: solid 2px $textOnBackground;
       padding: 10px;
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: flex-end;
+      justify-content: space-between;
     }
-    & .content {
+    .content {
       padding: 10px;
     }
   }

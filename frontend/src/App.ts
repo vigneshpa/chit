@@ -1,5 +1,11 @@
+// Checking weather logged in
+import { checkLoggedIn } from './api';
+checkLoggedIn();
+
+// Variables
 const bURL = process.env.BASE_URL || '/app';
 window.bURL = bURL;
+
 // Loading theme
 import TTheme from '@theme/';
 

@@ -32,3 +32,4 @@ export { default as IconText } from './IconText.svelte';
 export { default as Nav } from './Nav.svelte';
 export { default as Page } from './Page.svelte';
 export { default as Loading } from './Loading.svelte';
+export { default as Grid } from './Grid.svelte';

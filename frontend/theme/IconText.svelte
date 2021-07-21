@@ -1,6 +1,6 @@
 <script lang="ts">
   export let icon: string;
-  export let outlined: boolean;
+  export let outlined: boolean = false;
 </script>
 
 <template>
