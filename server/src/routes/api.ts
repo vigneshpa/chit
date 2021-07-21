@@ -60,7 +60,7 @@ router.post('/action', async (req, res, next) => {
     logging: process.env.NODE_ENV === 'development',
   });
   try {
-    const resBody = await (<any>core.actions)[action](...params);
+    const resBody = await(<any>core.actions)[action](params);
     await core.close();
     res.json(decycle(resBody));
   } catch (e) {

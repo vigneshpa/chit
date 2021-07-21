@@ -6,7 +6,7 @@ export default function makeCheckPhone(repos: Repos) {
    * @returns weather phone number exists
    * @param phone Phone number
    */
-  return async function checkPhone(phone: string) {
+  return async function checkPhone({ phone }: { phone: string }) {
     // Checking existance
     let count = await repos.User.count({ phone });
     return count > 0;

@@ -8,7 +8,7 @@ export default function makeCreateChit(repos: Repos) {
    * @param group uuid of Group this chit belongs to and Group must not be active
    * @param value Value of this chit in Rpees; It must be an integer
    */
-  return async function createChit(userUuid: string, groupUuid: string, value: number) {
+  return async function createChit({ userUuid, groupUuid, value }: { userUuid: string; groupUuid: string; value: number }) {
     // getting user object
     const user = await repos.User.findOne({ uuid: userUuid });
     if (!user) throw new Error('User does not exists');
@@ -32,7 +32,7 @@ export default function makeCreateChit(repos: Repos) {
     chit.payments = [];
 
     // Creating Payments
-    for (let imonth = 1; imonth <= 20; imonth++){
+    for (let imonth = 1; imonth <= 20; imonth++) {
       // Creating payment object
       const payment = new Payment();
 
@@ -43,7 +43,7 @@ export default function makeCreateChit(repos: Repos) {
 
       // Pushing payment
       chit.payments.push(payment);
-    };
+    }
 
     // Creating chit
     chit = await repos.Chit.save(chit);

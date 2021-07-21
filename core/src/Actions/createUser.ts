@@ -1,4 +1,5 @@
-import Repos, { User } from '../Entites';
+import { User } from '../Entites';
+import type Repos from '../Entites';
 
 export default function makeCreateUser(repos: Repos) {
   /**
@@ -7,7 +8,7 @@ export default function makeCreateUser(repos: Repos) {
    * @param phone Phone number of the user
    * @param address Address of the user
    */
-  return async function createUser(name: string, phone: string, address: string) {
+  return async function createUser({ name, phone, address }: { name: string; phone: string; address: string }) {
     // Validating
     if (name.length < 3) throw new Error('Name must be longer than 2 characters');
     if (phone.length < 10) throw new Error('Phone number must be longer than 10 characters');
