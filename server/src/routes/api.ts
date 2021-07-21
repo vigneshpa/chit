@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as multer from 'multer';
 import Core from 'core';
+import { decycle } from '../cycle';
 
 const upload = multer();
 const router = Router();
@@ -46,17 +47,25 @@ router.get('/logout', (req, res, next) => {
 // User specific handlers
 
 router.post('/action', async (req, res, next) => {
+  const action: any = req.body.action;
+  const params: any = req.body.params;
+  const schema: string = req.session.user?.name || 'test';
+
+  const core = new Core();
+  await core.connect({
+    type: 'postgres',
+    url: process.env.DATABASE_URL,
+    schema,
+    name: (req.session.user?.name || 'test') + Math.floor(Math.random() * 1000),
+    logging: process.env.NODE_ENV === 'development',
+  });
   try {
-    const action: any = req.body.action;
-    const params: any = req.body.params;
-    const core = new Core();
-    console.log('Connecting to ', process.env.DATABASE_URL);
-    await core.connect({ type: 'postgres', url: process.env.DATABASE_URL, schema: req.session.user?.name || 'test' });
     const resBody = await (<any>core.actions)[action](...params);
     await core.close();
-    res.json(resBody);
+    res.json(decycle(resBody));
   } catch (e) {
     next(e);
+    await core.close();
   }
 });
 

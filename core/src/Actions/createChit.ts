@@ -19,7 +19,7 @@ export default function makeCreateChit(repos: Repos) {
     if (group.isActive) throw new Error('Cannot add chit to an active group');
 
     // Validating value
-    if (isFiniteUnSignInteger(value)) throw new Error('Value of an chit is not valid');
+    if (!isFiniteUnSignInteger(value)) throw new Error('Value of an chit is not valid');
 
     //Creating chit object
     let chit = new Chit();
