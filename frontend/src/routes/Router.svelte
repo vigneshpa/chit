@@ -18,7 +18,8 @@
   const routes: { [path: string]: () => Promise<typeof import('*.svelte')> } = {
     '/dashboard': () => import('./Dashboard.svelte'),
     '/users': () => import('./Users.svelte'),
-    '/users/:user': () => import('./UsersInfo.svelte'),
+    '/users/info/:user': () => import('./UsersInfo.svelte'),
+    '/users/add': () => import('./UsersAdd.svelte'),
     '/about': () => import('./About.svelte'),
     '/groups/': () => import('./Group.svelte'),
   };
