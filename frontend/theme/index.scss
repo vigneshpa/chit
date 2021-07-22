@@ -5,3 +5,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   color: scheme.$textOnBackground;
 }
+.a-btn {
+  text-decoration: none;
+  color: inherit;
+  display:inline-block;
+  padding: 5px;
+  transition: background-color scheme.$aniDuration ease;
+  &:hover {
+    background-color: scheme.$highlight;
+    box-shadow: 0px 0px 2px scheme.$shadowColor;
+  }
+}
