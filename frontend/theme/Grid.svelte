@@ -16,4 +16,14 @@
       // border-radius:5px;
     }
   }
+  @media only screen and (max-width: 1080px + scheme.$drawerWidth){
+    .t-grid{
+      grid-template-columns: auto auto;
+    }
+  }
+  @media only screen and (max-width: 720px){
+    .t-grid{
+      grid-template-columns: auto;
+    }
+  }
 </style>
