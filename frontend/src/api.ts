@@ -25,6 +25,7 @@ export async function action(action: string, params?: any) {
       'Content-Type': 'application/json',
     },
   });
+  if(res.status !== 200)return checkLoggedIn();
   const body = await res.json();
   return retrocycle(body);
 }
