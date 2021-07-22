@@ -26,6 +26,8 @@
     .t-icon-text {
       margin-top: 0.16rem;
       display: inline-block;
+      text-decoration: none;
+      padding-right: 10px;
     }
     display: flex;
     justify-content: center;
