@@ -13,7 +13,7 @@
 <template>
   <Page heading="Users">
     <div slot="top-extra">
-      <button><IconText icon="add">Add</IconText></button>
+      <a href="users/add" class="a-btn" title="Create new User"><IconText icon="add">Add</IconText></a>
     </div>
     <Grid>
       {#each users as user}
@@ -44,11 +44,6 @@
     div {
       padding: 5px;
       margin-top: 5px;
-    }
-  }
-  .top-extra{
-    button{
-      align-items: center;
     }
   }
 </style>
