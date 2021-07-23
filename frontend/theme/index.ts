@@ -3,7 +3,6 @@ import './index.scss';
 const storeDefault = {
   mobile: writable(true) as Writable<boolean>,
   drawer: writable(false) as Writable<boolean>,
-  confirm: writable(false) as Writable<boolean>,
 };
 export type TStore = typeof storeDefault;
 export default class TTheme {
@@ -25,7 +24,7 @@ declare global {
     ttheme: TTheme;
   }
 }
-export { default as Confirm } from './Confirm.svelte';
+export { default as Dialouge } from './Dialouge.svelte';
 export { default as Container } from './Container.svelte';
 export { default as Drawer } from './Drawer.svelte';
 export { default as IconText } from './IconText.svelte';

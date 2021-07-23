@@ -35,8 +35,8 @@
       let childCtx: SvelteRouterContext | undefined;
       for (const path in routes)
         if (Object.prototype.hasOwnProperty.call(routes, path)) {
-          const pageStr = prepend + '/' + path + '/';
-          // console.log('Registering route', pageStr);
+          const pageStr = prepend + '/' + path ;
+          console.log('Registering route', pageStr);
 
           // Registering route
           router.on(pageStr, async params => {
@@ -50,7 +50,7 @@
 
           // Registering subroutes
           if (routes[path].routes) {
-            childCtx = handleRoutes(<SvelteRouterRoutes>routes[path].routes, router, prepend + '/' + path);
+            childCtx = handleRoutes(<SvelteRouterRoutes>routes[path].routes, router, pageStr);
           }
         }
       return { component, childCtx };

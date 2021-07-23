@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Container, Drawer, IconText, Nav, Confirm } from '@theme/';
+  import { Container, Drawer, IconText, Nav } from '@theme/';
   import { Router } from '@/router';
   import routes from '@/routes/';
   const bURL = window.bURL;
@@ -32,7 +32,5 @@
       <span> Chit Management System</span>
       <a href="/api/logout"> Logout </a>
     </Nav>
-
-    <Confirm />
   </div>
 </template>

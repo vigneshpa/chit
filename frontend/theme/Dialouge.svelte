@@ -1,17 +1,13 @@
 <script lang="ts">
   if (!window.ttheme) new Error('Please initilze theme');
-  let store_confirm = window.ttheme.store.confirm;
-  // Sconfirm.set(true);
+  export let show: boolean = true;
+  console.log($$slots);
 </script>
 
 <template>
-  {#if $store_confirm}
-    <div class="t-confirm">
-      <div class="t-confirm-cover">
-        <div class="t-confirm-box">
-          <button on:click={() => store_confirm.set(false)}> Close </button>
-        </div>
-      </div>
+  {#if show}
+    <div class="t-confirm" on:click={() => (show = false)}>
+      <slot />
     </div>
   {/if}
 </template>
@@ -26,5 +22,6 @@
     bottom: 0px;
     left: 0px;
     background-color: scheme.$coverColor;
+    z-index: +10;
   }
 </style>

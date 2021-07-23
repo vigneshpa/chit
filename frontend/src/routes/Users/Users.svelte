@@ -4,7 +4,8 @@
   import { slide as trns } from 'svelte/transition';
   import { Grid } from '@theme/';
   import { IconText } from '@theme/';
-  import Router from '@/router/Router.svelte';
+  import { Router } from '@/router/';
+  import { Dialouge } from '@theme/';
 
   let users: any[] = [];
   action('findUsers', {}) // Getting all users
