@@ -1,8 +1,9 @@
 <script lang="ts">
   import { Container, Drawer, IconText, Nav, Confirm } from '@theme/';
-  import Router from './routes/Router.svelte';
+  import { Router } from '@/router';
+  import routes from '@/routes/';
   const bURL = window.bURL;
-  let route_loading = window.route.isLoading;
+  let route_loading = window['svelte-router'].isLoading;
   let drawer_links = [
     { href: bURL + '/dashboard', text: 'Dashboard', icon: 'space_dashboard', icon_noutlined: false },
     { href: bURL + '/users', text: 'Users', icon: 'people' },
@@ -10,13 +11,13 @@
     { href: bURL + '/about', text: 'About', icon: 'info' },
   ];
   let route_pageStr: string = '';
-  window.route.pageStr.subscribe(val => (route_pageStr = val));
+  window['svelte-router'].pageStr.subscribe(val => (route_pageStr = val));
 </script>
 
 <template>
   <div id="app">
     <Container>
-      <Router />
+      <Router base={bURL} {...routes} />
     </Container>
 
     <Drawer>

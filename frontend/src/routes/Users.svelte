@@ -4,6 +4,7 @@
   import { slide as trns } from 'svelte/transition';
   import { Grid } from '@theme/';
   import { IconText } from '@theme/';
+  import Router from '@/router/Router.svelte';
 
   let users: any[] = [];
   action('findUsers', {}) // Getting all users
@@ -13,7 +14,7 @@
 <template>
   <Page heading="Users">
     <div slot="top-extra">
-      <a href="users/add" class="a-btn" title="Create new User"><IconText icon="add">Add</IconText></a>
+      <a href="users/add" class="t-a-btn" title="Create new User"><IconText icon="add">Add</IconText></a>
     </div>
     <Grid>
       {#each users as user}
@@ -26,6 +27,7 @@
         </div>
       {/each}
     </Grid>
+    <Router />
   </Page>
 </template>
 
