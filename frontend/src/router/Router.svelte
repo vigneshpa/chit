@@ -29,7 +29,7 @@
     // Setting Context
     setContext('svelte-navaid', ctx);
 
-    // Function to generate context and handle routes
+    // Recrusive Function to generate context and handle routes
     function handleRoutes(routes: SvelteRouterRoutes, router: Router, prepend: string = '', preRun: () => Promise<any> = async () => {}) {
       let component = writable<SvelteComponent | null>();
       let childCtx: SvelteRouterContext | undefined;
