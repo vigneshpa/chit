@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <Page heading="User {route_params.user}">
+  <Page heading="Client {route_params.client}">
     <p>This a test content</p>
   </Page>
 </template>

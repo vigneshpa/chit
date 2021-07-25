@@ -6,7 +6,7 @@
   let route_loading = window['svelte-router'].isLoading;
   let drawer_links = [
     { href: bURL + '/dashboard', text: 'Dashboard', icon: 'space_dashboard', icon_noutlined: false },
-    { href: bURL + '/users', text: 'Users', icon: 'people' },
+    { href: bURL + '/clients', text: 'Clients', icon: 'people' },
     { href: bURL + '/groups', text: 'Groups', icon: 'groups' },
     { href: bURL + '/about', text: 'About', icon: 'info' },
   ];

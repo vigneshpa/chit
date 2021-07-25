@@ -10,24 +10,24 @@
 
   export let hasChildRouteComp: Writable<boolean>;
 
-  let users: any[] = [];
-  action('findUsers') // Getting all users
-    .then(val => (users = val));
+  let clients: any[] = [];
+  action('findClients') // Getting all clients
+    .then(val => (clients = val));
 </script>
 
 <template>
-  <Page heading="Users">
+  <Page heading="Clients">
     <div slot="top-extra">
-      <a href="users/add" class="t-a-btn" title="Create new User"><IconText icon="add">Add</IconText></a>
+      <a href="clients/add" class="t-a-btn" title="Create new Client"><IconText icon="add">Add</IconText></a>
     </div>
     <Grid>
-      {#each users as user}
-        <div class="user" transition:trns>
-          <div class="name"><IconText icon="person">{user.name}</IconText></div>
+      {#each clients as client}
+        <div class="client" transition:trns>
+          <div class="name"><IconText icon="person">{client.name}</IconText></div>
           <div class="details">
-            <div class="phone">{user.phone}</div>
+            <div class="phone">{client.phone}</div>
             <div class="address">
-              {#each user.address.split('\n') as level}
+              {#each client.address.split('\n') as level}
                 {level}<br />
               {/each}
             </div>
@@ -37,14 +37,14 @@
     </Grid>
   </Page>
   {#if $hasChildRouteComp}
-    <Dialouge preClose={() => window['svelte-router'].router?.route('/users')}>
+    <Dialouge preClose={() => window['svelte-router'].router?.route('/clients')}>
       <Router />
     </Dialouge>
   {/if}
 </template>
 
 <style lang="scss">
-  .user {
+  .client {
     padding: 10px;
     margin: 10px;
     text-align: center;

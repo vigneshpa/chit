@@ -2,11 +2,11 @@ import type { SvelteRouterMiddleware, SvelteRouterRoutes } from '@/router';
 
 const tree: SvelteRouterRoutes = {
   dashboard: { component:  () => import('./Dashboard.svelte')},
-  users: {
-    component: () => import('./Users/Users.svelte'),
+  clients: {
+    component: () => import('./Clients/Clients.svelte'),
     routes: {
-      'info/:user': { component: () => import('./Users/Info.svelte') },
-      add: { component: () => import('./Users/Add.svelte') },
+      'info/:client': { component: () => import('./Clients/Info.svelte') },
+      add: { component: () => import('./Clients/Add.svelte') },
     },
   },
   about: { component: () => import('./About.svelte') },

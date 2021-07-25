@@ -15,11 +15,11 @@
     if (phone.startsWith('0') && phone.length < 13) {
       return 'Local landline numbers must contain 11 digits';
     }
-    const userCheck = await action('checkPhone', { phone });
-    if (!userCheck) {
+    const clientCheck = await action('checkPhone', { phone });
+    if (!clientCheck) {
       return '';
     } else {
-      return 'This number is being used by ' + userCheck;
+      return 'This number is being used by ' + clientCheck;
     }
   };
   function onPhoneChange(this: HTMLInputElement) {
@@ -43,24 +43,24 @@
     form.addEventListener('submit', ev => {
       ev.preventDefault();
       const formData = new FormData(form);
-      action('createUser', {
+      action('createClient', {
         name: formData.get('name'),
         phone: formData.get('phone'),
         address: formData.get('address'),
       }).then(val => {
         if (val.uuid) {
-          alert('Created User');
+          alert('Created Client');
         } else {
-          alert('User not created');
+          alert('Client not created');
         }
-        window['svelte-router'].router?.route('/users');
+        window['svelte-router'].router?.route('/clients');
       });
     })
   );
 </script>
 
 <template>
-  <Page heading="Create a new User" backButton>
+  <Page heading="Create a new Client" backButton>
     <div slot="top-extra">
       <!-- svelte-ignore a11y-invalid-attribute -->
       <a href="javascript:alert('Sorry\n This feature is yet to be implemented.')" class="t-a-btn"><IconText icon="close">Clear</IconText></a>

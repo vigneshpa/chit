@@ -3,7 +3,7 @@ import Chit from './Chit';
 import Model from './Model';
 
 @Entity()
-export default class User extends Model {
+export default class Client extends Model {
   @Column()
   name!: string;
 
@@ -13,6 +13,6 @@ export default class User extends Model {
   @Column()
   address!: string;
 
-  @OneToMany(type => Chit, Chit => Chit.user)
+  @OneToMany(type => Chit, Chit => Chit.client)
   chits!: Chit[];
 }

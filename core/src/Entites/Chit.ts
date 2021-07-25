@@ -1,15 +1,15 @@
 import { Entity, JoinColumn, ManyToOne, Column, OneToMany } from 'typeorm';
 import Payment from './Payment';
 import Group from './Group';
-import User from './User';
+import Client from './Client';
 import Model from './Model';
 import type { RangeOf2 } from '../vendorTypes';
 
 @Entity()
 export default class Chit extends Model {
   @JoinColumn()
-  @ManyToOne(type => User, User => User.chits)
-  user!: User;
+  @ManyToOne(type => Client, Client => Client.chits)
+  client!: Client;
 
   @JoinColumn()
   @ManyToOne(type => Group, Group => Group.chits)

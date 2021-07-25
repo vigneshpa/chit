@@ -2,18 +2,18 @@ import type Repos from '../Entites';
 import makeCheckPhone from './checkPhone';
 import makeCreateChit from './createChit';
 import makeCreateGroup from './createGroup';
-import makeCreateUser from './createUser';
+import makeCreateClient from './createClient';
 import makeFindChits from './findChits';
 import makeFindGroups from './findGroups';
-import makeFindUsers from './findUsers';
+import makeFindClients from './findClients';
 
 export default function makeActions(repos: Repos) {
   return {
     checkPhone: makeCheckPhone(repos),
     createChit: makeCreateChit(repos),
     createGroup: makeCreateGroup(repos),
-    createUser: makeCreateUser(repos),
-    findUsers: makeFindUsers(repos),
+    createClient: makeCreateClient(repos),
+    findClients: makeFindClients(repos),
     findGroups: makeFindGroups(repos),
     findChits: makeFindChits(repos),
   };
