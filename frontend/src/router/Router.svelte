@@ -3,7 +3,7 @@
   import navaid, { RouteHandler } from 'navaid';
   import type { Router } from 'navaid';
   import { writable } from 'svelte/store';
-  import type { SvelteComponent, SvelteRouterContext, SvelteRouterMiddleware, SvelteRouterRoutes } from '.';
+  import type { SvelteComponent, SvelteRouterContext, SvelteRouterMiddleware, SvelteRouterParameters, SvelteRouterRoutes } from '.';
 
   // Params
 
@@ -13,8 +13,11 @@
 
   let component: SvelteComponent | null;
 
+  // Context vars
   const ctxSuper: SvelteRouterContext | false = hasContext('svelte-navaid') ? getContext('svelte-navaid') : false;
+  let ctx: SvelteRouterContext | undefined;
 
+  // Checking super context
   if (!ctxSuper) {
     // Loading router
     if (window['svelte-router'].router)
@@ -23,11 +26,8 @@
     window['svelte-router'].router = router;
 
     const v = handleRoutes(tree, router);
-    const ctx = v.childCtx;
+    ctx = v.childCtx;
     v.component.subscribe(val => (component = val));
-
-    // Setting Context
-    setContext('svelte-navaid', ctx);
 
     // Recrusive Function to generate context and handle routes
     function handleRoutes(routes: SvelteRouterRoutes, router: Router, prepend: string = '', preRun: () => Promise<any> = async () => {}) {
@@ -41,7 +41,7 @@
           // Activate function
           const activate: RouteHandler = async params => {
             await preRun(); // Acrivating all parent components
-            component.set(await routes[path].component()); // Activating current component
+            component.set((await routes[path].component()).default); // Activating current component
             childCtx?.component.set(null); // Closing child routes if exists
           };
 
@@ -65,11 +65,17 @@
   } else {
     ctxSuper.component.subscribe(com => (component = com));
     if (ctxSuper.childCtx) {
-      setContext('svelte-navaid', ctxSuper.childCtx);
+      ctx = ctxSuper.childCtx;
     }
   }
+
+  setContext('svelte-navaid', ctx);
+
+  const hasChildRouteComp = writable<boolean>();
+  ctx?.component.subscribe(val => hasChildRouteComp.set(val ? true : false));
+  const svelteRouterParams: SvelteRouterParameters = { hasChildRouteComp };
 </script>
 
 <template>
-  <svelte:component this={component} />
+  <svelte:component this={component} {...svelteRouterParams} />
 </template>

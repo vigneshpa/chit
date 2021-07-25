@@ -35,7 +35,7 @@
 
     transition: all scheme.$aniDuration ease;
     &.hidden {
-      transform: translateX(-100%);
+      transform: translateX(-102%);
     }
     :global(a) {
       color: scheme.$textOnBackground;

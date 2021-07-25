@@ -7,14 +7,18 @@
 import { retrocycle } from './cycle';
 const apiUrl = '/api/';
 const actionURL = apiUrl + 'action';
+let isRedirecting = false;
 
-export const checkLoggedIn = () =>
+export const checkLoggedIn = () => {
+  if (isRedirecting) return;
   fetch('/api/login').then(async res => {
-    if (!(res.status === 200 && (await res.json()) === 'LOGGED_IN')) {
+    if (res.status !== 200 || (await res.json()) !== 'LOGGED_IN') {
+      isRedirecting = true;
       alert('You are not signed in.\nPlease sign in.');
       window.location.href = '/login.html?page=' + window.location.href;
     }
   });
+}
 export async function action(action: string, params?: any) {
   params = params || {};
   const res = await fetch(actionURL, {
@@ -25,7 +29,7 @@ export async function action(action: string, params?: any) {
       'Content-Type': 'application/json',
     },
   });
-  if(res.status !== 200)return checkLoggedIn();
+  if (res.status !== 200) return checkLoggedIn();
   const body = await res.json();
   return retrocycle(body);
 }

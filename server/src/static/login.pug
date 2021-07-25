@@ -49,24 +49,24 @@ html(lang="en")
 
       let form = document.getElementsByTagName("form")[0];
       form.onsubmit = function (e) {
-      e.preventDefault();
-      let formData = new FormData(form);
-      let xhr = new XMLHttpRequest();
-      xhr.open("POST", "/api/login");
-      xhr.onloadend = function (e) {
-        let response = xhr.response;
-        let status = xhr.status;
-        if (status === 200 && JSON.parse(response) === "LOGGED_IN") {
-          //alert("Logged in succesfully!\n Redirecting to app");
-          window.location.href = pageprm;
-        } else if (status === 404) {
-          //alert("Already logged in!\n Redirecting to app");
-          window.location.href = pageprm;
-        } else if (status === 401 || JSON.parse(response) === "LOGIN_FAILED") {
-          alert("login Failed!\nPlease Try again");
-        } else {
-          alert("Something went wrong\nTry again later");
+        e.preventDefault();
+        let formData = new FormData(form);
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "/api/login");
+        xhr.onloadend = function (e) {
+          let response = xhr.response;
+          let status = xhr.status;
+          if (status === 200 && JSON.parse(response) === "LOGGED_IN") {
+            //alert("Logged in succesfully!\n Redirecting to app");
+            window.location.href = pageprm;
+          } else if (status === 404) {
+            //alert("Already logged in!\n Redirecting to app");
+            window.location.href = pageprm;
+          } else if (status === 401 || JSON.parse(response) === "LOGIN_FAILED") {
+            alert("login Failed!\nPlease Try again");
+          } else {
+            alert("Something went wrong\nTry again later");
+          }
         }
-      }
-      xhr.send(formData);
+        xhr.send(formData);
       }

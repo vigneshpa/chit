@@ -8,7 +8,7 @@ export default function makeCheckPhone(repos: Repos) {
    */
   return async function checkPhone({ phone }: { phone: string }) {
     // Checking existance
-    let count = await repos.User.count({ phone });
-    return count > 0;
+    let count = await repos.User.findOne({ phone });
+    return count?.name || false;
   };
 }

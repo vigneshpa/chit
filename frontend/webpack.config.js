@@ -64,7 +64,7 @@ module.exports = {
     }),
   ],
   output: {
-    filename: 'assets/[name].[chunkhash].js',
+    filename: 'assets/[chunkhash].js',
     assetModuleFilename: 'assets/[name].[hash][ext][query]',
     path: resolve(__dirname, process.env.DIST_PATH),
     clean: true,

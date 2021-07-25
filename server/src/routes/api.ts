@@ -53,6 +53,7 @@ router.post('/action', async (req, res, next) => {
   const schema: string = req.session.user?.name || 'test';
 
   const core = new Core();
+  try {
   await core.connect({
     type: 'postgres',
     url: process.env.DATABASE_URL,
@@ -60,7 +61,6 @@ router.post('/action', async (req, res, next) => {
     name: (req.session.user?.name || 'test') + Math.floor(Math.random() * 1000),
     logging: process.env.NODE_ENV === 'development',
   });
-  try {
     const resBody = await(<any>core.actions)[action](params);
     await core.close();
     res.json(decycle(resBody));

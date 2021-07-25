@@ -6,9 +6,12 @@
   import { IconText } from '@theme/';
   import { Router } from '@/router/';
   import { Dialouge } from '@theme/';
+  import type { Writable } from 'svelte/store';
+
+  export let hasChildRouteComp: Writable<boolean>;
 
   let users: any[] = [];
-  action('findUsers', {}) // Getting all users
+  action('findUsers') // Getting all users
     .then(val => (users = val));
 </script>
 
@@ -23,13 +26,21 @@
           <div class="name"><IconText icon="person">{user.name}</IconText></div>
           <div class="details">
             <div class="phone">{user.phone}</div>
-            <div class="address">{user.address}</div>
+            <div class="address">
+              {#each user.address.split('\n') as level}
+                {level}<br />
+              {/each}
+            </div>
           </div>
         </div>
       {/each}
     </Grid>
-    <Router />
   </Page>
+  {#if $hasChildRouteComp}
+    <Dialouge preClose={() => window['svelte-router'].router?.route('/users')}>
+      <Router />
+    </Dialouge>
+  {/if}
 </template>
 
 <style lang="scss">

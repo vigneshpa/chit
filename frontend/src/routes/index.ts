@@ -1,16 +1,16 @@
 import type { SvelteRouterMiddleware, SvelteRouterRoutes } from '@/router';
 
 const tree: SvelteRouterRoutes = {
-  dashboard: { component: async () => (await import('./Dashboard.svelte')).default },
+  dashboard: { component:  () => import('./Dashboard.svelte')},
   users: {
-    component: async () => (await import('./Users/Users.svelte')).default,
+    component: () => import('./Users/Users.svelte'),
     routes: {
-      'info/:user': { component: async () => (await import('./Users/Info.svelte')).default },
-      add: { component: async () => (await import('./Users/Add.svelte')).default },
+      'info/:user': { component: () => import('./Users/Info.svelte') },
+      add: { component: () => import('./Users/Add.svelte') },
     },
   },
-  about: { component: async () => (await import('./About.svelte')).default },
-  groups: { component: async () => (await import('./Group.svelte')).default },
+  about: { component: () => import('./About.svelte') },
+  groups: { component: () => import('./Group.svelte') },
 };
 const middleware: SvelteRouterMiddleware = router => router.on('/', () => router.route('/dashboard'));
 export default { tree, middleware };
