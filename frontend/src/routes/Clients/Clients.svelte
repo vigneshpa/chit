@@ -11,7 +11,8 @@
   export let hasChildRouteComp: Writable<boolean>;
 
   let clients: any[] = [];
-  $: !$hasChildRouteComp && action('findClients').then(val => (clients = val));
+  action('findClients').then(val => (clients = val));
+  $: console.log($hasChildRouteComp)
 </script>
 
 <template>

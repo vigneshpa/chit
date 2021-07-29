@@ -6,10 +6,6 @@ export type SvelteComponent = typeof SC;
 export interface SvelteRouterRoutes {
   [route: string]: { component: () => Promise<{default:SvelteComponent}> | {default:SvelteComponent}; routes?: SvelteRouterRoutes };
 }
-export interface SvelteRouterContext {
-  component: Writable<SvelteComponent | null>;
-  childCtx?: SvelteRouterContext;
-}
 export interface SvelteRouterMiddleware{
   (router:SvelteRouter):Promise<any> | any;
 }
