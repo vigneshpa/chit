@@ -59,7 +59,7 @@
     }
   }
   .drawer-cover {
-    position: absolute;
+    position: fixed;
     top: scheme.$navSize;
     left: 0;
     right: 0;
