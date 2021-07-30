@@ -1,6 +1,6 @@
 import { Router, static as estatic } from 'express';
 import { join } from 'path';
-import api from './api';
+import api from '../api';
 import * as historyApiFallback from 'connect-history-api-fallback';
 
 const router = Router();

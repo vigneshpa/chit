@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { action } from '@/api';
   import { Page } from '@theme/';
-  export let route_params: any = {};
-  window['svelte-router'].params.subscribe(pms => (route_params = pms));
+  const params = window['svelte-router'].params;
+  let details: any = {};
+  action('clientDetails').then(ret => (details = ret));
 </script>
 
 <template>
-  <Page heading="Client {route_params.client}">
+  <Page heading="Client {$params.client}">
     <p>This a test content</p>
   </Page>
 </template>

@@ -33,7 +33,7 @@ export default function makeCreateGroup(repos: Repos) {
     group.chits = [];
 
     // Auto generated
-    group.name = batch + month + year;
+    group.name = year + '-' + month + '-' + batch;
 
     // Saving group
     group = await repos.Group.save(group);

@@ -10,8 +10,7 @@
     { href: bURL + '/groups', text: 'Groups', icon: 'groups' },
     { href: bURL + '/about', text: 'About', icon: 'info' },
   ];
-  let route_pageStr: string = '';
-  window['svelte-router'].pageStr.subscribe(val => (route_pageStr = val));
+  let route_pageStr = window['svelte-router'].pageStr;
 </script>
 
 <template>
@@ -22,7 +21,7 @@
 
     <Drawer>
       {#each drawer_links as lnk}
-        <a href={lnk.href} class:linkactive={(bURL + route_pageStr).startsWith(lnk.href)}>
+        <a href={lnk.href} class:linkactive={(bURL + $route_pageStr).startsWith(lnk.href)}>
           <IconText icon={lnk.icon} outlined={!lnk.icon_noutlined}>{lnk.text}</IconText>
         </a>
       {/each}

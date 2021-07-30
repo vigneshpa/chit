@@ -5,7 +5,7 @@ import * as compression from 'compression';
 import { inspect } from 'util';
 
 import router from './routes';
-import sessionParser from './sessionParser';
+import sessionParser from './api/sessionParser';
 export default class App {
   app: express.Express;
   server: Server;
