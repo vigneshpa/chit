@@ -29,7 +29,7 @@
 
   function parser(routes: SvelteRouterRoutes, router: Router, prefix: string = '', prerun?: () => Promise<SvelteComponent[]>) {
     const comps = typeof prerun === 'function' ? null : writable<SvelteComponent[]>([]);
-    prerun = prerun || (() => Promise.resolve([]));
+    prerun = typeof prerun === 'function' ? prerun : () => Promise.resolve([]);
     for (const route in routes) {
       if (Object.prototype.hasOwnProperty.call(routes, route)) {
         const pageStr = prefix + '/' + route;
