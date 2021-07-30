@@ -2,7 +2,7 @@
   import { slide as trans } from 'svelte/transition';
   if (!window.ttheme) new Error('Please initilze theme');
   let store_drawer = window.ttheme.store.drawer;
-  export let loading: boolean = false;
+  export let loading: boolean = true;
 </script>
 
 <template>
@@ -56,7 +56,7 @@
     }
   }
   .t-nav-loading {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 5px;
     top: scheme.$navSize;
@@ -67,14 +67,14 @@
     .line {
       position: absolute;
       opacity: 0.4;
-      background: #4a8df8;
+      background: scheme.$primary;
       width: 150%;
       height: 5px;
     }
 
     .subline {
       position: absolute;
-      background: #4a8df8;
+      background: scheme.$primaryLight;
       height: 5px;
     }
     .inc {

@@ -11,8 +11,7 @@
   export let hasChildRouteComp: Writable<boolean>;
 
   let clients: any[] = [];
-  action('findClients').then(val => (clients = val));
-  $: console.log($hasChildRouteComp)
+  $: !$hasChildRouteComp && action('findClients').then(val => (clients = val));
 </script>
 
 <template>
@@ -23,7 +22,9 @@
     <Grid>
       {#each clients as client}
         <div class="client" transition:trns>
-          <div class="name"><IconText icon="person">{client.name}</IconText></div>
+          <div class="name" on:click={() => window['svelte-router'].router?.route('/clients/info/' + client.uuid)}>
+            <IconText icon="person">{client.name}</IconText>
+          </div>
           <div class="details">
             <div class="phone">{client.phone}</div>
             <div class="address">

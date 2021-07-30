@@ -4,6 +4,8 @@
   window.ttheme.store.drawer.set(!$store_mobile);
   export let backButton: boolean = false;
   export let heading: string;
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
 </script>
 
 <template>
@@ -32,7 +34,7 @@
       color: $textOnBackground;
       .t-a-btn {
         height: 34px;
-        display:inline-block;
+        display: inline-block;
         box-sizing: border-box;
         border-radius: 17px;
         width: 34px;

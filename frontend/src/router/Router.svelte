@@ -1,8 +1,8 @@
 <script lang="ts">
   import { getContext, setContext, hasContext } from 'svelte';
   import navaid from 'navaid';
-  import type { Router, RouteHandler } from 'navaid';
-  import { get, Writable, writable } from 'svelte/store';
+  import type { Router } from 'navaid';
+  import { Writable, writable } from 'svelte/store';
   import type { SvelteComponent, SvelteRouterMiddleware, SvelteRouterRoutes } from '.';
 
   // Params
@@ -43,9 +43,13 @@
             return cps;
           };
           if (routes[route].routes) parser(routes[route].routes as SvelteRouterRoutes, router, pageStr, activate, comps);
-          console.log('Registering', pageStr);
+          console.log('Registering route', pageStr);
           router.on(pageStr, async params => {
+            window['svelte-router'].isLoading.set(true);
             await activate(true);
+            window['svelte-router'].isLoading.set(false);
+            window['svelte-router'].params.set(params);
+            window['svelte-router'].pageStr.set(pageStr);
           });
         }
       }

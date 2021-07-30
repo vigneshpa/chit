@@ -48,9 +48,7 @@
         phone: formData.get('phone'),
         address: formData.get('address'),
       }).then(val => {
-        if (val.uuid) {
-          alert('Created Client');
-        } else {
+        if (!val.uuid) {
           alert('Client not created');
         }
         window['svelte-router'].router?.route('/clients');
