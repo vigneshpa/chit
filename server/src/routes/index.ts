@@ -10,9 +10,6 @@ router.use('/500error', function (req, res, next) {
   next(Error('Broken'));
 });
 
-//Handeling History API
-router.use('/app', historyApiFallback());
-
 // Mounting public
 router.use(estatic(join(__dirname, '../public')));
 
@@ -24,6 +21,9 @@ if (process.env.NODE_ENV !== 'production')
       baseUrl: '/',
     })
   );
+
+//Handeling History API
+router.use('/app', historyApiFallback());
 
 // Mounting renderer if specified
 if (process.env.NODE_ENV !== 'production' && process.env.RENDERER_PATH) {

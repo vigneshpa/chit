@@ -4,7 +4,7 @@ const SveltePreprocess = require('svelte-preprocess');
 const { EnvironmentPlugin } = require('webpack');
 
 process.env.BASE_URL = process.env?.BASE_URL || '/app';
-process.env.DIST_PATH = process.env?.DIST_PATH || './dist/public/app';
+process.env.DIST_PATH = process.env?.DIST_PATH || './dist';
 
 module.exports = {
   entry: { app: resolve(__dirname, 'src/App.ts') },

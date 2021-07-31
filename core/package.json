@@ -6,7 +6,8 @@
   "types": "lib/index.d.ts",
   "license": "GPL-3.0",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "tsc --watch"
   },
   "dependencies": {
     "@types/uuid": "^8.3.1",
