@@ -2,12 +2,6 @@ import { isFiniteUnSignInteger } from '../utils';
 import Repos, { Chit, Payment } from '../Entites';
 
 export default function makeCreateChit(repos: Repos) {
-  /**
-   * Creates a new Chit
-   * @param client uuid of client to assign this chit to
-   * @param group uuid of Group this chit belongs to and Group must not be active
-   * @param value Value of this chit in Rpees; It must be an integer
-   */
   return async function createChit({ clientUuid, groupUuid, value }: { clientUuid: string; groupUuid: string; value: number }) {
     // getting client object
     const client = await repos.Client.findOne({ uuid: clientUuid });

@@ -2,12 +2,6 @@ import { Client } from '../Entites';
 import type Repos from '../Entites';
 
 export default function makeCreateClient(repos: Repos) {
-  /**
-   * Creates a new Client
-   * @param name Name of the client
-   * @param phone Phone number of the client
-   * @param address Address of the client
-   */
   return async function createClient({ name, phone, address }: { name: string; phone: string; address: string }) {
     // Validating
     if (name.length < 3) throw new Error('Name must be longer than 2 characters');

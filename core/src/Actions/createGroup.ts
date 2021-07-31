@@ -3,13 +3,6 @@ import type { RangeOf2 } from '../vendorTypes';
 import Repos, { Group } from '../Entites';
 
 export default function makeCreateGroup(repos: Repos) {
-  /**
-   * Creates a new Group
-   * @param year Year in number
-   * @param month Month of the year
-   * @param batch Batch of the month
-   * @param totalValue Total value of the batch
-   */
   return async function createGroup({ year, month, batch, totalValue }: { year: number; month: RangeOf2<1, 12>; batch: string; totalValue: number }) {
     // Validating
     if (!isFiniteUnSignInteger(year)) throw new Error('Year is not valid');
