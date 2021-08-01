@@ -61,7 +61,7 @@
   <Page heading="Create a new Client" backButton>
     <div slot="top-extra">
       <!-- svelte-ignore a11y-invalid-attribute -->
-      <a href="javascript:alert('Sorry\n This feature is yet to be implemented.')" class="t-a-btn"><IconText icon="close">Clear</IconText></a>
+      <a href={window.bURL + '/clients'} class="t-a-btn"><IconText icon="close">Close</IconText></a>
     </div>
     <section class="t-shadow">
       <form bind:this={form}>
