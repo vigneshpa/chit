@@ -5,9 +5,9 @@
   "main": "./dist/server.js",
   "scripts": {
     "build": "gulp",
-    "start": "cp ./src/.env ./dist/.env && cd ./dist && node .",
+    "start": "echo '\\nDATABASE_URL=\"postgresql://chit:test@localhost:5432/chit\"' >> ../dist/.env && cd ../dist && node .",
     "serve": "gulp serve",
-    "upcr": "cd ../core && yarn build && cd ../server && yarn upgrade core"
+    "upcr": "cd ../core && npm run build"
   },
   "keywords": [
     "chit",

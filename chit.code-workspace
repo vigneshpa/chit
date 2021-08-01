@@ -32,7 +32,7 @@
 	"launch": {
 		"configurations": [
 			{
-				"command": "cd frontend && yarn serve",
+				"command": "cd frontend && npm run serve",
 				"name": "Serve frontend",
 				"request": "launch",
 				"type": "node-terminal"

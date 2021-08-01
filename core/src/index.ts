@@ -19,7 +19,7 @@ export default class Core {
     this.connection.manager.query;
   }
   async close() {
-    if (!this.isConnected || !this.connection) return console.error(Error('Connection is already closed'));
+    if (!this.isConnected || !this.connection) return console.error(new Error('Connection is already closed'));
     await this.connection.close();
     this.isConnected = false;
   }

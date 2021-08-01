@@ -5,9 +5,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "GPL-3.0",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch"
+    "build": "tsc"
   },
   "dependencies": {
     "@types/uuid": "^8.3.1",
