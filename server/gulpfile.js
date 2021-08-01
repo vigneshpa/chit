@@ -72,5 +72,5 @@ const startBackend = done => {
 };
 const upcr = () => spawn('npm', ['run', 'upcr']);
 const upgradeCore = series(upcr, nmRestart.cal);
-const coreUpgrader = () => watch(join(__dirname, '../core/src/*.ts'), { delay: 10000 }, upgradeCore);
+const coreUpgrader = () => watch(join(__dirname, '../core/src/**/*.ts'), { delay: 5000 }, upgradeCore);
 exports.serve = parallel(watchFrontend, startBackend, coreUpgrader);
