@@ -32,8 +32,8 @@
 	"launch": {
 		"configurations": [
 			{
-				"command": "cd frontend && npm run serve",
-				"name": "Serve frontend",
+				"command": "cd server && npm run serve",
+				"name": "Serve",
 				"request": "launch",
 				"type": "node-terminal"
 			}
