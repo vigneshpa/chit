@@ -33,7 +33,7 @@
     flex-wrap: nowrap;
     justify-content: flex-start;
 
-    transition: all scheme.$aniDuration ease;
+    transition: transform scheme.$aniDuration ease;
     &.hidden {
       transform: translateX(-102%);
     }
@@ -44,7 +44,7 @@
       text-align: center;
       text-decoration: none;
       padding: 10px;
-      transition: all scheme.$aniDuration ease;
+      transition: background-color scheme.$aniDuration ease, border scheme.$aniDuration ease;
 
       &:hover {
         background-color: scheme.$highlight;

@@ -51,7 +51,9 @@ form {
     }
   }
   input[type='text'],
-  textarea {
+  input[type='number'],
+  textarea,
+  select {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
