@@ -57,10 +57,8 @@ html(lang="en")
           let response = xhr.response;
           let status = xhr.status;
           if (status === 200 && JSON.parse(response) === "LOGGED_IN") {
-            //alert("Logged in succesfully!\n Redirecting to app");
             window.location.href = pageprm;
           } else if (status === 404) {
-            //alert("Already logged in!\n Redirecting to app");
             window.location.href = pageprm;
           } else if (status === 401 || JSON.parse(response) === "LOGIN_FAILED") {
             alert("login Failed!\nPlease Try again");
