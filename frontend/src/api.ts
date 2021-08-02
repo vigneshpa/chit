@@ -18,7 +18,7 @@ export const checkLoggedIn = () => {
       window.location.href = '/login.html?page=' + window.location.href;
     }
   });
-}
+};
 export async function action(action: string, params?: any) {
   params = params || {};
   const res = await fetch(actionURL, {
@@ -29,6 +29,7 @@ export async function action(action: string, params?: any) {
       'Content-Type': 'application/json',
     },
   });
+  if (res.status === 500) return false;
   if (res.status !== 200) return checkLoggedIn();
   const body = await res.json();
   return retrocycle(body);
