@@ -10,6 +10,7 @@
   export let base = '/';
   export let tree: SvelteRouterRoutes = {};
   export let middleware: SvelteRouterMiddleware = () => {};
+  export let verbose: boolean = false;
 
   let component: SvelteComponent | undefined;
 
@@ -43,7 +44,7 @@
             return cps;
           };
           if (routes[route].routes) parser(routes[route].routes as SvelteRouterRoutes, router, pageStr, activate, comps);
-          console.log('Registering route', pageStr);
+          if (verbose) console.log('Registering route', pageStr);
           router.on(pageStr, async params => {
             window['svelte-router'].isLoading.set(true);
             await activate(true);
