@@ -19,13 +19,21 @@
       <a href="groups/add" class="t-a-btn" title="Create new Group"><IconText icon="add">Add</IconText></a>
     </div>
     <div class="groups">
+      <div class="group title" transition:trns>
+        <div class="tbl">
+          <div>Year</div>
+          <div>Month</div>
+          <div>Batch</div>
+          <div>Name</div>
+        </div>
+      </div>
       {#each groups as group}
         <div class="group" transition:trns>
           <div class="tbl">
-            <div>{group.name}</div>
-            <div>{group.batch}</div>
-            <div>{group.month}</div>
             <div>{group.year}</div>
+            <div>{group.month}</div>
+            <div>{group.batch}</div>
+            <div>{group.name}</div>
           </div>
         </div>
       {/each}
@@ -39,14 +47,18 @@
 </template>
 
 <style lang="scss">
+  @use '../../../theme/scheme.scss' as scheme;
   .group {
     padding: 5px;
     margin: 0px;
     text-align: center;
+    :hover {
+      background-color: scheme.$highlight;
+    }
     .tbl > div {
       display: inline-block;
-      margin:5px;
-      padding:5px;
+      margin: 5px;
+      padding: 5px;
     }
   }
 </style>
