@@ -25,7 +25,7 @@
   function onPhoneChange(this: HTMLInputElement) {
     validatePhone(this.value).then(val => this.setCustomValidity((phoneMessage = val)));
   }
-  const onPhoneChangeDeb = debounce(onPhoneChange, 700);
+  const onPhoneChangeDeb = debounce(onPhoneChange);
   function onPhoneInput(this: HTMLInputElement) {
     if (!this.value) return;
     let ph: string = this.value;
