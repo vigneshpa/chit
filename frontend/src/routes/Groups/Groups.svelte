@@ -1,16 +1,16 @@
 <script lang="ts">
+  import { Page, IconText, Dialouge, TTable } from '@theme/';
+  import Info from './Info.svelte';
   import { action } from '@/api';
-  import { Page } from '@theme/';
   import { slide as trns } from 'svelte/transition';
-  import { IconText } from '@theme/';
   import { Router } from '@/router/';
-  import { Dialouge } from '@theme/';
   import type { Writable } from 'svelte/store';
 
   export let hasChildRouteComp: Writable<boolean>;
 
   let groups: any[] = [];
   $: !$hasChildRouteComp && action('findGroups').then(val => (groups = val));
+  let open: number | null = null;
 </script>
 
 <template>
@@ -18,26 +18,31 @@
     <div slot="top-extra">
       <a href="groups/add" class="t-a-btn" title="Create new Group"><IconText icon="add">Add</IconText></a>
     </div>
-    <div class="groups">
-      <div class="group title" transition:trns>
-        <div class="tbl">
-          <div>Year</div>
-          <div>Month</div>
-          <div>Batch</div>
-          <div>Name</div>
-        </div>
-      </div>
-      {#each groups as group}
-        <div class="group" transition:trns>
-          <div class="tbl">
-            <div>{group.year}</div>
-            <div>{group.month}</div>
-            <div>{group.batch}</div>
-            <div>{group.name}</div>
-          </div>
-        </div>
+    <TTable>
+      <tr>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Batch</th>
+        <th>Value</th>
+      </tr>
+      {#each groups as group, index}
+        <tr class="fold-view" transition:trns on:click={() => (open === index ? (open = null) : (open = index))}>
+          <td>{group.year}</td>
+          <td>{group.month}</td>
+          <td>{group.batch}</td>
+          <td class="rupee">{(group.totalValue / 20).toLocaleString('en-IN')}</td>
+        </tr>
+        {#if open === index}
+          <tr class="fold">
+            <td colspan="4" class="fold">
+              <div class="fold" transition:trns>
+                <Info {group} />
+              </div>
+            </td>
+          </tr>
+        {/if}
       {/each}
-    </div>
+    </TTable>
   </Page>
   {#if $hasChildRouteComp}
     <Dialouge preClose={() => window['svelte-router'].router?.route('/groups')}>
@@ -47,18 +52,7 @@
 </template>
 
 <style lang="scss">
-  @use '../../../theme/scheme.scss' as scheme;
-  .group {
-    padding: 5px;
-    margin: 0px;
-    text-align: center;
-    :hover {
-      background-color: scheme.$highlight;
-    }
-    .tbl > div {
-      display: inline-block;
-      margin: 5px;
-      padding: 5px;
-    }
+  .rupee::before {
+    content: '\20b9';
   }
 </style>
