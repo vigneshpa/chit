@@ -1,10 +1,14 @@
 const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SveltePreprocess = require('svelte-preprocess');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { EnvironmentPlugin } = require('webpack');
 
-process.env.BASE_URL = process.env?.BASE_URL || '/app';
-process.env.DIST_PATH = process.env?.DIST_PATH || './dist';
+process.env.BASE_URL = typeof process.env.BASE_URL === 'string' ? process.env.BASE_URL : '/app';
+process.env.DIST_PATH = typeof process.env.DIST_PATH === 'string' ? process.env.DIST_PATH : './dist';
+
+const cssLoader = 'css-loader';
+const sassLoader = 'sass-loader';
 
 module.exports = {
   entry: { app: resolve(__dirname, 'src/App.ts') },
@@ -15,6 +19,7 @@ module.exports = {
         loader: 'svelte-loader',
         options: {
           preprocess: SveltePreprocess(),
+          emitCss: true,
         },
       },
       {
@@ -26,11 +31,11 @@ module.exports = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: [MiniCssExtractPlugin.loader, cssLoader, sassLoader],
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, cssLoader],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
@@ -56,6 +61,9 @@ module.exports = {
   },
   plugins: [
     new EnvironmentPlugin(['BASE_URL']),
+    new MiniCssExtractPlugin({
+      filename: 'assets/[fullhash].css',
+    }),
     new HtmlWebpackPlugin({
       inject: 'head',
       scriptLoading: 'defer',
@@ -65,7 +73,7 @@ module.exports = {
   ],
   output: {
     filename: 'assets/[chunkhash].js',
-    assetModuleFilename: 'assets/[name].[hash][ext][query]',
+    assetModuleFilename: 'assets/[fullhash][ext][query]',
     path: resolve(__dirname, process.env.DIST_PATH),
     clean: true,
     publicPath: process.env.BASE_URL + '/',
