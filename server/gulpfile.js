@@ -9,21 +9,23 @@ const gpug = require('gulp-pug');
 
 const execP = promisify(exec);
 
-const clean = () => del(['./dist', '../dist'], { dot: true, force: true });
+const buildDir = './dist';
 
-const copyConfigFiles = () => copyFile('./src/prod.env', './dist/.env');
+const clean = () => del(buildDir, { dot: true, force: true });
 
-const frontendBuild = () => spawn('npm', ['run', 'build'], { cwd: '../frontend' });
-const copyBundeles = () => src('../frontend/dist/**/*').pipe(dest('./dist/public/app'));
-const buildFrontend = series(frontendBuild, copyBundeles);
+const copyConfigFiles = () => copyFile('./src/prod.env', buildDir + '/.env');
 
-const copyPublicFiles = () => src('./src/public/**/*').pipe(dest('./dist/public'));
-const copyViews = () => src('./src/views/**/*').pipe(dest('./dist/views'));
+const compileFrontend = () => spawn('npm', ['run', 'build'], { cwd: '../frontend' });
+const copyBundeles = () => src('../frontend/dist/**/*').pipe(dest(buildDir + '/public/app'));
+const buildFrontend = series(compileFrontend, copyBundeles);
+
+const copyPublicFiles = () => src('./src/public/**/*').pipe(dest(buildDir + '/public'));
+const copyViews = () => src('./src/views/**/*').pipe(dest(buildDir + '/views'));
 
 const compilePugStatic = () =>
   src('./src/static/**/*.pug')
     .pipe(gpug({ data: { env: process.env } }))
-    .pipe(dest('./dist/public'));
+    .pipe(dest(buildDir + '/public'));
 
 const modifyPackageJson = async () => {
   const pkg = JSON.parse((await readFile('./package.json')).toString());
@@ -31,20 +33,20 @@ const modifyPackageJson = async () => {
   delete pkg.devDependencies;
   if (pkg.dependencies.sqlite3) delete pkg.dependencies.sqlite3;
   if (pkg.dependencies.core) {
-    const cp = await execP('npm pack --json --pack-destination ../server/dist', { cwd: pkg.dependencies.core });
+    const cp = await execP('npm pack --json --pack-destination ' + join(__dirname, buildDir), { cwd: pkg.dependencies.core });
     if (cp.stderr) console.error(cp.stderr);
     const stdout = JSON.parse(cp.stdout);
     pkg.dependencies.core = './' + stdout[0].filename;
   }
   pkg.engines = { node: process.version.replace(/[^0-9.]/g, '') };
   pkg.scripts = { start: 'node server.js' };
-  await writeFile('./dist/package.json', JSON.stringify(pkg));
+  await writeFile(buildDir + '/package.json', JSON.stringify(pkg));
 };
 
 const compileBackend = () => spawn('npx', ['tsc', '--build', 'tsconfig.json']);
 
 const build = parallel(copyPublicFiles, copyViews, modifyPackageJson, compilePugStatic, compileBackend, buildFrontend);
-const moveDist = () => rename('./dist', '../dist');
+const moveDist = () => rename(buildDir, '../dist');
 exports.default = series(clean, build, copyConfigFiles, moveDist);
 
 // Develpoement server --------------------------------------------------------------------------//
