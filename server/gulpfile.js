@@ -9,9 +9,11 @@ const gpug = require('gulp-pug');
 
 const execP = promisify(exec);
 
+const outDir = '../dist';
+
 const buildDir = './dist';
 
-const clean = () => del(buildDir, { dot: true, force: true });
+const clean = () => del([buildDir, outDir], { dot: true, force: true });
 
 const copyConfigFiles = () => copyFile('./src/prod.env', buildDir + '/.env');
 
@@ -46,7 +48,7 @@ const modifyPackageJson = async () => {
 const compileBackend = () => spawn('npx', ['tsc', '--build', 'tsconfig.json']);
 
 const build = parallel(copyPublicFiles, copyViews, modifyPackageJson, compilePugStatic, compileBackend, buildFrontend);
-const moveDist = () => rename(buildDir, '../dist');
+const moveDist = () => rename(buildDir, outDir);
 exports.default = series(clean, build, copyConfigFiles, moveDist);
 
 // Develpoement server --------------------------------------------------------------------------//
