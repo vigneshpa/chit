@@ -9,6 +9,7 @@ process.env.DIST_PATH = typeof process.env.DIST_PATH === 'string' ? process.env.
 
 const cssLoader = 'css-loader';
 const sassLoader = 'sass-loader';
+const sourceMapLoader = 'source-map-loader';
 
 module.exports = {
   entry: { app: resolve(__dirname, 'src/App.ts') },
@@ -35,7 +36,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, cssLoader],
+        use: [MiniCssExtractPlugin.loader, cssLoader, sourceMapLoader],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
