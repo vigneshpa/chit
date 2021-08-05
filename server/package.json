@@ -2,7 +2,7 @@
   "name": "chit-server",
   "version": "0.1.0",
   "description": "Server module for chit app",
-  "main": "./dist/server.js",
+  "main": "../dist/server.js",
   "scripts": {
     "build": "gulp",
     "start": "echo '\\nDATABASE_URL=\"postgresql://chit:test@localhost:5432/chit\"' >> ../dist/.env && cd ../dist && node .",
@@ -14,6 +14,12 @@
     "chitapp",
     "app"
   ],
+  "pkg": {
+    "assets": [
+      "views/**/*",
+      "public/**/*"
+    ]
+  },
   "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
   "license": "GPL-3.0",
   "dependencies": {

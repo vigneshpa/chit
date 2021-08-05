@@ -2,6 +2,7 @@ import { createServer, Server } from 'http';
 import * as express from 'express';
 import * as logger from 'morgan';
 import * as compression from 'compression';
+import { join } from 'path';
 import { inspect } from 'util';
 
 import router from './routes';
@@ -31,7 +32,7 @@ export default class App {
     this.app.use(compression());
 
     //setting up view engine
-    this.app.set('views', './views');
+    this.app.set('views', join(__dirname, './views'));
     this.app.set('view engine', 'pug');
 
     //Setting up request parsers

@@ -11,12 +11,11 @@
   const nowYear = now.getFullYear();
 
   let form: HTMLFormElement;
+  let batchInput: HTMLInputElement;
   let month: number = nowMonth + 1;
   let year: number = nowYear;
   let batch: string;
   let totalValue: number = 2000000;
-
-  $: console.log({ year, month, batch });
 
   onMount(() =>
     form.addEventListener('submit', ev => {
@@ -31,10 +30,10 @@
   );
 
   let batchMessage = '';
-  function validateBatch(this: HTMLInputElement) {
+  function validateBatch() {
     action('checkGroup', {
       name: year + '-' + month + '-' + batch,
-    }).then(val => this.setCustomValidity((batchMessage = val ? 'Batch already exists' : '')));
+    }).then(val => batchInput.setCustomValidity((batchMessage = val ? 'Batch already exists' : '')));
   }
   const validateBatchDeb = debounce(validateBatch);
   function batchChange(this: HTMLInputElement) {
@@ -52,20 +51,20 @@
     <section class="t-shadow">
       <form bind:this={form}>
         <label for="year">Year</label>
-        <input name="year" type="number" bind:value={year} autocomplete="off" min="2000" max="3000" required />
+        <input name="year" type="number" bind:value={year} on:input={validateBatchDeb} autocomplete="off" min="2000" max="3000" required />
 
         <label for="month">Month</label>
-        <select name="month" type="month" bind:value={month} autocomplete="off" required>
+        <select name="month" type="month" bind:value={month} on:input={validateBatchDeb} autocomplete="off" required>
           {#each months as month, index}
             <option value={index + 1} selected={nowMonth === index}>{month}</option>
           {/each}
         </select>
 
         <label for="totalValue">Value</label>
-        <input name="totalVaue" type="number" bind:value={totalValue} autocomplete="off" required />
+        <input name="totalVaue" type="number" min="20" bind:value={totalValue} autocomplete="off" required />
 
         <label for="batch">Batch</label>
-        <input name="batch" type="text" autocomplete="off" required maxlength="3" on:input={batchChange} />
+        <input bind:this={batchInput} name="batch" type="text" autocomplete="off" required maxlength="3" on:input={batchChange} />
         {#if batchMessage}
           <div class="message" transition:slide>{batchMessage}</div>
         {/if}

@@ -5,6 +5,11 @@
 <template>
   <div class="container">
     <div class="top"><span class="heading">Batch {group.name}</span></div>
+    name: {group.name}<br />
+    year: {group.year}<br />
+    month: {group.month}<br />
+    batch: {group.batch}<br />
+    value: {group.totalValue}<br />
   </div>
 </template>
 

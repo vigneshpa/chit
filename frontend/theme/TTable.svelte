@@ -11,12 +11,21 @@
     :global {
       th {
         text-align: left;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid grey;
       }
       th,
       td {
-        padding: 0.4em;
+        padding: 0.8em;
         user-select: none;
+      }
+      tr.fold-view {
+        transition: background-color scheme.$aniDuration ease;
+      }
+      tr.fold-view:nth-child(even) {
+        background-color: transparentize(scheme.$highlight, 0.07);
+      }
+      tr.fold-view:nth-child(odd) {
+        background-color: transparentize(scheme.$highlight, 0.15);
       }
       tr.fold-view:hover {
         background-color: scheme.$highlight;
@@ -25,10 +34,12 @@
         max-height: 0px;
       }
       tr.fold div.fold {
-        transition: max-height 0.3s ease;
+        transition: max-height scheme.$aniDuration ease;
         max-height: 400px;
-        padding: 0.4em;
+        padding: 0px;
+        margin: 10px 0px;
         overflow: hidden;
+        border: solid 1px grey;
       }
       td.fold {
         padding: 0px;

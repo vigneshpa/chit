@@ -30,6 +30,10 @@
   .page {
     margin: 0px;
     padding: 10px;
+    transition: padding $aniDuration ease;
+    @media only screen and (max-width: 720px) {
+      padding: 10px 5px;
+    }
     .top {
       color: $textOnBackground;
       .t-a-btn {
@@ -54,6 +58,10 @@
     }
     .content {
       padding: 10px;
+      transition: padding $aniDuration ease;
+      @media only screen and (max-width: 720px) {
+        padding: 10px 0px;
+      }
     }
   }
 </style>

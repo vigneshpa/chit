@@ -37,25 +37,26 @@
     &.hidden {
       transform: translateX(-102%);
     }
-    :global(a) {
-      color: scheme.$textOnBackground;
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-      text-decoration: none;
-      padding: 10px;
-      transition: background-color scheme.$aniDuration ease, border scheme.$aniDuration ease;
+    :global {
+      a {
+        color: scheme.$textOnBackground;
+        width: 100%;
+        box-sizing: border-box;
+        text-decoration: none;
+        padding: 10px;
+        transition: background-color scheme.$aniDuration ease, border scheme.$aniDuration ease;
 
-      &:hover {
-        background-color: scheme.$highlight;
+        &:hover {
+          background-color: scheme.$highlight;
+        }
+        &:active {
+          background-color: scheme.$highlightDark;
+        }
       }
-      &:active {
-        background-color: scheme.$highlightDark;
+      .linkactive {
+        font-weight: bold;
+        border-right: solid 0.3rem scheme.$primaryLight;
       }
-    }
-    :global(.linkactive) {
-      font-weight: bold;
-      border-right: solid 0.3rem scheme.$primaryLight;
     }
   }
   .drawer-cover {

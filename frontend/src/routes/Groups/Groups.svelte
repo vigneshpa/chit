@@ -26,7 +26,7 @@
         <th>Value</th>
       </tr>
       {#each groups as group, index}
-        <tr class="fold-view" transition:trns on:click={() => (open === index ? (open = null) : (open = index))}>
+        <tr class="fold-view" on:click={() => (open === index ? (open = null) : (open = index))}>
           <td>{group.year}</td>
           <td>{group.month}</td>
           <td>{group.batch}</td>

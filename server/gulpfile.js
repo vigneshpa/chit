@@ -32,6 +32,7 @@ const compilePugStatic = () =>
 const modifyPackageJson = async () => {
   const pkg = JSON.parse((await readFile('./package.json')).toString());
   pkg.main = 'server.js';
+  pkg.bin = 'server.js';
   delete pkg.devDependencies;
   if (pkg.dependencies.sqlite3) delete pkg.dependencies.sqlite3;
   if (pkg.dependencies.core) {
