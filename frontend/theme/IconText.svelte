@@ -5,7 +5,7 @@
 
 <template>
   <div class="t-icon-text-container">
-    <span class="t-icon" class:material-icons={!outlined} class:material-icons-outlined={outlined}> {icon} </span>
+    <i class="t-icon" class:material-icons={!outlined} class:material-icons-outlined={outlined}> {icon} </i>
     <span class="t-icon-text">
       <slot />
     </span>
