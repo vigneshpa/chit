@@ -7,11 +7,13 @@ const { EnvironmentPlugin } = require('webpack');
 process.env.BASE_URL = typeof process.env.BASE_URL === 'string' ? process.env.BASE_URL : '/app';
 process.env.DIST_PATH = typeof process.env.DIST_PATH === 'string' ? process.env.DIST_PATH : './dist';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const cssLoader = 'css-loader';
 const sassLoader = 'sass-loader';
 const sourceMapLoader = 'source-map-loader';
 
-module.exports = {
+const config = {
   entry: { app: resolve(__dirname, 'src/App.ts') },
   module: {
     rules: [
@@ -54,7 +56,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.ts', '.js'],
     alias: {
       '@': resolve(__dirname, 'src'),
       '@theme': resolve(__dirname, 'theme'),
@@ -74,7 +76,7 @@ module.exports = {
   ],
   output: {
     filename: 'assets/[chunkhash].js',
-    assetModuleFilename: 'assets/[fullhash][ext][query]',
+    assetModuleFilename: 'assets/[hash][ext][query]',
     path: resolve(__dirname, process.env.DIST_PATH),
     clean: true,
     publicPath: process.env.BASE_URL + '/',
@@ -84,10 +86,11 @@ module.exports = {
       chunks: 'all',
     },
   },
-  devtool: 'source-map',
+  devtool: isDev ? 'eval-source-map' : 'source-map',
   devServer: {
     hot: false,
     port: 5000,
     historyApiFallback: true,
   },
 };
+module.exports = config;
