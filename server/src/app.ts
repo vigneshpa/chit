@@ -17,10 +17,10 @@ export default class App {
     this.server = createServer(this.app);
     this.router = router;
 
-    //Setting up logger
+    // Setting up logger
     this.app.use(logger('dev'));
 
-    //Reditecting to secure if it is in oproduction
+    // Reditecting to secure if it is in oproduction
     if (process.env.NODE_ENV === 'production')
       this.app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] === 'http') {
@@ -28,21 +28,21 @@ export default class App {
         } else next();
       });
 
-    //compression
+    // Compression
     this.app.use(compression());
 
-    //setting up view engine
+    // Setting up view engine
     this.app.set('views', join(__dirname, './views'));
     this.app.set('view engine', 'pug');
 
-    //Setting up request parsers
+    // Setting up request parsers
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
 
-    //Injecting session parser
+    // Injecting session parser
     this.app.use(this.sessionParser);
 
-    //adding router
+    // Adding router
     this.app.use('/', router);
 
     // Handle 404
