@@ -20,6 +20,9 @@ export default class App {
     // Setting up logger
     this.app.use(logger('dev'));
 
+    // Trusting proxy if in production
+    if (this.app.get('env') !== 'development') this.app.set('trust proxy', true);
+
     // Reditecting to secure if it is in oproduction
     if (process.env.NODE_ENV === 'production')
       this.app.use((req, res, next) => {

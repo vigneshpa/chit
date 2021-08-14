@@ -17,7 +17,7 @@ const sessionParser = session({
   store: new MemStore({ checkPeriod: 86400000 }),
   cookie: {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== 'development',
+    secure: 'auto',
     sameSite: true,
   },
 });
