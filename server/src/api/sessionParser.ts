@@ -18,6 +18,7 @@ const sessionParser = session({
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV !== 'development',
+    sameSite: true,
   },
 });
 export default sessionParser;
