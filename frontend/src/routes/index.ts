@@ -1,4 +1,4 @@
-import type { SvelteRouterMiddleware, SvelteRouterRoutes } from '@/router';
+import type { SvelteRouterMiddleware, SvelteRouterRoutes } from '@vigneshpa/svelte-router';
 
 const tree: SvelteRouterRoutes = {
   dashboard: { component: () => import('./Dashboard.svelte') },

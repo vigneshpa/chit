@@ -1,7 +1,9 @@
 <script lang="ts">
   import { slide as trns } from 'svelte/transition';
-  let store_mobile = window.ttheme.store.mobile;
-  window.ttheme.store.drawer.set(!$store_mobile);
+  import getStore from './TStore';
+  const store = getStore();
+  let store_mobile = store.mobile;
+  store.drawer.set(!$store_mobile);
   export let backButton: boolean = false;
   export let heading: string;
   document.body.scrollTop = 0;

@@ -3,8 +3,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const SveltePreprocess = require('svelte-preprocess');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { EnvironmentPlugin } = require('webpack');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
-process.env.BASE_URL = typeof process.env.BASE_URL === 'string' ? process.env.BASE_URL : '/app';
 process.env.DIST_PATH = typeof process.env.DIST_PATH === 'string' ? process.env.DIST_PATH : './dist';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -14,7 +14,7 @@ const sassLoader = 'sass-loader';
 const sourceMapLoader = 'source-map-loader';
 
 const config = {
-  entry: { app: resolve(__dirname, 'src/App.ts') },
+  entry: { app: '@/App.ts' },
   module: {
     rules: [
       {
@@ -56,35 +56,33 @@ const config = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.mjs', '.js', '.json', '.svelte'],
+    mainFields: ['svelte', 'browser', 'module', 'main'],
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@theme': resolve(__dirname, 'theme'),
+      '@': resolve('src'),
+      '@theme': resolve('theme'),
+      svelte: resolve('node_modules', 'svelte'),
     },
   },
   plugins: [
-    new EnvironmentPlugin(['BASE_URL']),
     new MiniCssExtractPlugin({
-      filename: 'assets/[fullhash].css',
+      filename: 'assets/[name].css',
     }),
     new HtmlWebpackPlugin({
       inject: 'head',
       scriptLoading: 'defer',
       template: resolve(__dirname, 'src/index.html'),
-      chunks: ['app'],
     }),
   ],
   output: {
-    filename: 'assets/[chunkhash].js',
-    assetModuleFilename: 'assets/[hash][ext][query]',
+    filename: 'assets/[name].js',
+    assetModuleFilename: 'assets/[name][ext][query]',
     path: resolve(__dirname, process.env.DIST_PATH),
     clean: true,
-    publicPath: process.env.BASE_URL + '/',
+    publicPath: 'auto',
   },
   optimization: {
-    splitChunks: {
-      chunks: 'all',
-    },
+    minimizer: [`...`, new CssMinimizerPlugin()],
   },
   devtool: isDev ? 'eval-source-map' : 'source-map',
   devServer: {

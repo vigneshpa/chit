@@ -1,7 +1,8 @@
 <script lang="ts">
-  if (!window.ttheme) new Error('Please initilze theme');
-  const store_drawer = window.ttheme.store.drawer;
-  const store_mobile = window.ttheme.store.mobile;
+  import getStore from './TStore';
+  const store = getStore();
+  const store_drawer = store.drawer;
+  const store_mobile = store.mobile;
 </script>
 
 <template>

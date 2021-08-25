@@ -1,6 +1,5 @@
 <script lang="ts">
   import { fade as trans } from 'svelte/transition';
-  if (!window.ttheme) new Error('Please initilze theme');
   export let preClose: () => Promise<boolean | void> | boolean | void = () => false;
   export let show: boolean = true;
 </script>
@@ -38,8 +37,8 @@
     z-index: 2;
     margin: Auto;
     > :global(div) {
-      border-bottom-left-radius:10px;
-      border-bottom-right-radius:10px;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
       background-color: scheme.$background;
     }
   }

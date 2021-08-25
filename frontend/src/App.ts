@@ -2,14 +2,8 @@
 import { checkLoggedIn } from './api';
 checkLoggedIn();
 
-// Variables
-const bURL = process.env.BASE_URL || '/app';
-window.bURL = bURL;
-
-// Loading theme
-import TTheme from '@theme/';
-
-const theme = new TTheme();
+// registering burl
+window.bURL = window.bURL || process.env.BASE_URL || '/app';
 
 // Loading App
 import App from '@/App.svelte';

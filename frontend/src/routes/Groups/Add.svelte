@@ -1,7 +1,8 @@
 <script lang="ts">
+  import Page from '@theme/Page.svelte';
+  import IconText from '@theme/IconText.svelte';
   import { action } from '@/api';
   import { debounce } from '@/utils';
-  import { Page, IconText } from '@theme/';
   import { onMount } from 'svelte';
   import { slide } from 'svelte/transition';
 

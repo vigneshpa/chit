@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Page } from '@theme/';
+  import Page from '@theme/Page.svelte';
 </script>
 
 <template>

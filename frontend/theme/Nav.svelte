@@ -1,7 +1,8 @@
 <script lang="ts">
   import { slide as trans } from 'svelte/transition';
-  if (!window.ttheme) new Error('Please initilze theme');
-  let store_drawer = window.ttheme.store.drawer;
+  import getStore from './TStore';
+  const store = getStore();
+  let store_drawer = store.drawer;
   export let loading: boolean = true;
 </script>
 

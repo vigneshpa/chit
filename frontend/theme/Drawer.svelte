@@ -1,8 +1,9 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  if (!window.ttheme) new Error('Please initilze theme');
-  let store_drawer = window.ttheme.store.drawer;
-  let store_mobile = window.ttheme.store.mobile;
+  import getStore from './TStore';
+  const store = getStore();
+  let store_drawer = store.drawer;
+  let store_mobile = store.mobile;
 </script>
 
 <template>

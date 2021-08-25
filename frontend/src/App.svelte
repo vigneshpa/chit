@@ -1,6 +1,10 @@
 <script lang="ts">
-  import { Container, Drawer, IconText, Nav } from '@theme/';
-  import { Router } from '@/router';
+  import Container from '@theme/Container.svelte';
+  import Drawer from '@theme/Drawer.svelte';
+  import IconText from '@theme/IconText.svelte';
+  import Nav from '@theme/Nav.svelte';
+  import TApp from '@theme/TApp.svelte';
+  import { Router } from '@vigneshpa/svelte-router';
   import routes from '@/routes/';
   const bURL = window.bURL;
   let route_loading = window['svelte-router'].isLoading;
@@ -14,7 +18,7 @@
 </script>
 
 <template>
-  <div id="app">
+  <TApp>
     <Container>
       <Router base={bURL} {...routes} />
     </Container>
@@ -31,5 +35,5 @@
       <span> Chit Management System</span>
       <a href="/api/logout"> Logout </a>
     </Nav>
-  </div>
+  </TApp>
 </template>

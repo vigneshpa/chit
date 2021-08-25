@@ -1,11 +1,12 @@
 <script lang="ts">
+  import Grid from '@theme/Grid.svelte';
+  import Page from '@theme/Page.svelte';
+  import IconText from '@theme/IconText.svelte';
+  import Dialouge from '@theme/Dialouge.svelte';
+
   import { action } from '@/api';
-  import { Page } from '@theme/';
   import { slide as trns } from 'svelte/transition';
-  import { Grid } from '@theme/';
-  import { IconText } from '@theme/';
-  import { Router } from '@/router/';
-  import { Dialouge } from '@theme/';
+  import { Router } from '@vigneshpa/svelte-router';
   import type { Writable } from 'svelte/store';
 
   export let hasChildRouteComp: Writable<boolean>;
