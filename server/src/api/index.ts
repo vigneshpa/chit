@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { decycle } from '../thirdparty/cycle';
 import { gaurd } from './gaurd';
-import Core from 'core';
+import Core from '../../../core/src';
 
 const router = Router();
 

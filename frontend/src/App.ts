@@ -3,7 +3,9 @@ import { checkLoggedIn } from './api';
 checkLoggedIn();
 
 // registering burl
-window.bURL = window.bURL || process.env.BASE_URL || '/app';
+window.bURL = window.bURL || '/app';
+// registering apiURL
+window.apiURL = window.apiURL || '/api';
 
 // Loading App
 import App from '@/App.svelte';
@@ -17,6 +19,10 @@ declare global {
      * Base url for the app
      */
     bURL: string;
+    /**
+     * Base url of the api sserver
+     */
+    apiURL: string;
     /**
      * App instance
      */

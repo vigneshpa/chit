@@ -11,18 +11,18 @@
     grid-template-columns: auto auto auto;
     > div {
       box-shadow: 0px 0px 2px scheme.$shadowColor;
-      padding:10px;
-      margin:10px;
+      padding: 10px;
+      margin: 10px;
       // border-radius:5px;
     }
   }
-  @media only screen and (max-width: 1080px + scheme.$drawerWidth){
-    .t-grid{
+  @media only screen and (max-width: 1080px + scheme.$drawerWidth) {
+    .t-grid {
       grid-template-columns: auto auto;
     }
   }
-  @media only screen and (max-width: 720px){
-    .t-grid{
+  @media only screen and (max-width: 720px) {
+    .t-grid {
       grid-template-columns: auto;
     }
   }

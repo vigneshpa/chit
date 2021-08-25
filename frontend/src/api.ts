@@ -1,15 +1,22 @@
 /**
  * This file is a common module used to fetch information from the api server
+ * or to perform operations locally on the browser storage
  *
  * This is made as a seperate file to isolate api from other frontend code
  */
-
+import type { Actions, CoreClass } from './Core';
 import { retrocycle } from './cycle';
-const apiUrl = '/api/';
-const actionURL = apiUrl + 'action';
+
+let core: CoreClass;
+if (window.useLocalCore) {
+  window.initCore().then(cr => (core = cr));
+}
+
+const actionURL = window.apiURL + '/action';
 let isRedirecting = false;
 
 export const checkLoggedIn = () => {
+  if (window.useLocalCore) return true;
   if (isRedirecting) return;
   fetch('/api/login').then(async res => {
     if (res.status !== 200 || (await res.json()) !== 'LOGGED_IN') {
@@ -19,7 +26,8 @@ export const checkLoggedIn = () => {
     }
   });
 };
-export async function action(action: string, params?: any) {
+export async function action(action: keyof Actions, params: Actions[keyof Actions]) {
+  if (window.useLocalCore && core) return core.actions![action](params);
   params = params || {};
   const res = await fetch(actionURL, {
     method: 'POST',

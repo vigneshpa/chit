@@ -5,6 +5,7 @@ import type { Actions } from './Actions';
 import makeActions from './Actions';
 import * as Entites from './Entites';
 
+export type { Actions };
 export default class Core {
   connection?: Connection;
   isConnected: boolean = false;

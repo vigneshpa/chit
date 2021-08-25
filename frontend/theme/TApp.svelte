@@ -24,6 +24,9 @@
 
 <style lang="scss" global>
   @use "./scheme.scss" as scheme;
+  @import url(https://fonts.googleapis.com/css2?family=Roboto&display=swap);
+  @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
+  @import url(https://fonts.googleapis.com/icon?family=Material+Icons+Outlined);
   body {
     font-family: 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
