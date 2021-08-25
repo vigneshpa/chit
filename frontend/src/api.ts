@@ -26,8 +26,8 @@ export const checkLoggedIn = () => {
     }
   });
 };
-export async function action(action: keyof Actions, params: Actions[keyof Actions]) {
-  if (window.useLocalCore && core) return core.actions![action](params);
+export async function action<K extends keyof Actions>(action: K, params: Parameters<Actions[K]>[0]) {
+  if (window.useLocalCore) return core.actions![action](params as any);
   params = params || {};
   const res = await fetch(actionURL, {
     method: 'POST',
