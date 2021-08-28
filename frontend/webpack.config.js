@@ -3,8 +3,10 @@ const SveltePreprocess = require('svelte-preprocess');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { NormalModuleReplacementPlugin } = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
 
-const distPath = process.env.DIST_PATH ?? './dist';
+const distPath = process.env.DIST_PATH ?? '../pages/docs';
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -79,6 +81,18 @@ const config = {
       result.request = result.request.replace(/typeorm/, 'typeorm/browser');
     }),
     new MiniCssExtractPlugin({ filename: 'css/[name].css' }),
+    new HtmlWebpackPlugin({
+      inject: 'head',
+      minify: true,
+      template: resolve('src/index.html'),
+      scriptLoading: 'defer',
+      publicPath: '/chitapp/',
+    }),
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+      navigateFallback: 'index.html',
+    }),
   ],
   output: {
     filename: 'js/[name].js',

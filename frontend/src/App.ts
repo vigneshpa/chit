@@ -1,4 +1,4 @@
-if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production' && !window.disableSecure) {
+if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production' && !window.disableSecureRedirect) {
   window.document.body.innerText = 'Redirecting to secure';
   window.location.href = window.location.href.replace('http:', 'https:');
 }
@@ -24,6 +24,19 @@ import(
   '@/App.svelte'
 ).then(App => (window.app = new App.default({ target: window.document.body })));
 
+if (window.useLocalCore && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register(new URL(pPath + 'service-worker.js'))
+      .then(registration => {
+        console.log('SW registered: ', registration);
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+
 declare global {
   interface Window {
     /**
@@ -38,6 +51,6 @@ declare global {
      * App instance
      */
     app: App;
-    disableSecure: true | undefined;
+    disableSecureRedirect: true | undefined;
   }
 }

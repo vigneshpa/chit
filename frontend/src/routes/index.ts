@@ -16,6 +16,7 @@ const tree: SvelteRouterRoutes = {
       add: { component: () => import('./Groups/Add.svelte') },
     },
   },
+  backup: { component: () => import('./Backup.svelte') },
 };
 const middleware: SvelteRouterMiddleware = router => router.on('/', () => router.route('/dashboard'));
 export default { tree, middleware };

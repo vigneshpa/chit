@@ -12,6 +12,7 @@
     { href: bURL + '/dashboard', text: 'Dashboard', icon: 'space_dashboard', icon_noutlined: false },
     { href: bURL + '/clients', text: 'Clients', icon: 'people' },
     { href: bURL + '/groups', text: 'Groups', icon: 'groups' },
+    { href: bURL + '/backup', text: 'Backup', icon: 'settings_backup_restore' },
     { href: bURL + '/about', text: 'About', icon: 'info' },
   ];
   let route_pageStr = window['svelte-router'].pageStr;
@@ -33,7 +34,9 @@
 
     <Nav loading={$route_loading}>
       <span> Chit Management System</span>
-      <a href="/api/logout"> Logout </a>
+      {#if !window.useLocalCore}
+        <a href="/api/logout"> Logout </a>
+      {/if}
     </Nav>
   </TApp>
 </template>

@@ -9,7 +9,7 @@ localforage.config({
   storeName: 'chitDataStore',
 });
 
-export async function initCore(dbName: string = 'chitDataBase') {
+export async function initCore(dbName: string = 'chitDatabase') {
   // Loading SqlJs
   if (!window.SQL) window.SQL = await initSqlJs({ locateFile: () => sqlWasm });
   // Mounting localforage
@@ -29,6 +29,15 @@ export async function initCore(dbName: string = 'chitDataBase') {
   });
   return core;
 }
+export async function getDatabaseBackup(database: string = 'chitDatabase'): Promise<File> {
+  const ary = await localforage.getItem<Uint8Array>(database);
+  if (!ary) throw new Error('Database file does not exists');
+  return new File([ary], 'backup.sqlite3', { type: 'application/vnd.sqlite3', lastModified: Date.now() });
+}
+export async function restoreDatabase(databaseBackup: File, database: string = 'chitDatabase') {
+  await localforage.setItem(database, new Int8Array(await readFile(databaseBackup)));
+  window.location.reload();
+}
 window.initCore = initCore;
 export type CoreClass = Core;
 declare global {
@@ -38,4 +47,12 @@ declare global {
     useLocalCore: true | undefined;
     localforage: typeof localforage;
   }
+}
+function readFile(file: File): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener('loadend', e => resolve((e as any).target.result));
+    reader.addEventListener('error', reject);
+    reader.readAsArrayBuffer(file);
+  });
 }

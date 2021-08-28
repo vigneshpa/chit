@@ -11,12 +11,39 @@ type actionFunction = <K extends keyof Actions>(action: K, params: Parameters<Ac
 
 let checkLoggedIn: () => void;
 let action: actionFunction;
+let downloadBackup: () => Promise<void>;
+let restoreBackup: () => Promise<void>;
 
 if (window.useLocalCore) {
   checkLoggedIn = () => true;
-  let core: Promise<CoreClass> = (async () => await (await import(/* webpackChunkName: "core" */ './Core')).initCore())();
+  const coreModule = import(/* webpackChunkName: "core" */ './Core');
+  const core: Promise<CoreClass> = (async () => await (await coreModule).initCore())();
   //@ts-ignore
   action = async (action, params) => await (await core).actions[action](params);
+  downloadBackup = async () => {
+    const data = await (await coreModule).getDatabaseBackup();
+    const a = document.createElement('a');
+    a.href = window.URL.createObjectURL(data);
+    a.download = data.name;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => window.URL.revokeObjectURL(a.href), 5000);
+    a.remove();
+  };
+  restoreBackup = async () => {
+    const inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = '.sqlite3,.sqlite,.db,application/vnd.sqlite3';
+    inp.onchange = async e => {
+      const file = inp.files![0];
+      if (!file) return;
+      (await coreModule).restoreDatabase(file);
+    };
+    inp.style.display = 'none';
+    document.body.append(inp);
+    inp.click();
+  };
 } else {
   const actionURL = window.apiURL + '/action';
   let isRedirecting = false;
@@ -49,4 +76,4 @@ if (window.useLocalCore) {
     return retrocycle(body);
   };
 }
-export { checkLoggedIn, action };
+export { checkLoggedIn, action, downloadBackup, restoreBackup };
