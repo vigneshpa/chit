@@ -47,6 +47,7 @@
     "@types/pug": "^2.0.4",
     "@types/sql.js": "^1.4.2",
     "@vigneshpa/svelte-router": "^1.0.6",
+    "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.0.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
     "del": "^6.0.0",

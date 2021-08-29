@@ -27,7 +27,7 @@ import(
 if (window.useLocalCore && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(new URL(pPath + 'service-worker.js'))
+      .register(new URL(pPath + 'service-worker.js'), { scope: pPath.href })
       .then(registration => {
         console.log('SW registered: ', registration);
       })

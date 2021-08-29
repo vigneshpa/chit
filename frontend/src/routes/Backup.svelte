@@ -4,10 +4,16 @@
 </script>
 
 <template>
-  <Page heading="Backup and restore">
+  <Page heading="Backup and Restore">
     <h3>Backup</h3>
+    <p>To backup all the data in this application download the backup file and store it for future restorations.</p>
     <button class="t-btn" on:click={() => downloadBackup()}>Download Backup</button>
     <h3>Restore</h3>
+    <p>
+      To restore a backup that you have made in the past. click the restore backup button and choose the backup file. This action will reload the
+      page.
+    </p>
+    <p>Current application data will be lost. proceed with caution.</p>
     <button class="t-btn" on:click={() => restoreBackup()}>Restore Backup</button>
   </Page>
 </template>

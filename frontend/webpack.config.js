@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const { NormalModuleReplacementPlugin } = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 
 const distPath = process.env.DIST_PATH ?? '../pages/docs';
@@ -84,9 +85,15 @@ const config = {
     new HtmlWebpackPlugin({
       inject: 'head',
       minify: true,
-      template: resolve('src/index.html'),
+      template: resolve('index.html'),
       scriptLoading: 'defer',
       publicPath: '/chitapp/',
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'icons/generated', to: 'icons' },
+        { from: 'webmanifest.js', to: 'manifest.webmanifest', transform: content => require('./webmanifest')('/chitapp/') },
+      ],
     }),
     new GenerateSW({
       clientsClaim: true,
@@ -103,6 +110,7 @@ const config = {
   },
   optimization: {
     minimizer: [`...`, new CssMinimizerPlugin()],
+    mangleExports: false,
   },
   devtool: isDev ? 'eval-source-map' : 'source-map',
 };
