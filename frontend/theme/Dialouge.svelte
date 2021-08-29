@@ -1,16 +1,16 @@
 <script lang="ts">
   import { fade as trans } from 'svelte/transition';
-  export let preClose: () => Promise<boolean | void> | boolean | void = () => false;
+  export let preClose: () => Promise<boolean | void> | boolean | void = () => Promise.resolve(false);
   export let show: boolean = true;
 </script>
 
 <template>
   {#if show}
-    <div class="t-confirm">
+    <div class="t-dialouge">
       <slot />
     </div>
     <div
-      class="t-confirm-cover"
+      class="t-dialouge-cover"
       on:click={() => Promise.resolve(preClose()).then(val => (show = !(typeof val === 'boolean' && val)))}
       transition:trans
     />
@@ -19,7 +19,7 @@
 
 <style lang="scss">
   @use "./scheme.scss" as scheme;
-  .t-confirm-cover {
+  .t-dialouge-cover {
     position: fixed;
     overflow: auto;
     top: 0px;
@@ -29,7 +29,7 @@
     left: 0px;
     background-color: scheme.$coverColor;
   }
-  .t-confirm {
+  .t-dialouge {
     position: absolute;
     top: 0;
     left: 0;

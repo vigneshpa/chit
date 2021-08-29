@@ -47,9 +47,13 @@
   }
   .t-btn {
     text-decoration: none;
-    color: scheme.$textOnPrimary;
-    transition: background-color scheme.$aniDuration ease;
     background-color: scheme.$primary;
+    color: scheme.$textOnPrimary;
+    &.secondary {
+      background-color: scheme.$secondary;
+      color: scheme.$textOnSecondary;
+    }
+    transition: background-color scheme.$aniDuration ease;
     border: none;
     box-shadow: 0px 0px 0px scheme.$shadowColor;
     border-radius: 3px;

@@ -23,7 +23,7 @@
     width: scheme.$drawerWidth;
     box-sizing: border-box;
     background-color: scheme.$background;
-    box-shadow: 0px 0px 5px scheme.$shadowColor;
+    box-shadow: scheme.$shadow;
     overflow: auto;
     padding: 20px 0px 10px 0px;
 

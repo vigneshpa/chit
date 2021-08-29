@@ -9,12 +9,47 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 
 const distPath = process.env.DIST_PATH ?? '../pages/docs';
 
+if (typeof process.env.NODE_ENV !== 'string') process.env.NODE_ENV = 'development';
+
 const isDev = process.env.NODE_ENV === 'development';
 
 const cssLoader = 'css-loader';
 const sassLoader = 'sass-loader';
 const sourceMapLoader = 'source-map-loader';
+const pPath = isDev ? './' : '/chitapp/';
 
+const cssPlugin = isDev ? 'style-loader' : MiniCssExtractPlugin.loader;
+
+const plugins = [];
+plugins.push(
+  new NormalModuleReplacementPlugin(/typeorm$/, function (result) {
+    result.request = result.request.replace(/typeorm/, 'typeorm/browser');
+  }),
+  new CopyPlugin({
+    patterns: [
+      { from: 'icons/generated', to: 'icons' },
+      { from: 'webmanifest.js', to: 'manifest.webmanifest', transform: content => require('./webmanifest')(pPath) },
+    ],
+  }),
+  new HtmlWebpackPlugin({
+    inject: 'head',
+    minify: true,
+    template: resolve('index.html'),
+    scriptLoading: 'defer',
+    publicPath: pPath,
+  })
+);
+if (!isDev)
+  plugins.push(
+    new MiniCssExtractPlugin({ filename: 'css/[name].css' }),
+    new GenerateSW({
+      swDest: 'service-worker.js',
+      clientsClaim: true,
+      skipWaiting: true,
+      navigateFallback: 'index.html',
+      exclude: [/^.*icons\/.*$/, /\.map$/],
+    })
+  );
 const config = {
   entry: { app: '@/App' },
   module: {
@@ -36,11 +71,11 @@ const config = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: [MiniCssExtractPlugin.loader, cssLoader, sassLoader],
+        use: [cssPlugin, cssLoader, sassLoader],
       },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, cssLoader, sourceMapLoader],
+        use: [cssPlugin, cssLoader, sourceMapLoader],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif|woff|woff2|eot|ttf|otf)$/i,
@@ -73,31 +108,7 @@ const config = {
       'react-native-sqlite-storage': false,
     },
   },
-  plugins: [
-    new NormalModuleReplacementPlugin(/typeorm$/, function (result) {
-      result.request = result.request.replace(/typeorm/, 'typeorm/browser');
-    }),
-    new MiniCssExtractPlugin({ filename: 'css/[name].css' }),
-    new CopyPlugin({
-      patterns: [
-        { from: 'icons/generated', to: 'icons' },
-        { from: 'webmanifest.js', to: 'manifest.webmanifest', transform: content => require('./webmanifest')('/chitapp/') },
-      ],
-    }),
-    new HtmlWebpackPlugin({
-      inject: 'head',
-      minify: true,
-      template: resolve('index.html'),
-      scriptLoading: 'defer',
-      publicPath: '/chitapp/',
-    }),
-    new GenerateSW({
-      clientsClaim: true,
-      skipWaiting: true,
-      navigateFallback: 'index.html',
-      exclude: [/^.*icons\/.*$/, /\.map$/],
-    }),
-  ],
+  plugins,
   output: {
     filename: 'js/[name].js',
     assetModuleFilename: 'assets/[name][ext][query]',
@@ -112,6 +123,10 @@ const config = {
   cache: {
     type: 'filesystem',
     cacheDirectory: resolve('webpack-cache'),
+  },
+  devServer: {
+    historyApiFallback: true,
+    port: 3000,
   },
 };
 module.exports = config;

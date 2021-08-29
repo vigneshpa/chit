@@ -33,26 +33,32 @@
     box-sizing: border-box;
     background-color: scheme.$primary;
     display: flex;
+    align-items: center;
     box-shadow: 0px 0px 5px scheme.$shadowColor;
     justify-content: space-between;
-    :global(a),
-    :global(span) {
-      line-height: scheme.$nav1in3;
-      font-size: 1rem;
-      padding: scheme.$nav1in3 15px scheme.$nav1in3 15px;
-      text-decoration: none;
-      color: scheme.$textOnPrimary;
-      transition: background-color scheme.$aniDuration ease;
-      user-select: none;
-      cursor: pointer;
-      &:hover {
-        background-color: scheme.$highlight;
+    :global {
+      a,
+      span {
+        line-height: scheme.$nav1in3;
+        font-size: 1.5rem;
+        padding: scheme.$nav1in3 15px scheme.$nav1in3 15px;
+        text-decoration: none;
+        color: scheme.$textOnPrimary;
+        transition: background-color scheme.$aniDuration ease;
+        user-select: none;
+        cursor: pointer;
+        &:hover {
+          background-color: scheme.$highlight;
+        }
       }
-    }
-    :global(span) {
-      cursor: default;
-      &:hover {
-        background-color: rgba(0, 0, 0, 0);
+      span {
+        cursor: default;
+        &:hover {
+          background-color: rgba(0, 0, 0, 0);
+        }
+      }
+      .title {
+        font-size: 1rem;
       }
     }
   }
