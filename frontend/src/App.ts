@@ -6,6 +6,7 @@ if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production'
 // Checking weather logged in
 import { checkLoggedIn } from './api';
 import type App from './App.svelte';
+import { Writable, writable } from 'svelte/store';
 checkLoggedIn();
 
 declare const __webpack_public_path__: string;
@@ -16,6 +17,29 @@ window.bURL = window.bURL ?? pPath.href.substring(pPath.origin.length, pPath.hre
 // registering apiURL
 window.apiURL = window.apiURL ?? '/api';
 
+if (window.useLocalCore && 'serviceWorker' in navigator) {
+  window.serviceWorkerStatus = writable('preparing');
+  import('register-service-worker').then(v =>
+    v.register(new URL(pPath + 'service-worker.js').href, {
+      registrationOptions: { scope: pPath.href },
+      ready(registration) {
+        window.serviceWorkerStatus!.set('ready');
+      },
+      updatefound(registration) {
+        window.serviceWorkerStatus!.set('downloading');
+      },
+      updated(registration) {
+        window.serviceWorkerStatus!.set('refresh');
+      },
+      offline() {
+        window.serviceWorkerStatus!.set('offline');
+      },
+      error(error) {
+        console.error('Error during service worker registration:', error);
+      },
+    })
+  );
+}
 // Lazy loading App to link css automatically
 import(
   /* webpackChunkName: "appComponent" */
@@ -23,19 +47,6 @@ import(
   /* webpackPrefetch: true */
   '@/App.svelte'
 ).then(App => (window.app = new App.default({ target: window.document.body })));
-
-if (window.useLocalCore && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register(new URL(pPath + 'service-worker.js'), { scope: pPath.href })
-      .then(registration => {
-        console.log('SW registered: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
-      });
-  });
-}
 
 declare global {
   interface Window {
@@ -51,6 +62,8 @@ declare global {
      * App instance
      */
     app: App;
+    useLocalCore: true | undefined;
     disableSecureRedirect: true | undefined;
+    serviceWorkerStatus: Writable<'preparing' | 'downloading' | 'ready' | 'refresh' | 'offline'> | undefined;
   }
 }

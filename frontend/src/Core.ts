@@ -44,7 +44,6 @@ declare global {
   interface Window {
     initCore: typeof initCore;
     SQL: SqlJsStatic;
-    useLocalCore: true | undefined;
     localforage: typeof localforage;
   }
 }
