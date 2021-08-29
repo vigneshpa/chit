@@ -43,11 +43,7 @@ const config = {
         use: [MiniCssExtractPlugin.loader, cssLoader, sourceMapLoader],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|woff|woff2|eot|ttf|otf)$/i,
         type: 'asset/resource',
       },
       {
@@ -82,18 +78,18 @@ const config = {
       result.request = result.request.replace(/typeorm/, 'typeorm/browser');
     }),
     new MiniCssExtractPlugin({ filename: 'css/[name].css' }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'icons/generated', to: 'icons' },
+        { from: 'webmanifest.js', to: 'manifest.webmanifest', transform: content => require('./webmanifest')('/chitapp/') },
+      ],
+    }),
     new HtmlWebpackPlugin({
       inject: 'head',
       minify: true,
       template: resolve('index.html'),
       scriptLoading: 'defer',
       publicPath: '/chitapp/',
-    }),
-    new CopyPlugin({
-      patterns: [
-        { from: 'icons/generated', to: 'icons' },
-        { from: 'webmanifest.js', to: 'manifest.webmanifest', transform: content => require('./webmanifest')('/chitapp/') },
-      ],
     }),
     new GenerateSW({
       clientsClaim: true,
@@ -113,5 +109,9 @@ const config = {
     minimizer: [`...`, new CssMinimizerPlugin()],
   },
   devtool: isDev ? 'eval-source-map' : 'source-map',
+  cache: {
+    type: 'filesystem',
+    cacheDirectory: resolve('webpack-cache'),
+  },
 };
 module.exports = config;
