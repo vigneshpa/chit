@@ -99,6 +99,7 @@ const config = {
       clientsClaim: true,
       skipWaiting: true,
       navigateFallback: 'index.html',
+      exclude: [/^.*icons\/.*$/, /\.map$/],
     }),
   ],
   output: {
@@ -110,7 +111,6 @@ const config = {
   },
   optimization: {
     minimizer: [`...`, new CssMinimizerPlugin()],
-    mangleExports: false,
   },
   devtool: isDev ? 'eval-source-map' : 'source-map',
 };

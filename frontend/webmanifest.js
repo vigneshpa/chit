@@ -4,10 +4,10 @@ module.exports = publicPath => {
   function generateIconSources(src) {
     const ret = [];
     if (src) {
-      ret.push({ src: join(publicPath, src + '.svg'), sizes: '1024x1024', purpose: 'all' });
+      ret.push({ src: join(publicPath, src + '.svg'), sizes: '1024x1024', purpose: 'any' });
       ret.push({ src: join(publicPath, src + '_maskable.svg'), sizes: '1024x1024', purpose: 'maskable' });
       sizes.forEach(size => {
-        ret.push({ src: join(publicPath, src + size + '.png'), sizes: size + 'x' + size, purpose: 'all' });
+        ret.push({ src: join(publicPath, src + size + '.png'), sizes: size + 'x' + size, purpose: 'any' });
         ret.push({ src: join(publicPath, src + '_maskable' + size + '.png'), sizes: size + 'x' + size, purpose: 'maskable' });
       });
     }

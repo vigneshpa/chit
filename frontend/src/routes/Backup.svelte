@@ -11,7 +11,7 @@
     <h3>Restore</h3>
     <p>
       To restore a backup that you have made in the past. click the restore backup button and choose the backup file. This action will reload the
-      page.
+      application.
     </p>
     <p>Current application data will be lost. proceed with caution.</p>
     <button class="t-btn" on:click={() => restoreBackup()}>Restore Backup</button>
