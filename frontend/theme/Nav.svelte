@@ -46,6 +46,8 @@
         color: scheme.$textOnPrimary;
         transition: background-color scheme.$aniDuration ease;
         user-select: none;
+        max-width: 24px;
+        overflow: hidden;
         cursor: pointer;
         &:hover {
           background-color: scheme.$highlight;
@@ -58,6 +60,7 @@
         }
       }
       .title {
+        max-width: unset;
         font-size: 1rem;
       }
     }

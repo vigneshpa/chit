@@ -9,7 +9,7 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 
 const distPath = process.env.DIST_PATH ?? '../pages/docs';
 
-if (typeof process.env.NODE_ENV !== 'string') process.env.NODE_ENV = 'development';
+if (typeof process.env.NODE_ENV !== 'string') process.env.NODE_ENV = 'production';
 
 const isDev = process.env.NODE_ENV === 'development';
 
