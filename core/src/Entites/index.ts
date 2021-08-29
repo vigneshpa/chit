@@ -3,7 +3,7 @@ import Chit from './Chit';
 import Group from './Group';
 import Client from './Client';
 import type { Repository } from 'typeorm';
-export const Entites = { Client, Group, Chit, Payment };
+export { Client, Group, Chit, Payment };
 export default interface Repos {
   Client: Repository<Client>;
   Group: Repository<Group>;

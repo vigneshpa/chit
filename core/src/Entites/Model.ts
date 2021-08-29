@@ -1,7 +1,6 @@
-import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, BeforeInsert, Entity } from 'typeorm';
+import { PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
-@Entity()
 export default abstract class Model {
   @PrimaryGeneratedColumn()
   private id!: number;
@@ -15,8 +14,7 @@ export default abstract class Model {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(uuid?:string) {
+  constructor(uuid?: string) {
     this.uuid = uuid || v4();
   }
-
 }

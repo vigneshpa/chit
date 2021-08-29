@@ -3,7 +3,7 @@ import { createConnection } from 'typeorm';
 import type { EntityManager, ConnectionOptions, Connection } from 'typeorm';
 import type { Actions } from './Actions';
 import makeActions from './Actions';
-import { Entites } from './Entites';
+import * as Entites from './Entites';
 
 export type { Actions };
 export default class Core {

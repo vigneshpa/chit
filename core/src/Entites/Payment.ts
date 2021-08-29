@@ -3,7 +3,7 @@ import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
 import Chit from './Chit';
 import Model from './Model';
 
-@Entity()
+@Entity('payments')
 export default class Payment extends Model {
   @JoinColumn()
   @ManyToOne(type => Chit, Chit => Chit.payments)

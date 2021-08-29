@@ -5,7 +5,7 @@ import Client from './Client';
 import Model from './Model';
 import type { RangeOf2 } from '../vendorTypes';
 
-@Entity()
+@Entity('chits')
 export default class Chit extends Model {
   @JoinColumn()
   @ManyToOne(type => Client, Client => Client.chits)

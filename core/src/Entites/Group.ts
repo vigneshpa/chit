@@ -3,7 +3,7 @@ import Chit from './Chit';
 import Model from './Model';
 import type { RangeOf2 } from '../vendorTypes';
 
-@Entity()
+@Entity('groups')
 export default class Group extends Model {
   @Column({ unique: true })
   name!: string;

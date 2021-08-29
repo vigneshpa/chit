@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import Chit from './Chit';
 import Model from './Model';
 
-@Entity()
+@Entity('clients')
 export default class Client extends Model {
   @Column()
   name!: string;
