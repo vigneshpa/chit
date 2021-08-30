@@ -55,7 +55,6 @@ if (window.useLocalCore) {
   let isRedirecting = false;
 
   checkLoggedIn = () => {
-    if (window.useLocalCore) return true;
     if (isRedirecting) return;
     fetch('/api/login').then(async res => {
       if (res.status !== 200 || (await res.json()) !== 'LOGGED_IN') {
