@@ -16,7 +16,7 @@ const isDev = process.env.NODE_ENV === 'development';
 const cssLoader = 'css-loader';
 const sassLoader = 'sass-loader';
 const sourceMapLoader = 'source-map-loader';
-const pPath = isDev ? './' : '/chitapp/';
+const pPath = isDev ? '/' : '/chitapp/';
 
 const cssPlugin = isDev ? 'style-loader' : MiniCssExtractPlugin.loader;
 

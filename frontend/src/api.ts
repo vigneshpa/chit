@@ -4,10 +4,9 @@
  *
  * This is made as a seperate file to isolate api from other frontend code
  */
-import type { Actions, CoreClass } from './Core';
+import type { actionFunction, exposed } from './core';
 import { retrocycle } from './cycle';
-
-type actionFunction = <K extends keyof Actions>(action: K, params: Parameters<Actions[K]>[0]) => ReturnType<Actions[K]>;
+import { wrap } from 'comlink';
 
 let checkLoggedIn: () => void;
 let action: actionFunction;
@@ -16,12 +15,12 @@ let restoreBackup: () => Promise<void>;
 
 if (window.useLocalCore) {
   checkLoggedIn = () => true;
-  const coreModule = import(/* webpackChunkName: "core" */ './Core');
-  const core: Promise<CoreClass> = (async () => await (await coreModule).initCore())();
+  const coreModule = wrap<exposed>(new Worker(new URL('./core', import.meta.url)));
+  coreModule.initCore();
   //@ts-ignore
-  action = async (action, params) => await (await core).actions[action](params);
+  action = coreModule.action;
   downloadBackup = async () => {
-    const data = await (await coreModule).getDatabaseBackup();
+    const data = await coreModule.getDatabaseBackup();
     const a = document.createElement('a');
     a.href = window.URL.createObjectURL(data);
     a.download = data.name;
@@ -38,7 +37,8 @@ if (window.useLocalCore) {
     inp.onchange = async e => {
       const file = inp.files![0];
       if (!file) return;
-      (await coreModule).restoreDatabase(file);
+      await coreModule.restoreDatabase(file);
+      window.location.reload();
     };
     inp.style.display = 'none';
     document.body.append(inp);

@@ -17,7 +17,7 @@ window.bURL = window.bURL ?? pPath.href.substring(pPath.origin.length, pPath.hre
 // registering apiURL
 window.apiURL = window.apiURL ?? '/api';
 
-if (window.useLocalCore && 'serviceWorker' in navigator) {
+if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
   window.serviceWorkerStatus = writable('preparing');
   import('register-service-worker').then(v =>
     v.register(new URL(pPath + 'service-worker.js').href, {

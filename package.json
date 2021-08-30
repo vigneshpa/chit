@@ -4,8 +4,8 @@
   "description": "An easy way to manage chits",
   "main": "dist/server.js",
   "scripts": {
-    "build": "gulp",
-    "serve": "gulp serve",
+    "build": "cd frontend && NODE_ENV='production' webpack build",
+    "serve": "cd frontend && NODE_ENV='development' webpack serve",
     "start": "cd dist && node ."
   },
   "author": "Vignesh Paranthaman <vignesh-p@outlook.com>",
@@ -47,6 +47,7 @@
     "@types/sql.js": "^1.4.2",
     "@types/uuid": "^8.3.1",
     "@vigneshpa/svelte-router": "^1.0.6",
+    "comlink": "^4.3.1",
     "copy-webpack-plugin": "^9.0.1",
     "css-loader": "^6.0.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
