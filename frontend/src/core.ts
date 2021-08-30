@@ -66,7 +66,7 @@ async function restoreDatabase(backupFile: File, database: string = 'chitDatabas
     const db = await zip.file('backup.sqlite3')?.async('uint8array');
     if (!db) return 'invalidFile';
     if (await crypto.subtle.verify('HMAC', await key, sign, db)) {
-      await localforage.setItem(database, await readFile(backupFile));
+      await localforage.setItem(database, db);
       return 'done';
     } else {
       return 'cannotVerifySignature';
@@ -82,14 +82,6 @@ declare global {
   interface Window {
     SQL: SqlJsStatic;
   }
-}
-function readFile(file: File): Promise<Uint8Array> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener('loadend', e => resolve(new Uint8Array((e as any).target.result)));
-    reader.addEventListener('error', reject);
-    reader.readAsArrayBuffer(file);
-  });
 }
 async function prepareBackup(db: Uint8Array): Promise<Blob> {
   const signature = await crypto.subtle.sign('HMAC', await key, db);
