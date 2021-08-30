@@ -33,7 +33,7 @@ if (window.useLocalCore) {
   restoreBackup = async () => {
     const inp = document.createElement('input');
     inp.type = 'file';
-    inp.accept = '.sqlite3,.sqlite,.db,application/vnd.sqlite3';
+    inp.accept = '.zip,application/zip';
     inp.onchange = async e => {
       const file = inp.files![0];
       if (!file) return;
