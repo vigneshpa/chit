@@ -37,8 +37,14 @@ if (window.useLocalCore) {
     inp.onchange = async e => {
       const file = inp.files![0];
       if (!file) return;
-      await coreModule.restoreDatabase(file);
-      window.location.reload();
+      const ret = await coreModule.restoreDatabase(file);
+      if (ret === 'done') {
+        window.location.reload();
+      } else {
+        alert(
+          ret === 'cannotVerifySignature' ? 'Cannot restore backup!\nFile may be corrupted' : 'Invalid File!\nPlease choose a valid chit backup file'
+        );
+      }
     };
     inp.style.display = 'none';
     document.body.append(inp);
