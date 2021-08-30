@@ -5,4 +5,4 @@ const keyData: JsonWebKey = {
   key_ops: ['sign', 'verify'],
   kty: 'oct',
 };
-export default crypto.subtle.importKey('jwk', keyData, { name: 'HMAC', hash: 'SHA-512' }, false, ['sign', 'verify']);
+export default crypto.subtle.importKey('jwk', keyData, 'HMAC', false, ['sign', 'verify']);
