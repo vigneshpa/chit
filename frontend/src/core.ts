@@ -7,12 +7,12 @@ import Core from '../../core/src';
 import type { Actions } from '../../core/src';
 import initSqlJs, { SqlJsStatic } from 'sql.js';
 import sqlWasm from 'sql.js/dist/sql-wasm.wasm';
-import * as localforage from 'localforage';
+import { config, setItem, getItem } from 'localforage';
 import { expose } from 'comlink';
 
 export type actionFunction = <K extends keyof Actions>(action: K, params: Parameters<Actions[K]>[0]) => ReturnType<Actions[K]>;
 
-localforage.config({
+config({
   name: 'chitDataStore',
   storeName: 'chitDataStore',
 });
@@ -32,7 +32,7 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
     // Loading SqlJs
     if (!self.SQL) self.SQL = await initSqlJs({ locateFile: () => sqlWasm });
 
-    const database = (await localforage.getItem<Uint8Array>(dbName)) ?? undefined;
+    const database = (await getItem<Uint8Array>(dbName)) ?? undefined;
 
     const core = new Core();
     await core.connect({
@@ -41,19 +41,19 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
       autoSave: true,
       logging: process.env.NODE_ENV !== 'production',
       autoSaveCallback(ary: Uint8Array) {
-        localforage.setItem(dbName, ary);
+        setItem(dbName, ary);
       },
     });
     return core;
   })();
 }
 async function getDatabaseBackup(database: string = 'chitDatabase'): Promise<File> {
-  const ary = await localforage.getItem<Uint8Array>(database);
+  const ary = await getItem<Uint8Array>(database);
   if (!ary) throw new Error('Database file does not exists');
   return new File([ary], 'backup.sqlite3', { type: 'application/vnd.sqlite3', lastModified: Date.now() });
 }
 async function restoreDatabase(databaseBackup: File, database: string = 'chitDatabase') {
-  await localforage.setItem(database, new Int8Array(await readFile(databaseBackup)));
+  await setItem(database, new Int8Array(await readFile(databaseBackup)));
 }
 const remote = { initCore, getDatabaseBackup, restoreDatabase, action };
 expose(remote);
