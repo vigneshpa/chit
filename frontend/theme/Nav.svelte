@@ -16,7 +16,9 @@
   {/if}
   <div class="t-nav">
     <!-- svelte-ignore a11y-missing-attribute -->
-    <a on:click={() => store_drawer.set(!$store_drawer)} class="material-icons" style="font-size:24px;">menu</a>
+    <a on:click={() => store_drawer.set(!$store_drawer)} class="material-icons-outlined" style="font-size:24px;"
+      >{$store_drawer ? 'menu_open' : 'menu'}</a
+    >
     <slot />
   </div>
 </template>

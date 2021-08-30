@@ -1,12 +1,11 @@
 <script lang="ts">
   export let icon: string;
-  export let outlined: boolean = false;
   export let justifyContent: 'left' | 'right' | 'center' = 'center';
 </script>
 
 <template>
   <div class="t-icon-text-container" style="justify-content:{justifyContent}">
-    <i class="t-icon" class:material-icons={!outlined} class:material-icons-outlined={outlined}> {icon} </i>
+    <i class="t-icon material-icons-outlined"> {icon} </i>
     <span class="t-icon-text">
       <slot />
     </span>

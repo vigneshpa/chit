@@ -15,7 +15,7 @@
     <div class="top">
       {#if backButton}
         <!-- svelte-ignore a11y-invalid-attribute -->
-        <a href="javascript:history.back()" class="t-a-btn"><span class="material-icons">arrow_back</span></a>
+        <a href="javascript:history.back()" class="t-a-btn"><span class="material-icons-outlined">arrow_back</span></a>
       {/if}
       <div class="heading">{heading}</div>
       <slot name="top-extra" />
