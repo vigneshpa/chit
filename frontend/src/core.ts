@@ -61,6 +61,9 @@ async function getDatabaseBackup(dbName?: string): Promise<File> {
 async function restoreDatabase(backupFile: File, database: string = 'chitDatabase'): Promise<'done' | 'invalidFile' | 'cannotVerifySignature'> {
   try {
     const zip = await new JSZip().loadAsync(backupFile);
+    zip.forEach((path, file) => {
+      if (file.name !== 'backup.sqlite3' && file.name !== 'signature.sha512.bin') throw new Error('Invalid file found');
+    });
     const sign = await zip.file('signature.sha512.bin')?.async('arraybuffer');
     if (!sign) return 'invalidFile';
     const db = await zip.file('backup.sqlite3')?.async('uint8array');
@@ -75,6 +78,13 @@ async function restoreDatabase(backupFile: File, database: string = 'chitDatabas
     return 'invalidFile';
   }
 }
+async function prepareBackup(db: Uint8Array): Promise<Blob> {
+  const signature = await crypto.subtle.sign('HMAC', await key, db);
+  const zip = new JSZip();
+  zip.file('backup.sqlite3', db, { binary: true });
+  zip.file('signature.sha512.bin', signature, { binary: true });
+  return await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 9 } });
+}
 const remote = { initCore, getDatabaseBackup, restoreDatabase, action };
 expose(remote);
 export type exposed = typeof remote;
@@ -82,11 +92,4 @@ declare global {
   interface Window {
     SQL: SqlJsStatic;
   }
-}
-async function prepareBackup(db: Uint8Array): Promise<Blob> {
-  const signature = await crypto.subtle.sign('HMAC', await key, db);
-  const zip = new JSZip();
-  zip.file('backup.sqlite3', db, { binary: true });
-  zip.file('signature.sha512.bin', signature, { binary: true });
-  return await zip.generateAsync({ type: 'blob' });
 }
