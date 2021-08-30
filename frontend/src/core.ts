@@ -5,7 +5,6 @@
 
 import Core from '../../core/src';
 import type { Actions } from '../../core/src';
-export type { Actions };
 import initSqlJs, { SqlJsStatic } from 'sql.js';
 import sqlWasm from 'sql.js/dist/sql-wasm.wasm';
 import * as localforage from 'localforage';
@@ -28,7 +27,7 @@ const action: actionFunction = async (act, prms) => {
 };
 
 async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
-  if (core) return console.error('Core is already atarted to initilise');
+  if (core) return console.error('Core is already started to initilise');
   core = (async () => {
     // Loading SqlJs
     if (!self.SQL) self.SQL = await initSqlJs({ locateFile: () => sqlWasm });
@@ -59,7 +58,6 @@ async function restoreDatabase(databaseBackup: File, database: string = 'chitDat
 const remote = { initCore, getDatabaseBackup, restoreDatabase, action };
 expose(remote);
 export type exposed = typeof remote;
-export type CoreClass = Core;
 declare global {
   interface Window {
     SQL: SqlJsStatic;

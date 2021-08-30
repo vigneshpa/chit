@@ -9,9 +9,12 @@
       window.useLocalCore = true;
     </script>
     <meta name="theme-color" content="#303f9f" />
-    <link rel="icon" href="./icons/icon.svg" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="mask-icon" href="./icons/icon_maskaable.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="<%= htmlWebpackPlugin.options.publicPath %>icons/icon.svg" />
+    <link rel="apple-touch-icon" href="<%= htmlWebpackPlugin.options.publicPath %>icons/icon_maskaable192.png" />
+    <link rel="manifest" href="<%= htmlWebpackPlugin.options.publicPath %>manifest.webmanifest" />
+    <link rel="mask-icon" href="<%= htmlWebpackPlugin.options.publicPath %>icons/icon_maskaable.svg" />
   </head>
   <body></body>
 </html>
