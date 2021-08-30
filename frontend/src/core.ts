@@ -7,14 +7,14 @@ import Core from '../../core/src';
 import type { Actions } from '../../core/src';
 import initSqlJs, { SqlJsStatic } from 'sql.js';
 import sqlWasm from 'sql.js/dist/sql-wasm.wasm';
-import { config, setItem, getItem } from 'localforage';
+import * as localforage from 'localforage';
 import { expose } from 'comlink';
 import * as JSZip from 'jszip';
 import key from './backupHmacKey';
 
 export type actionFunction = <K extends keyof Actions>(action: K, params: Parameters<Actions[K]>[0]) => ReturnType<Actions[K]>;
 
-config({
+localforage.config({
   name: 'chitDataStore',
   storeName: 'chitDataStore',
 });
@@ -35,7 +35,7 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
     // Loading SqlJs
     if (!self.SQL) self.SQL = await initSqlJs({ locateFile: () => sqlWasm });
 
-    database = (await getItem<Uint8Array>(dbName)) ?? undefined;
+    database = (await localforage.getItem<Uint8Array>(dbName)) ?? undefined;
 
     const core = new Core();
     await core.connect({
@@ -45,7 +45,7 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
       logging: process.env.NODE_ENV !== 'production',
       autoSaveCallback(ary: Uint8Array) {
         database = ary;
-        setItem(dbName, ary);
+        localforage.setItem(dbName, ary);
       },
     });
     return core;
@@ -53,7 +53,7 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
 }
 async function getDatabaseBackup(dbName?: string): Promise<File> {
   let db = database;
-  if (dbName) db = (await getItem<Uint8Array>(dbName)) ?? undefined;
+  if (dbName) db = (await localforage.getItem<Uint8Array>(dbName)) ?? undefined;
   if (!db) throw new Error('Database to backup is undefined');
   const archive = await prepareBackup(db);
   return new File([archive], 'backup.zip', { type: archive.type });
@@ -66,7 +66,7 @@ async function restoreDatabase(backupFile: File, database: string = 'chitDatabas
     const db = await zip.file('backup.sqlite3')?.async('uint8array');
     if (!db) return 'invalidFile';
     if (await crypto.subtle.verify('HMAC', await key, sign, db)) {
-      await setItem(database, await readFile(backupFile));
+      await localforage.setItem(database, await readFile(backupFile));
       return 'done';
     } else {
       return 'cannotVerifySignature';
