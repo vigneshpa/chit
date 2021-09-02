@@ -2,7 +2,7 @@ import type { Client } from '../Entites';
 import type Repos from '../Entites';
 
 export default function makeFindClients(repos: Repos) {
-  return async function findClients(params?: { partial: Partial<Client> }) {
+  return async function findClients(params: { partial?: Partial<Client> }) {
     if (!(params && params.partial)) return Object.freeze(await repos.Client.find());
 
     // Validating

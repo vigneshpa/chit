@@ -1,6 +1,6 @@
 <script lang="ts">
   import Page from '@theme/Page.svelte';
-  import { downloadBackup, restoreBackup } from '../api';
+  import { downloadBackup, restoreBackup } from '@/coreService';
 </script>
 
 <template>

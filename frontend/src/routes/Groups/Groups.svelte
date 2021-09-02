@@ -5,7 +5,7 @@
   import Dialouge from '@theme/Dialouge.svelte';
   import TTable from '@theme/TTable.svelte';
   import Info from './Info.svelte';
-  import { action } from '@/api';
+  import { action } from '@/coreService';
   import { slide as trns } from 'svelte/transition';
   import { Router } from '@vigneshpa/svelte-router';
   import type { Writable } from 'svelte/store';

@@ -97,6 +97,7 @@ const config = {
     alias: {
       '@': resolve('src'),
       '@theme': resolve('theme'),
+      '@core': resolve('../core/src'),
     },
     fallback: {
       fs: false,

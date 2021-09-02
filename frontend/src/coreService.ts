@@ -4,7 +4,7 @@
  *
  * This is made as a seperate file to isolate api from other frontend code
  */
-import type { actionFunction, exposed } from './core';
+import type { actionFunction, exposed } from './localCore';
 import { retrocycle } from './cycle';
 import { wrap } from 'comlink';
 
@@ -15,7 +15,7 @@ let restoreBackup: () => Promise<void>;
 
 if (window.useLocalCore) {
   checkLoggedIn = () => true;
-  const coreModule = wrap<exposed>(new Worker(new URL('./core', import.meta.url)));
+  const coreModule = wrap<exposed>(new Worker(new URL(/* webpackChunkName: "localCore" */ './localCore', import.meta.url)));
   coreModule.initCore();
   //@ts-ignore
   action = coreModule.action;

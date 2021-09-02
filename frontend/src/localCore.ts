@@ -3,8 +3,8 @@
  */
 (self as any).window = self;
 
-import Core from '../../core/src';
-import type { Actions } from '../../core/src';
+import Core from '@core';
+import type { Actions } from '@core';
 import initSqlJs, { SqlJsStatic } from 'sql.js';
 import sqlWasm from 'sql.js/dist/sql-wasm.wasm';
 import * as localforage from 'localforage';
@@ -54,7 +54,7 @@ async function initCore(dbName: string = 'chitDatabase'): Promise<void> {
 async function getDatabaseBackup(dbName?: string): Promise<File> {
   let db = database;
   if (dbName) db = (await localforage.getItem<Uint8Array>(dbName)) ?? undefined;
-  if (!db) throw new Error('Database to backup is undefined');
+  if (!db) throw new Error('Database to backup does not exists');
   const archive = await prepareBackup(db);
   return new File([archive], 'backup.zip', { type: archive.type });
 }

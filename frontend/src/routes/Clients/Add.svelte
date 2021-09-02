@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { action } from '@/api';
+  import { action } from '@/coreService';
   import { debounce } from '@/utils';
   import Page from '@theme/Page.svelte';
   import IconText from '@theme/IconText.svelte';
@@ -45,9 +45,9 @@
       ev.preventDefault();
       const formData = new FormData(form);
       action('createClient', {
-        name: formData.get('name'),
-        phone: formData.get('phone'),
-        address: formData.get('address'),
+        name: formData.get('name') as unknown as string,
+        phone: formData.get('phone') as unknown as string,
+        address: formData.get('address') as unknown as string,
       }).then(val => {
         if (!val.uuid) {
           alert('Client not created');

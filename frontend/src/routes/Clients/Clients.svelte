@@ -4,15 +4,15 @@
   import IconText from '@theme/IconText.svelte';
   import Dialouge from '@theme/Dialouge.svelte';
 
-  import { action } from '@/api';
-  import { slide as trns } from 'svelte/transition';
+  import { action } from '@/coreService';
   import { Router } from '@vigneshpa/svelte-router';
   import type { Writable } from 'svelte/store';
+  import type { Client } from '../../../../core/src/Entites';
 
   export let hasChildRouteComp: Writable<boolean>;
 
-  let clients: any[] = [];
-  $: !$hasChildRouteComp && action('findClients').then(val => (clients = val));
+  let clients: Readonly<Client[]> = [];
+  $: !$hasChildRouteComp && action('findClients', {}).then(val => (clients = val));
 </script>
 
 <template>
@@ -22,7 +22,7 @@
     </div>
     <Grid>
       {#each clients as client}
-        <div class="client" transition:trns>
+        <div class="client">
           <div class="name" on:click={() => window['svelte-router'].router?.route('/clients/info/' + client.uuid)}>
             <IconText icon="person">{client.name}</IconText>
           </div>

@@ -15,7 +15,10 @@
         "src/*"
       ],
       "@theme/*": [
-        "theme/"
+        "theme/*"
+      ],
+      "@core": [
+        "../core/src"
       ]
     },
     "lib": [

@@ -4,7 +4,7 @@ import type { Group } from '../Entites';
 import type Repos from '../Entites';
 
 export default function makeFindGroups(repos: Repos) {
-  return async function findGroups(params: { partial: Partial<Group> }) {
+  return async function findGroups(params: { partial?: Partial<Group> }) {
     if (!(params && params.partial)) return Object.freeze(await repos.Group.find());
 
     // Validating

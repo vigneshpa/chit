@@ -4,7 +4,7 @@ if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production'
 }
 
 // Checking weather logged in
-import { checkLoggedIn } from './api';
+import { checkLoggedIn } from './coreService';
 import type App from './App.svelte';
 import { Writable, writable } from 'svelte/store';
 checkLoggedIn();
