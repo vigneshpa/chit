@@ -34,7 +34,7 @@ plugins.push(
   new HtmlWebpackPlugin({
     inject: 'head',
     minify: true,
-    template: resolve('index.html'),
+    template: resolve('index.ejs'),
     scriptLoading: 'defer',
     publicPath: pPath,
   })
@@ -88,6 +88,10 @@ const config = {
       {
         test: /\.ts$/i,
         loader: 'ts-loader',
+      },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
       },
     ],
   },

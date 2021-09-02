@@ -59,9 +59,11 @@
         {:else if $serviceWorkerStatus === 'ready'}
           <span class="material-icons-outlined" title="Service worker is ready and the app is available offline">offline_pin</span>
         {:else if $serviceWorkerStatus === 'refresh'}
-          <span class="material-icons-outlined" title="A new version of the app is downloaded and requires restart">restart_alt</span>
+          <span class="material-icons-outlined" title="A new version of the app is downloaded and app requires restart">restart_alt</span>
         {:else if $serviceWorkerStatus === 'offline'}
           <span class="material-icons-outlined" title="No internet connection">wifi_off</span>
+        {:else if $serviceWorkerStatus === 'error'}
+          <span class="material-icons-outlined" title="Error insalling service worker">error_outline</span>
         {/if}
       {/if}
     </Nav>

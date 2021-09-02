@@ -1,0 +1,63 @@
+<style type="text/css">
+  :root {
+    --text-color: rgb(46, 46, 46);
+    --background-color: rgb(247, 247, 247);
+    --ancor-color: #0e469b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --text-color: rgb(247, 247, 247);
+      --background-color: rgb(46, 46, 46);
+      --ancor-color: #79aefd;
+    }
+  }
+  body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    padding: 1em;
+    text-align: center;
+    color: var(--text-color);
+    background-color: var(--background-color);
+  }
+  a {
+    color: var(--ancor-color);
+  }
+  .lds-ripple {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ripple div {
+    position: absolute;
+    border: 4px solid var(--text-color);
+    opacity: 1;
+    border-radius: 50%;
+    animation: lds-ripple 1s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+  }
+  .lds-ripple div:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  @keyframes lds-ripple {
+    0% {
+      top: 36px;
+      left: 36px;
+      width: 0;
+      height: 0;
+      opacity: 1;
+    }
+    100% {
+      top: 0px;
+      left: 0px;
+      width: 72px;
+      height: 72px;
+      opacity: 0;
+    }
+  }
+</style>
+<h2>Please Wait</h2>
+<h4>Installing service worker</h4>
+<p>This application needs service worker to be installed before using.</p>
+<div class="lds-ripple">
+  <div></div>
+  <div></div>
+</div>

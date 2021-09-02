@@ -7,7 +7,9 @@ if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production'
 import { checkLoggedIn, init } from './coreService';
 import type App from './App.svelte';
 import { writable, Writable } from 'svelte/store';
-type swStatus = 'preparing' | 'downloading' | 'ready' | 'refresh' | 'offline';
+import loadingHtml from './loading.html';
+window.document.body.innerHTML = loadingHtml;
+type swStatus = 'preparing' | 'downloading' | 'error' | 'ready' | 'refresh' | 'offline';
 
 declare const __webpack_public_path__: string;
 const pPath = new URL(__webpack_public_path__);
@@ -19,8 +21,11 @@ window.apiURL = window.apiURL ?? '/api';
 
 const initApp = () =>
   init().then(async e => {
+    window.serviceWorkerStatus!.set('ready');
+    window.document.body.innerHTML = '';
     checkLoggedIn();
-    const App = ( // Lazy loading App to link css automatically
+    const App = // Lazy loading App to link css automatically
+    (
       await import(
         /* webpackChunkName: "appComponent" */
         /* webpackMode: "lazy" */
@@ -37,20 +42,13 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
   window.serviceWorkerStatus = writable('preparing');
   // window.serviceWorkerStatus.subscribe(value => (swStatus = value));
 
-  let offlineTimeOut: number | null = null;
-  window.addEventListener('offline', e => {
-    offlineTimeOut = window.setTimeout(() => {
-      window.serviceWorkerStatus!.set('offline');
-      console.info('Offline');
-      offlineTimeOut = null;
-    }, 2000);
-  });
-  window.addEventListener('online', e => {
-    if (offlineTimeOut) window.clearTimeout(offlineTimeOut);
+  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
+  window.addEventListener('online', e => register());
+  if (navigator.onLine) {
     register();
-    console.info('Online');
-  });
-  register();
+  } else {
+    window.serviceWorkerStatus!.set('offline');
+  }
 } else initApp();
 function register() {
   window.navigator.serviceWorker
@@ -58,20 +56,19 @@ function register() {
     .then(registration => {
       window.serviceWorkerStatus!.set('ready');
       registration.addEventListener('updatefound', e => {
-        window.serviceWorkerStatus!.set('preparing');
+        window.serviceWorkerStatus!.set('downloading');
         const installingWorker = registration.installing!;
         installingWorker.addEventListener('statechange', e => {
-          switch (installingWorker.state) {
-            case 'installing':
-              window.serviceWorkerStatus!.set('downloading');
-              break;
-            case 'activated':
-              window.serviceWorkerStatus!.set('refresh');
+          if (installingWorker.state === 'activated') {
+            window.serviceWorkerStatus!.set('refresh');
           }
         });
       });
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+      window.serviceWorkerStatus!.set('error');
+      console.error(err);
+    });
 }
 declare global {
   interface Window {
