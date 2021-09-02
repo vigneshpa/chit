@@ -37,8 +37,19 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
   window.serviceWorkerStatus = writable('preparing');
   // window.serviceWorkerStatus.subscribe(value => (swStatus = value));
 
-  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
-  window.addEventListener('online', e => register());
+  let offlineTimeOut: number | null = null;
+  window.addEventListener('offline', e => {
+    offlineTimeOut = window.setTimeout(() => {
+      window.serviceWorkerStatus!.set('offline');
+      console.info('Offline');
+      offlineTimeOut = null;
+    }, 2000);
+  });
+  window.addEventListener('online', e => {
+    if (offlineTimeOut) window.clearTimeout(offlineTimeOut);
+    register();
+    console.info('Online');
+  });
   register();
 } else initApp();
 function register() {
