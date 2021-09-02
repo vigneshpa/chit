@@ -4,10 +4,10 @@ if (window.location.protocol == 'http:' && process.env.NODE_ENV === 'production'
 }
 
 // Checking weather logged in
-import { checkLoggedIn } from './coreService';
+import { checkLoggedIn, init } from './coreService';
 import type App from './App.svelte';
-import { Writable, writable } from 'svelte/store';
-checkLoggedIn();
+import { writable, Writable } from 'svelte/store';
+type swStatus = 'preparing' | 'downloading' | 'ready' | 'refresh' | 'offline';
 
 declare const __webpack_public_path__: string;
 const pPath = new URL(__webpack_public_path__);
@@ -18,12 +18,14 @@ window.bURL = window.bURL ?? pPath.href.substring(pPath.origin.length, pPath.hre
 window.apiURL = window.apiURL ?? '/api';
 
 if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  let swStatus: swStatus;
   window.serviceWorkerStatus = writable('preparing');
-  import('register-service-worker').then(v =>
-    v.register(new URL(pPath + 'service-worker.js').href, {
+  window.serviceWorkerStatus.subscribe(value => (swStatus = value));
+  import('register-service-worker').then(register =>
+    register.register(new URL(pPath + 'service-worker.js').href, {
       registrationOptions: { scope: pPath.href },
       ready(registration) {
-        window.serviceWorkerStatus!.set('ready');
+        if (swStatus === 'preparing') window.serviceWorkerStatus!.set('ready');
       },
       updatefound(registration) {
         window.serviceWorkerStatus!.set('downloading');
@@ -41,13 +43,18 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
   );
 }
 // Lazy loading App to link css automatically
-import(
-  /* webpackChunkName: "appComponent" */
-  /* webpackMode: "lazy" */
-  /* webpackPrefetch: true */
-  '@/App.svelte'
-).then(App => (window.app = new App.default({ target: window.document.body })));
-
+init().then(async e => {
+  checkLoggedIn();
+  const App = (
+    await import(
+      /* webpackChunkName: "appComponent" */
+      /* webpackMode: "lazy" */
+      /* webpackPrefetch: true */
+      '@/App.svelte'
+    )
+  ).default;
+  window.app = new App({ target: window.document.body });
+});
 declare global {
   interface Window {
     /**
@@ -64,6 +71,6 @@ declare global {
     app: App;
     useLocalCore: true | undefined;
     disableSecureRedirect: true | undefined;
-    serviceWorkerStatus: Writable<'preparing' | 'downloading' | 'ready' | 'refresh' | 'offline'> | undefined;
+    serviceWorkerStatus: Writable<swStatus> | undefined;
   }
 }
