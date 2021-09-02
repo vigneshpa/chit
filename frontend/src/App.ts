@@ -26,15 +26,19 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
       registrationOptions: { scope: pPath.href },
       ready(registration) {
         if (swStatus === 'preparing') window.serviceWorkerStatus!.set('ready');
+        console.log('Service worker is ready');
       },
       updatefound(registration) {
         window.serviceWorkerStatus!.set('downloading');
+        console.log('Service worker is downloading new content');
       },
       updated(registration) {
         window.serviceWorkerStatus!.set('refresh');
+        console.log('New content downloaded reload the application');
       },
       offline() {
         window.serviceWorkerStatus!.set('offline');
+        console.log('No internet connection found');
       },
       error(error) {
         console.error('Error during service worker registration:', error);
