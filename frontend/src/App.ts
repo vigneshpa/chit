@@ -36,9 +36,16 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
   // let swStatus: swStatus;
   window.serviceWorkerStatus = writable('preparing');
   // window.serviceWorkerStatus.subscribe(value => (swStatus = value));
+
+  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
+  window.addEventListener('online', e => register());
+  register();
+} else initApp();
+function register() {
   window.navigator.serviceWorker
     .register(new URL(pPath + 'service-worker.js'), { scope: pPath.href })
     .then(registration => {
+      window.serviceWorkerStatus!.set('ready');
       registration.addEventListener('updatefound', e => {
         window.serviceWorkerStatus!.set('preparing');
         const installingWorker = registration.installing!;
@@ -54,9 +61,7 @@ if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV 
       });
     })
     .catch(err => console.error(err));
-  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
-  window.addEventListener('online', e => console.log('going online'));
-} else initApp();
+}
 declare global {
   interface Window {
     /**
