@@ -17,48 +17,46 @@ window.bURL = window.bURL ?? pPath.href.substring(pPath.origin.length, pPath.hre
 // registering apiURL
 window.apiURL = window.apiURL ?? '/api';
 
+const initApp = () =>
+  init().then(async e => {
+    checkLoggedIn();
+    const App = ( // Lazy loading App to link css automatically
+      await import(
+        /* webpackChunkName: "appComponent" */
+        /* webpackMode: "lazy" */
+        /* webpackPrefetch: true */
+        '@/App.svelte'
+      )
+    ).default;
+    window.app = new App({ target: window.document.body });
+  });
+
 if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-  let swStatus: swStatus;
+  navigator.serviceWorker.ready.then(() => initApp());
+  // let swStatus: swStatus;
   window.serviceWorkerStatus = writable('preparing');
-  window.serviceWorkerStatus.subscribe(value => (swStatus = value));
-  import('register-service-worker').then(register =>
-    register.register(new URL(pPath + 'service-worker.js').href, {
-      registrationOptions: { scope: pPath.href },
-      ready(registration) {
-        if (swStatus === 'preparing') window.serviceWorkerStatus!.set('ready');
-        console.log('Service worker is ready');
-      },
-      updatefound(registration) {
-        window.serviceWorkerStatus!.set('downloading');
-        console.log('Service worker is downloading new content');
-      },
-      updated(registration) {
-        window.serviceWorkerStatus!.set('refresh');
-        console.log('New content downloaded reload the application');
-      },
-      offline() {
-        window.serviceWorkerStatus!.set('offline');
-        console.log('No internet connection found');
-      },
-      error(error) {
-        console.error('Error during service worker registration:', error);
-      },
+  // window.serviceWorkerStatus.subscribe(value => (swStatus = value));
+  window.navigator.serviceWorker
+    .register(new URL(pPath + 'service-worker.js'), { scope: pPath.href })
+    .then(registration => {
+      registration.addEventListener('updatefound', e => {
+        window.serviceWorkerStatus!.set('preparing');
+        const installingWorker = registration.installing!;
+        installingWorker.addEventListener('statechange', e => {
+          switch (installingWorker.state) {
+            case 'installing':
+              window.serviceWorkerStatus!.set('downloading');
+              break;
+            case 'activated':
+              window.serviceWorkerStatus!.set('refresh');
+          }
+        });
+      });
     })
-  );
-}
-// Lazy loading App to link css automatically
-init().then(async e => {
-  checkLoggedIn();
-  const App = (
-    await import(
-      /* webpackChunkName: "appComponent" */
-      /* webpackMode: "lazy" */
-      /* webpackPrefetch: true */
-      '@/App.svelte'
-    )
-  ).default;
-  window.app = new App({ target: window.document.body });
-});
+    .catch(err => console.error(err));
+  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
+  window.addEventListener('online', e => console.log('going online'));
+} else initApp();
 declare global {
   interface Window {
     /**

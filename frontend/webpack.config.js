@@ -47,7 +47,7 @@ if (!isDev)
       clientsClaim: true,
       skipWaiting: true,
       navigateFallback: 'index.html',
-      exclude: [/^.*icons\/.*$/, /\.map$/],
+      exclude: [/^.*icons\/.*\.png$/, /\.map$/],
     })
   );
 const config = {
