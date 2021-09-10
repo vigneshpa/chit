@@ -22,6 +22,7 @@ router.post('/login', upload.none(), async (req, res, next) => {
       sameSite: true,
       expires: new Date(date.setMonth(date.getMonth() + 1)),
       secure: process.env.NODE_ENV === 'production',
+      path: '/api',
     });
     res.status(200).json('LOGGED_IN');
   } else {
