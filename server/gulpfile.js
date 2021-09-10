@@ -9,16 +9,14 @@ const gpug = require('gulp-pug');
 
 const execP = promisify(exec);
 
-const outDir = '../dist';
-
 const buildDir = './dist';
 
-const clean = () => del([buildDir, outDir], { dot: true, force: true });
+const clean = () => del(buildDir, { dot: true, force: true });
 
 const copyConfigFiles = () => copyFile('./src/prod.env', buildDir + '/.env');
 
 const compileFrontend = () => spawn('npm', ['run', 'build'], { cwd: '../frontend' });
-const copyBundeles = () => src('../frontend/dist/**/*').pipe(dest(buildDir + '/public/app'));
+const copyBundeles = () => src('../pages/docs/**/*').pipe(dest(buildDir + '/public/app'));
 const buildFrontend = series(compileFrontend, copyBundeles);
 
 const copyPublicFiles = () => src('./src/public/**/*').pipe(dest(buildDir + '/public'));
@@ -49,19 +47,19 @@ const modifyPackageJson = async () => {
 const compileBackend = () => spawn('npx', ['tsc', '--build', 'tsconfig.json']);
 
 const build = parallel(copyPublicFiles, copyViews, modifyPackageJson, compilePugStatic, compileBackend, buildFrontend);
-const moveDist = () => rename(buildDir, outDir);
+const moveDist = () => rename(buildDir);
 exports.default = series(clean, build, copyConfigFiles, moveDist);
 
 // Develpoement server --------------------------------------------------------------------------//
 
-const watchFrontend = () => spawn('npm', ['run', 'watch'], { cwd: '../frontend' });
+const watchFrontend = () => spawn('npm', ['run', 'watch'], { cwd: '../pages' });
 const nmRestart = { restart: async () => {}, cal: () => nmRestart.restart() };
 const startBackend = done => {
   const nm = nodemon({
     exec: 'npx ts-node',
     cwd: './src',
     env: {
-      RENDERER_PATH: join(__dirname, '../frontend/dist'),
+      RENDERER_PATH: join(__dirname, '../pages/docs'),
     },
     delay: 200,
     script: 'server.ts',

@@ -7,6 +7,7 @@
   import { Router } from '@vigneshpa/svelte-router';
   import routes from '@/routes/';
   import Prompt from '@theme/Prompt.svelte';
+  import type { Writable } from 'svelte/store';
   const bURL = window.bURL;
   let route_loading = window['svelte-router'].isLoading;
   let drawer_links = [
@@ -17,17 +18,13 @@
     { href: bURL + '/about', text: 'About', icon: 'info' },
   ];
   let route_pageStr = window['svelte-router'].pageStr;
-  const serviceWorkerStatus = window.serviceWorkerStatus;
-  let installEvent: Event | null = null;
+  import type { swStatus } from './App';
+  export let serviceWorkerStatus: Writable<swStatus> | undefined;
+  export let installEvent: Writable<any>;
   const install = () => {
-    (installEvent as any).prompt();
-    installEvent = null;
+    $installEvent.prompt();
+    $installEvent = null;
   };
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    installEvent = e;
-  });
-  let prompt = true;
 </script>
 
 <template>
@@ -47,7 +44,7 @@
     <Nav loading={$route_loading}>
       <span class="title"> Chit Management System</span>
       {#if !window.useLocalCore}
-        <a href="/api/logout"> Logout </a>
+        <a href="/api/logout" class="material-icons-outlined" title="Logout">logout</a>
       {:else if serviceWorkerStatus}
         {#if $serviceWorkerStatus === 'preparing'}
           <span class="material-icons-outlined" title="Downloading service worker.">downloading</span>
@@ -68,12 +65,12 @@
       {/if}
     </Nav>
 
-    <Prompt show={!!installEvent}>
+    <Prompt show={!!$installEvent}>
       <div>
         <p>Chit App can now work offline.<br />Do you want to install?</p>
       </div>
       <svelte:fragment slot="buttons">
-        <button class="t-btn secondary" on:click={() => (installEvent = null)}>Cancel</button>
+        <button class="t-btn secondary" on:click={() => ($installEvent = null)}>Cancel</button>
         <button class="t-btn" on:click={install}>Install</button>
       </svelte:fragment>
     </Prompt>

@@ -1,11 +1,10 @@
 import { Router, static as estatic } from 'express';
 import { join } from 'path';
-import api from '../api';
+import api from './api';
 import * as historyApiFallback from 'connect-history-api-fallback';
 
 const router = Router();
 
-router.use('/api', api);
 router.use('/500error', function (req, res, next) {
   next(Error('Broken'));
 });
@@ -14,13 +13,13 @@ router.use('/500error', function (req, res, next) {
 router.use('/app', historyApiFallback());
 
 // Mounting public
-router.use(estatic(join(__dirname, '../public')));
+router.use(estatic(join(__dirname, './public')));
 
 // Mounting pug files if developement
 if (process.env.NODE_ENV !== 'production')
   router.use(
     require('express-pug-static')({
-      baseDir: join(__dirname, '../static'),
+      baseDir: join(__dirname, './static'),
       baseUrl: '/',
     })
   );
@@ -28,8 +27,10 @@ if (process.env.NODE_ENV !== 'production')
 // Mounting renderer if specified
 if (process.env.NODE_ENV !== 'production' && process.env.RENDERER_PATH) {
   const renderer: string = process.env.RENDERER_PATH;
-  console.log('Serving app from ', renderer);
+  console.log('Serving app from ', join(__dirname, renderer));
   router.use('/app', estatic(renderer));
 }
+
+router.use('/api', api);
 
 export default router;

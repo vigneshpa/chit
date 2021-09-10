@@ -8,8 +8,7 @@ import { checkLoggedIn, init } from './coreService';
 import type App from './App.svelte';
 import { writable, Writable } from 'svelte/store';
 import loadingHtml from './loading.html';
-window.document.body.innerHTML = loadingHtml;
-type swStatus = 'preparing' | 'downloading' | 'error' | 'ready' | 'refresh' | 'offline';
+export type swStatus = 'preparing' | 'downloading' | 'error' | 'ready' | 'refresh' | 'offline';
 
 declare const __webpack_public_path__: string;
 const pPath = new URL(__webpack_public_path__);
@@ -18,14 +17,25 @@ const pPath = new URL(__webpack_public_path__);
 window.bURL = window.bURL ?? pPath.href.substring(pPath.origin.length, pPath.href.length - 1);
 // registering apiURL
 window.apiURL = window.apiURL ?? '/api';
+// Creating install event store
+const installEvent = writable<Event | null>(null);
 
-const initApp = () =>
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  installEvent.set(e);
+});
+
+let serviceWorkerStatus: Writable<swStatus> | undefined;
+
+let inited: boolean = false;
+const initApp = () => {
+  if (inited) return;
+  inited = true;
   init().then(async e => {
-    window.serviceWorkerStatus!.set('ready');
+    serviceWorkerStatus?.set('ready');
     window.document.body.innerHTML = '';
     checkLoggedIn();
-    const App = // Lazy loading App to link css automatically
-    (
+    const App = ( // Lazy loading App to link css automatically
       await import(
         /* webpackChunkName: "appComponent" */
         /* webpackMode: "lazy" */
@@ -33,40 +43,47 @@ const initApp = () =>
         '@/App.svelte'
       )
     ).default;
-    window.app = new App({ target: window.document.body });
+    window.app = new App({ target: window.document.body, props: { serviceWorkerStatus, installEvent } });
   });
+};
 
 if (window.useLocalCore && 'serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-  navigator.serviceWorker.ready.then(() => initApp());
+  // If this page is controlled initilise app
+  if (navigator.serviceWorker.controller) initApp();
   // let swStatus: swStatus;
-  window.serviceWorkerStatus = writable('preparing');
+  serviceWorkerStatus = writable('preparing');
   // window.serviceWorkerStatus.subscribe(value => (swStatus = value));
 
-  window.addEventListener('offline', e => window.serviceWorkerStatus!.set('offline'));
+  window.addEventListener('offline', e => serviceWorkerStatus!.set('offline'));
   window.addEventListener('online', e => register());
   if (navigator.onLine) {
     register();
   } else {
-    window.serviceWorkerStatus!.set('offline');
+    serviceWorkerStatus!.set('offline');
   }
 } else initApp();
 function register() {
+  if (!inited)
+    // Setting inner html to loading service worker
+    window.document.body.innerHTML = loadingHtml;
   window.navigator.serviceWorker
     .register(new URL(pPath + 'service-worker.js'), { scope: pPath.href })
     .then(registration => {
-      window.serviceWorkerStatus!.set('ready');
+      serviceWorkerStatus!.set('ready');
       registration.addEventListener('updatefound', e => {
-        window.serviceWorkerStatus!.set('downloading');
+        serviceWorkerStatus!.set('downloading');
         const installingWorker = registration.installing!;
         installingWorker.addEventListener('statechange', e => {
+          console.log(`Installing worker state ${installingWorker.state}`);
           if (installingWorker.state === 'activated') {
-            window.serviceWorkerStatus!.set('refresh');
+            serviceWorkerStatus!.set('refresh');
+            initApp();
           }
         });
       });
     })
     .catch(err => {
-      window.serviceWorkerStatus!.set('error');
+      serviceWorkerStatus!.set('error');
       console.error(err);
     });
 }
@@ -86,6 +103,5 @@ declare global {
     app: App;
     useLocalCore: true | undefined;
     disableSecureRedirect: true | undefined;
-    serviceWorkerStatus: Writable<swStatus> | undefined;
   }
 }

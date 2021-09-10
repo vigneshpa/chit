@@ -24,40 +24,21 @@ html(lang="en")
       }
       #msgbox{
         text-align:left;
-        height:0px;
+        height:250px;
         padding:5px;
         width:80%;
         margin-left:10%;
         margin-right:10%;
-        overflow:hidden;
+        overflow:auto;
         transition:all ease 0.5s;
         white-space:nowrap;
         margin-top:20px;
-        background-color:#FFFFFF;
-        opacity:0;
+        background-color:#F0F0F0;
+        opacity:1;
       }
       #footer{
         color:grey;
       }
-    if(details)
-      script.
-        let isShown = false;
-        function toogleDetails(){
-          let msgbox = document.getElementById("msgbox");
-          if(!isShown){
-            msgbox.style.height = "250px";
-            msgbox.style.overflow = "auto";
-            msgbox.style.backgroundColor = "#F0F0F0";
-            msgbox.style.opacity = "1";
-            isShown = true;
-          }else{
-            msgbox.style.height = "0px";
-            msgbox.style.overflow = "hidden";
-            isShown = false;
-            msgbox.style.backgroundColor = "#FFFFFF";
-            msgbox.style.opacity = "0";
-          }
-        }
   body
     #content
       img(src=`/images/${code}.svg` style="width:calc(100px + 20vmin)")
@@ -76,3 +57,23 @@ html(lang="en")
         |  | To report issues click 
         a(href="https://github.com/vigneshpa/chit/issues" target="_blank") here
         |.
+    if(details)
+      script.
+        let isShown = true;
+        const msgbox = document.getElementById("msgbox");
+        function toogleDetails(){
+          if(!isShown){
+            msgbox.style.height = "250px";
+            msgbox.style.overflow = "auto";
+            msgbox.style.backgroundColor = "#F0F0F0";
+            msgbox.style.opacity = "1";
+            isShown = true;
+          }else{
+            msgbox.style.height = "0px";
+            msgbox.style.overflow = "hidden";
+            isShown = false;
+            msgbox.style.backgroundColor = "#FFFFFF";
+            msgbox.style.opacity = "0";
+          }
+        }
+        toogleDetails();

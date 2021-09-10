@@ -1,3 +1,4 @@
+import './authorize';
 import { createServer, Server } from 'http';
 import * as express from 'express';
 import * as logger from 'morgan';
@@ -5,13 +6,11 @@ import * as compression from 'compression';
 import { join } from 'path';
 import { inspect } from 'util';
 
-import router from './routes';
-import sessionParser from './api/sessionParser';
+import router from './router';
 export default class App {
   app: express.Express;
   server: Server;
-  router: express.Router;
-  sessionParser = sessionParser;
+  private router: express.Router;
   constructor() {
     this.app = express();
     this.server = createServer(this.app);
@@ -21,15 +20,15 @@ export default class App {
     this.app.use(logger('dev'));
 
     // Trusting proxy if in production
-    if (this.app.get('env') !== 'development') this.app.set('trust proxy', true);
-
     // Reditecting to secure if it is in oproduction
-    if (process.env.NODE_ENV === 'production')
+    if (process.env.NODE_ENV === 'production') {
+      this.app.set('trust proxy', true);
       this.app.use((req, res, next) => {
         if (req.headers['x-forwarded-proto'] === 'http') {
           res.redirect(307, `https://${req.hostname + req.originalUrl}`);
         } else next();
       });
+    }
 
     // Compression
     this.app.use(compression());
@@ -41,9 +40,6 @@ export default class App {
     // Setting up request parsers
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
-
-    // Injecting session parser
-    this.app.use(this.sessionParser);
 
     // Adding router
     this.app.use('/', router);
