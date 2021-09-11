@@ -4,7 +4,6 @@ declare namespace Express {
     uuid?: string;
   }
 }
-import './authorize';
 import { createServer, Server } from 'http';
 import * as express from 'express';
 import * as logger from 'morgan';
