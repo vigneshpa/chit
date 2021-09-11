@@ -1,3 +1,9 @@
+declare namespace Express {
+  export interface Request {
+    user?: string;
+    uuid?: string;
+  }
+}
 import './authorize';
 import { createServer, Server } from 'http';
 import * as express from 'express';
