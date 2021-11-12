@@ -37,7 +37,7 @@ export async function init() {
     restoreBackup = async () => {
       const inp = document.createElement('input');
       inp.type = 'file';
-      inp.accept = '.zip,application/zip';
+      inp.accept = 'application/zip';
       inp.onchange = async e => {
         const file = inp.files![0];
         if (!file) return;
