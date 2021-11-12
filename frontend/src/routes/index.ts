@@ -9,7 +9,14 @@ const tree: SvelteRouterRoutes = {
       'info/:client': { component: () => import('./Clients/Info.svelte') },
     },
   },
-  about: { component: () => import('./About.svelte') },
+  about: {
+    component: () => import('./About/About.svelte'),
+    routes: {
+      license: {
+        component: () => import('./About/License.svelte'),
+      },
+    },
+  },
   groups: {
     component: () => import('./Groups/Groups.svelte'),
     routes: {

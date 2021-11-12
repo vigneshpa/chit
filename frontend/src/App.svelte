@@ -62,6 +62,12 @@
         {:else if $serviceWorkerStatus === 'error'}
           <span class="material-icons-outlined" title="Error insalling service worker">error_outline</span>
         {/if}
+      {:else}
+        <span
+          class="material-icons-outlined"
+          title="Warning: Development Build
+For Debug and Experimental use only">bug_report</span
+        >
       {/if}
     </Nav>
 

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Grid from '@theme/Grid.svelte';
   import Page from '@theme/Page.svelte';
   import IconText from '@theme/IconText.svelte';
   import Dialouge from '@theme/Dialouge.svelte';
@@ -12,8 +11,8 @@
 
   export let hasChildRouteComp: Writable<boolean>;
 
-  let groups: any[] = [];
-  $: !$hasChildRouteComp && action('findGroups').then(val => (groups = val));
+  let groups: readonly any[] = [];
+  $: !$hasChildRouteComp && action('findGroups', {}).then(val => (groups = val));
   let open: number | null = null;
 </script>
 

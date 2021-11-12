@@ -21,7 +21,7 @@
   onMount(() =>
     form.addEventListener('submit', ev => {
       ev.preventDefault();
-      action('createGroup', { year, month, batch, totalValue }).then(val => {
+      action('createGroup', { year, month: month as any, batch, totalValue }).then(val => {
         if (!val.uuid) {
           alert('Group not created');
         }
