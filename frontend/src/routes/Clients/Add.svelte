@@ -8,7 +8,6 @@
   let form: HTMLFormElement;
   let phoneMessage = '';
   const validatePhone = async (phone: string) => {
-    console.log(phone);
     if (!phone) return '';
     if (phone.startsWith('+91') && phone.length < 14) {
       return 'Indian phone numbers must contain 10 digits';
